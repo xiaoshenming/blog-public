@@ -130,38 +130,32 @@ export default function RandomMusicPlayer() {
 
 	return (
 		<div className='fixed bottom-6 right-6 z-50'>
-			{/* 主按钮 */}
-			<motion.button
-				onClick={isPlaying ? closePlayer : startRandomPlay}
-				className={cn(
-					'flex items-center gap-2 rounded-full px-4 py-3 shadow-lg transition-all duration-300',
-					isPlaying 
-						? 'bg-gradient-to-r from-brand/20 to-brand-secondary/20 border border-brand/30 backdrop-blur-sm' 
-						: 'bg-gradient-to-r from-brand to-brand-secondary text-white hover:shadow-xl'
-				)}
-				whileHover={{ scale: 1.05 }}
-				whileTap={{ scale: 0.95 }}
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.3 }}>
-				{isPlaying ? (
-					<>
-						<MusicIcon className='h-5 w-5 text-brand' />
-						<span className='text-sm font-medium text-brand'>随机播放中</span>
-					</>
-				) : (
-					<>
+			{/* 主按钮 - 只在未播放时显示 */}
+			<AnimatePresence>
+				{!isPlaying && (
+					<motion.button
+						onClick={startRandomPlay}
+						className={cn(
+							'flex items-center gap-2 rounded-full px-4 py-3 shadow-lg transition-all duration-300',
+							'bg-gradient-to-r from-brand to-brand-secondary text-white hover:shadow-xl'
+						)}
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, scale: 0.8, y: 20 }}
+						transition={{ duration: 0.3 }}>
 						<PlayIcon className='h-5 w-5' />
 						<span className='text-sm font-medium'>开启随机播放</span>
-					</>
+					</motion.button>
 				)}
-			</motion.button>
+			</AnimatePresence>
 
 			{/* 展开的播放器 */}
 			<AnimatePresence>
 				{isPlaying && currentSong && isExpanded && (
 					<motion.div
-						className='absolute bottom-full right-0 mb-4 w-[385px] rounded-2xl border border-border bg-card/95 backdrop-blur-md shadow-2xl'
+						className='absolute bottom-0 right-0 w-[385px] rounded-2xl border border-border bg-card/95 backdrop-blur-md shadow-2xl'
 						initial={{ opacity: 0, scale: 0.9, y: 20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -316,7 +310,7 @@ export default function RandomMusicPlayer() {
 			<AnimatePresence>
 				{isPlaying && currentSong && isMinimized && (
 					<motion.div
-						className='fixed bottom-20 right-6 w-[385px] rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-2xl'
+						className='fixed bottom-6 right-6 w-[385px] rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-2xl'
 						initial={{ opacity: 0, scale: 0.8, y: 20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.8, y: 20 }}
