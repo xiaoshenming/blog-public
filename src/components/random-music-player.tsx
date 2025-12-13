@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { ShuffleIcon, PlayIcon, MusicIcon, XIcon, EditIcon, PlusIcon, TrashIcon, SaveIcon } from 'lucide-react'
@@ -21,10 +21,38 @@ export default function RandomMusicPlayer() {
 	const [newSong, setNewSong] = useState({ name: '', iframe: '' })
 	const [isSaving, setIsSaving] = useState(false)
 	const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+	const [iframeLoaded, setIframeLoaded] = useState(false)
 	const keyInputRef = useRef<HTMLInputElement>(null)
+	const iframeContainerRef = useRef<HTMLDivElement>(null)
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const buttonText = isAuth ? '保存歌单' : '导入密钥'
+
+	// 处理iframe内容，移除自动播放参数
+	const processIframeContent = useCallback((iframe: string): string => {
+		// 移除网易云音乐的auto=1参数
+		return iframe
+			.replace(/auto=1/g, 'auto=0')
+			.replace(/&auto=\d+/g, '')
+			.replace(/\?auto=\d+&/g, '?')
+			.replace(/\?auto=\d+/g, '')
+	}, [])
+
+	// 缓存处理后的iframe内容
+	const processedIframeContent = useMemo(() => {
+		if (!currentSong?.iframe) return ''
+		return processIframeContent(currentSong.iframe)
+	}, [currentSong?.iframe, processIframeContent])
+
+	// 防抖的输入处理函数
+	const handleInputChange = useCallback((field: 'name' | 'iframe', value: string) => {
+		setNewSong(prev => ({ ...prev, [field]: value }))
+	}, [])
+
+	// iframe加载完成处理
+	const handleIframeLoad = useCallback(() => {
+		setIframeLoaded(true)
+	}, [])
 
 	// 加载用户歌单
 	const loadUserPlaylist = async () => {
@@ -147,6 +175,7 @@ export default function RandomMusicPlayer() {
 		setIsPlaying(true)
 		setIsExpanded(true)
 		setIsMinimized(false)
+		setIframeLoaded(false)
 	}
 
 	// 播放下一首随机歌曲
@@ -154,6 +183,7 @@ export default function RandomMusicPlayer() {
 		const song = getRandomSong()
 		setCurrentSong(song)
 		setPlayHistory(prev => [...prev.slice(-4), song]) // 保留最近5首的历史
+		setIframeLoaded(false)
 	}
 
 	// 最小化播放器（点击叉叉）
@@ -246,10 +276,13 @@ export default function RandomMusicPlayer() {
 					{/* iframe 容器 */}
 					<div className='p-4'>
 						<div className='relative overflow-hidden rounded-lg border border-border bg-white/5 flex items-center justify-center' style={{ height: '112px' }}>
-							<div 
-								style={{ width: '330px', height: '86px' }}
-								dangerouslySetInnerHTML={{ __html: currentSong.iframe }}
-							/>
+							{processedIframeContent && (
+								<div
+									ref={iframeContainerRef}
+									style={{ width: '330px', height: '86px' }}
+									dangerouslySetInnerHTML={{ __html: processedIframeContent }}
+								/>
+							)}
 						</div>
 					</div>
 
@@ -288,13 +321,13 @@ export default function RandomMusicPlayer() {
 											type='text'
 											placeholder='歌曲名称'
 											value={newSong.name}
-											onChange={(e) => setNewSong({ ...newSong, name: e.target.value })}
+											onChange={(e) => handleInputChange('name', e.target.value)}
 											className='w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder-secondary focus:border-brand focus:outline-none'
 										/>
 										<textarea
 											placeholder='iframe嵌入代码'
 											value={newSong.iframe}
-											onChange={(e) => setNewSong({ ...newSong, iframe: e.target.value })}
+											onChange={(e) => handleInputChange('iframe', e.target.value)}
 											className='w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder-secondary focus:border-brand focus:outline-none resize-none'
 											rows={2}
 										/>
@@ -420,10 +453,12 @@ export default function RandomMusicPlayer() {
 							</div>
 						</div>
 						<div className='relative overflow-hidden flex items-center justify-center' style={{ height: '112px' }}>
-							<div 
-								style={{ width: '330px', height: '86px' }}
-								dangerouslySetInnerHTML={{ __html: currentSong.iframe }}
-							/>
+							{processedIframeContent && (
+								<div
+									style={{ width: '330px', height: '86px' }}
+									dangerouslySetInnerHTML={{ __html: processedIframeContent }}
+								/>
+							)}
 						</div>
 					</motion.div>
 				)}
