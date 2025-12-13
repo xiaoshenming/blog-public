@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { toast } from 'sonner'
 import { ShuffleIcon, PlayIcon, MusicIcon, XIcon, EditIcon, PlusIcon, TrashIcon, SaveIcon } from 'lucide-react'
 import { list } from '@/app/music/list'
 import { cn } from '@/lib/utils'
 import { pushMusicPlaylist, type MusicItem, type MusicPlaylist } from '@/app/music/services/push-music-playlist'
+import { useAuthStore } from '@/hooks/use-auth'
 
 export default function RandomMusicPlayer() {
 	const [isPlaying, setIsPlaying] = useState(false)
@@ -15,9 +17,14 @@ export default function RandomMusicPlayer() {
 	const [isEditing, setIsEditing] = useState(false)
 	const [playHistory, setPlayHistory] = useState<MusicItem[]>([])
 	const [musicList, setMusicList] = useState<MusicItem[]>(list)
+	const [originalMusicList, setOriginalMusicList] = useState<MusicItem[]>(list)
 	const [newSong, setNewSong] = useState({ name: '', iframe: '' })
 	const [isSaving, setIsSaving] = useState(false)
 	const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+	const keyInputRef = useRef<HTMLInputElement>(null)
+
+	const { isAuth, setPrivateKey } = useAuthStore()
+	const buttonText = isAuth ? '保存歌单' : '导入密钥'
 
 	// 加载用户歌单
 	const loadUserPlaylist = async () => {
@@ -28,6 +35,7 @@ export default function RandomMusicPlayer() {
 				const playlist = await response.json()
 				if (playlist && playlist.songs && playlist.songs.length > 0) {
 					setMusicList(playlist.songs)
+					setOriginalMusicList(playlist.songs)
 					console.log('已加载用户自定义歌单')
 					return
 				}
@@ -38,11 +46,33 @@ export default function RandomMusicPlayer() {
 		
 		// 如果没有用户歌单或读取失败，使用默认歌单
 		setMusicList(list)
+		setOriginalMusicList(list)
 		console.log('使用默认歌单')
 	}
 
+	// 选择私钥文件
+	const handleChoosePrivateKey = async (file: File) => {
+		try {
+			const text = await file.text()
+			setPrivateKey(text)
+			await handleSave()
+		} catch (error) {
+			console.error('Failed to read private key:', error)
+			toast.error('读取密钥文件失败')
+		}
+	}
+
+	// 处理保存点击
+	const handleSaveClick = () => {
+		if (!isAuth) {
+			keyInputRef.current?.click()
+		} else {
+			handleSave()
+		}
+	}
+
 	// 保存用户歌单
-	const saveUserPlaylist = async () => {
+	const handleSave = async () => {
 		setIsSaving(true)
 		setSaveStatus('saving')
 		
@@ -51,16 +81,26 @@ export default function RandomMusicPlayer() {
 				songs: musicList,
 				lastUpdated: new Date().toISOString()
 			}
+			
 			await pushMusicPlaylist(playlist)
+			setOriginalMusicList(musicList)
 			setSaveStatus('saved')
+			toast.success('歌单保存成功！')
 			setTimeout(() => setSaveStatus('idle'), 2000)
-		} catch (error) {
+		} catch (error: any) {
 			console.error('保存歌单失败:', error)
 			setSaveStatus('error')
+			toast.error(`保存失败: ${error?.message || '未知错误'}`)
 			setTimeout(() => setSaveStatus('idle'), 2000)
 		} finally {
 			setIsSaving(false)
 		}
+	}
+
+	// 取消编辑
+	const handleCancel = () => {
+		setMusicList(originalMusicList)
+		setIsEditing(false)
 	}
 
 	// 组件加载时获取用户歌单
@@ -139,7 +179,21 @@ export default function RandomMusicPlayer() {
 	}
 
 	return (
-		<div className='fixed bottom-6 right-6 z-50'>
+		<>
+			{/* 隐藏的文件输入 */}
+			<input
+				ref={keyInputRef}
+				type='file'
+				accept='.pem'
+				className='hidden'
+				onChange={async e => {
+					const f = e.target.files?.[0]
+					if (f) await handleChoosePrivateKey(f)
+					if (e.currentTarget) e.currentTarget.value = ''
+				}}
+			/>
+
+			<div className='fixed bottom-6 right-6 z-50'>
 			{/* 主按钮 - 只在未播放时显示 */}
 			<AnimatePresence>
 				{!isPlaying && (
@@ -256,7 +310,7 @@ export default function RandomMusicPlayer() {
 										
 										{/* 保存按钮 */}
 										<motion.button
-											onClick={saveUserPlaylist}
+											onClick={handleSaveClick}
 											disabled={isSaving}
 											className={cn(
 												'flex items-center gap-2 rounded-full px-3 py-1.5 text-sm shadow-lg transition-all',
@@ -287,7 +341,7 @@ export default function RandomMusicPlayer() {
 											) : (
 												<>
 													<SaveIcon className='h-3 w-3' />
-													<span>保存歌单</span>
+													<span>{buttonText}</span>
 												</>
 											)}
 										</motion.button>
@@ -363,6 +417,7 @@ export default function RandomMusicPlayer() {
 					</motion.div>
 				)}
 			</AnimatePresence>
-		</div>
+			</div>
+		</>
 	)
 }
