@@ -55,7 +55,8 @@ export default function RandomMusicPlayer() {
 		try {
 			const text = await file.text()
 			setPrivateKey(text)
-			await handleSave()
+			// 导入密钥后不立即保存，让用户手动点击保存
+			toast.success('密钥导入成功，请点击保存按钮')
 		} catch (error) {
 			console.error('Failed to read private key:', error)
 			toast.error('读取密钥文件失败')
@@ -298,7 +299,7 @@ export default function RandomMusicPlayer() {
 											rows={2}
 										/>
 									</div>
-									<div className='flex gap-2 items-center'>
+									<div className='flex gap-2 items-center flex-wrap'>
 										<motion.button
 											onClick={addSong}
 											className='flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand-secondary px-3 py-1.5 text-white text-sm shadow-lg hover:shadow-xl transition-all'
@@ -344,6 +345,16 @@ export default function RandomMusicPlayer() {
 													<span>{buttonText}</span>
 												</>
 											)}
+										</motion.button>
+
+										{/* 取消按钮 */}
+										<motion.button
+											onClick={handleCancel}
+											className='flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-secondary hover:text-primary transition-all'
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}>
+											<XIcon className='h-3 w-3' />
+											<span>取消</span>
 										</motion.button>
 									</div>
 									
