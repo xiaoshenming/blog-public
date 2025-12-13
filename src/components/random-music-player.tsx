@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { ShuffleIcon, PlayIcon, MusicIcon, XIcon, EditIcon, PlusIcon, TrashIcon, SaveIcon } from 'lucide-react'
@@ -21,37 +21,15 @@ export default function RandomMusicPlayer() {
 	const [newSong, setNewSong] = useState({ name: '', iframe: '' })
 	const [isSaving, setIsSaving] = useState(false)
 	const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-	const [iframeLoaded, setIframeLoaded] = useState(false)
+	const [isHomePage, setIsHomePage] = useState(false)
 	const keyInputRef = useRef<HTMLInputElement>(null)
-	const iframeContainerRef = useRef<HTMLDivElement>(null)
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const buttonText = isAuth ? '保存歌单' : '导入密钥'
 
-	// 处理iframe内容，移除自动播放参数
-	const processIframeContent = useCallback((iframe: string): string => {
-		// 移除网易云音乐的auto=1参数
-		return iframe
-			.replace(/auto=1/g, 'auto=0')
-			.replace(/&auto=\d+/g, '')
-			.replace(/\?auto=\d+&/g, '?')
-			.replace(/\?auto=\d+/g, '')
-	}, [])
-
-	// 缓存处理后的iframe内容
-	const processedIframeContent = useMemo(() => {
-		if (!currentSong?.iframe) return ''
-		return processIframeContent(currentSong.iframe)
-	}, [currentSong?.iframe, processIframeContent])
-
-	// 防抖的输入处理函数
-	const handleInputChange = useCallback((field: 'name' | 'iframe', value: string) => {
-		setNewSong(prev => ({ ...prev, [field]: value }))
-	}, [])
-
-	// iframe加载完成处理
-	const handleIframeLoad = useCallback(() => {
-		setIframeLoaded(true)
+	// 检测是否在首页（客户端hydration后）
+	useEffect(() => {
+		setIsHomePage(window.location.pathname === '/')
 	}, [])
 
 	// 加载用户歌单
@@ -71,7 +49,7 @@ export default function RandomMusicPlayer() {
 		} catch (error) {
 			console.log('读取用户歌单失败，使用默认歌单:', error)
 		}
-		
+
 		// 如果没有用户歌单或读取失败，使用默认歌单
 		setMusicList(list)
 		setOriginalMusicList(list)
@@ -104,13 +82,13 @@ export default function RandomMusicPlayer() {
 	const handleSave = async () => {
 		setIsSaving(true)
 		setSaveStatus('saving')
-		
+
 		try {
 			const playlist: MusicPlaylist = {
 				songs: musicList,
 				lastUpdated: new Date().toISOString()
 			}
-			
+
 			await pushMusicPlaylist(playlist)
 			setOriginalMusicList(musicList)
 			setSaveStatus('saved')
@@ -139,10 +117,10 @@ export default function RandomMusicPlayer() {
 
 	// 获取随机歌曲（避免重复）
 	const getRandomSong = (): MusicItem => {
-		const availableSongs = musicList.filter(song => 
+		const availableSongs = musicList.filter(song =>
 			!playHistory.some(history => history.name === song.name)
 		)
-		
+
 		// 如果所有歌曲都播放过了，重置历史
 		const songsToChoose = availableSongs.length > 0 ? availableSongs : musicList
 		const randomIndex = Math.floor(Math.random() * songsToChoose.length)
@@ -175,7 +153,6 @@ export default function RandomMusicPlayer() {
 		setIsPlaying(true)
 		setIsExpanded(true)
 		setIsMinimized(false)
-		setIframeLoaded(false)
 	}
 
 	// 播放下一首随机歌曲
@@ -183,7 +160,6 @@ export default function RandomMusicPlayer() {
 		const song = getRandomSong()
 		setCurrentSong(song)
 		setPlayHistory(prev => [...prev.slice(-4), song]) // 保留最近5首的历史
-		setIframeLoaded(false)
 	}
 
 	// 最小化播放器（点击叉叉）
@@ -209,6 +185,34 @@ export default function RandomMusicPlayer() {
 		setIsMinimized(false)
 	}
 
+	// 处理iframe内容，移除自动播放参数
+	const processIframeContent = (iframe: string): string => {
+		// 移除网易云音乐的auto=1参数
+		return iframe
+			.replace(/auto=1/g, 'auto=0')
+			.replace(/&auto=\d+/g, '')
+			.replace(/\?auto=\d+&/g, '?')
+			.replace(/\?auto=\d+/g, '')
+	}
+
+	// 处理后的iframe内容
+	const processedIframeContent = currentSong?.iframe ? processIframeContent(currentSong.iframe) : ''
+
+	// 导出全局访问函数，供首页MusicCard使用
+	useEffect(() => {
+		// 将播放器实例暴露到全局，供其他组件调用
+		;(window as any).musicPlayer = {
+			startRandomPlay,
+			playNextRandom,
+			isPlaying,
+			currentSong
+		}
+
+		return () => {
+			delete (window as any).musicPlayer
+		}
+	}, [startRandomPlay, playNextRandom, isPlaying, currentSong])
+
 	return (
 		<>
 			{/* 隐藏的文件输入 */}
@@ -225,9 +229,9 @@ export default function RandomMusicPlayer() {
 			/>
 
 			<div className='fixed bottom-6 right-6 z-50'>
-			{/* 主按钮 - 只在未播放时显示 */}
+			{/* 主按钮 - 只在非首页且未播放时显示 */}
 			<AnimatePresence>
-				{!isPlaying && (
+				{!isPlaying && !isHomePage && (
 					<motion.button
 						onClick={startRandomPlay}
 						className={cn(
@@ -276,13 +280,10 @@ export default function RandomMusicPlayer() {
 					{/* iframe 容器 */}
 					<div className='p-4'>
 						<div className='relative overflow-hidden rounded-lg border border-border bg-white/5 flex items-center justify-center' style={{ height: '112px' }}>
-							{processedIframeContent && (
-								<div
-									ref={iframeContainerRef}
-									style={{ width: '330px', height: '86px' }}
-									dangerouslySetInnerHTML={{ __html: processedIframeContent }}
-								/>
-							)}
+							<div
+								style={{ width: '330px', height: '86px' }}
+								dangerouslySetInnerHTML={{ __html: processedIframeContent }}
+							/>
 						</div>
 					</div>
 
@@ -321,13 +322,13 @@ export default function RandomMusicPlayer() {
 											type='text'
 											placeholder='歌曲名称'
 											value={newSong.name}
-											onChange={(e) => handleInputChange('name', e.target.value)}
+											onChange={(e) => setNewSong({ ...newSong, name: e.target.value })}
 											className='w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder-secondary focus:border-brand focus:outline-none'
 										/>
 										<textarea
 											placeholder='iframe嵌入代码'
 											value={newSong.iframe}
-											onChange={(e) => handleInputChange('iframe', e.target.value)}
+											onChange={(e) => setNewSong({ ...newSong, iframe: e.target.value })}
 											className='w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder-secondary focus:border-brand focus:outline-none resize-none'
 											rows={2}
 										/>
@@ -341,15 +342,15 @@ export default function RandomMusicPlayer() {
 											<PlusIcon className='h-3 w-3' />
 											<span>添加歌曲</span>
 										</motion.button>
-										
+
 										{/* 保存按钮 */}
 										<motion.button
 											onClick={handleSaveClick}
 											disabled={isSaving}
 											className={cn(
 												'flex items-center gap-2 rounded-full px-3 py-1.5 text-sm shadow-lg transition-all',
-												saveStatus === 'saved' 
-													? 'bg-green-500 text-white' 
+												saveStatus === 'saved'
+													? 'bg-green-500 text-white'
 													: saveStatus === 'error'
 													? 'bg-red-500 text-white'
 													: 'bg-blue-500 text-white hover:bg-blue-600',
@@ -390,7 +391,7 @@ export default function RandomMusicPlayer() {
 											<span>取消</span>
 										</motion.button>
 									</div>
-									
+
 									{/* 歌曲列表 */}
 									<div className='max-h-40 overflow-y-auto space-y-2'>
 										{musicList.map((song, index) => (
@@ -453,12 +454,10 @@ export default function RandomMusicPlayer() {
 							</div>
 						</div>
 						<div className='relative overflow-hidden flex items-center justify-center' style={{ height: '112px' }}>
-							{processedIframeContent && (
-								<div
-									style={{ width: '330px', height: '86px' }}
-									dangerouslySetInnerHTML={{ __html: processedIframeContent }}
-								/>
-							)}
+							<div
+								style={{ width: '330px', height: '86px' }}
+								dangerouslySetInnerHTML={{ __html: processedIframeContent }}
+							/>
 						</div>
 					</motion.div>
 				)}
