@@ -22,12 +22,20 @@ export default function RandomMusicPlayer() {
 	// 加载用户歌单
 	const loadUserPlaylist = async () => {
 		try {
+			// 优先尝试加载用户自定义歌单
 			const playlist = await loadMusicPlaylist()
-			if (playlist && playlist.songs) {
+			if (playlist && playlist.songs && playlist.songs.length > 0) {
 				setMusicList(playlist.songs)
+				console.log('已加载用户自定义歌单')
+			} else {
+				// 如果没有用户歌单，使用默认歌单
+				setMusicList(list)
+				console.log('使用默认歌单')
 			}
 		} catch (error) {
-			console.error('加载歌单失败:', error)
+			console.error('加载歌单失败，使用默认歌单:', error)
+			// 出错时使用默认歌单
+			setMusicList(list)
 		}
 	}
 
