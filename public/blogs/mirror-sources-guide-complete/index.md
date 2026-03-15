@@ -226,6 +226,118 @@ nvidia-smi
 nvidia-smi --query-gpu=driver_version --format=csv
 ```
 
+---
+
+## 🐉 ArchLinux 代理配置（2026年最新方案）
+
+> 这是一个我觉得超级好用的方案！尤其是配合 Clash Verge，直接开启局域网模式就能让本机所有应用自动走代理，连配置都省了。
+
+### 核心思路
+
+与其一个一个应用去配置代理，不如让系统层面统一走代理。我的方案是：
+
+- **代理客户端**：Clash Verge（开源免费，界面美观）
+- **代理模式**：仅开启「允许局域网连接」，不开启 TUN 模式
+- **代理地址**：`http://127.0.0.1:7897`
+- **全局代理**：使用 `alias` 别名 + 命令前缀，一键让任意命令走代理
+
+### 步骤一：安装 Clash Verge
+
+```bash
+# Arch 用户可以直接用 yay 或 pacman
+yay -S clash-verge
+
+# 或者下载 AppImage
+wget https://github.com/zzzgydi/clash-verge/releases/latest/download/Clash-Verge-linux-x64.tar.gz
+tar -xzf Clash-Verge-linux-x64.tar.gz
+./Clash-Verge-linux-x64/clash-verge
+```
+
+### 步骤二：配置 Clash Verge
+
+1. 打开 Clash Verge
+2. 导入你的机场订阅链接
+3. **关键设置**：在「设置」→「网络」中，勾选「允许局域网连接」
+4. 不需要开启 TUN 模式，普通的 HTTP 代理模式就够用了
+5. 记下代理地址：`http://127.0.0.1:7897`
+
+### 步骤三：配置终端代理别名（推荐！）
+
+编辑 `~/.zshrc` 或 `~/.bashrc`，添加一个超级好用的别名：
+
+```bash
+# 代理别名：px = proxy
+alias px='http_proxy=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 HTTPS_PROXY=http://127.0.0.1:7897'
+```
+
+保存后执行 `source ~/.zshrc` 生效。
+
+### 步骤四：愉快地使用
+
+现在，你只需要在任意命令前加上 `px ` 前缀，这条命令就会自动走代理：
+
+```bash
+# 安装 npm 包
+px npm install express
+
+# 克隆 GitHub 仓库
+px git clone https://github.com/some/repo.git
+
+# pip 安装
+px pip install torch
+
+# docker pull
+px docker pull nginx:latest
+
+# curl 测试
+px curl https://google.com
+
+# 甚至可以用它来运行带网络请求的脚本
+px python my_script.py
+```
+
+### 为什么推荐这种方式？
+
+1. **简单粗暴**：不用每个应用单独配置，一个别名搞定一切
+2. **可控性强**：只有你想走代理的命令才会走，不影响其他操作
+3. **兼容性好**：TUN 模式有时候会出问题，但这种别名法几乎不会
+4. **随时可关**：只要不写 `px` 前缀，该怎么玩怎么玩
+5. **一劳永逸**：配置一次，以后天天爽
+
+### 进阶用法
+
+如果你觉得每次写 `px` 也麻烦，可以进一步配置：
+
+```bash
+# 方式1：更短的别名
+alias p='px'
+
+# 方式2：为特定工具设置永久代理（可选）
+# npm
+npm config set proxy http://127.0.0.1:7897
+npm config set https-proxy http://127.0.0.1:7897
+
+# git
+git config --global http.proxy http://127.0.0.1:7897
+git config --global https.proxy http://127.0.0.1:7897
+
+# pip
+pip config set global.proxy http://127.0.0.1:7897
+```
+
+### 常见问题
+
+**Q：代理没反应？**
+A：检查 Clash Verge 是否开启、是否勾选了「允许局域网连接」、端口是不是 7897
+
+**Q：有些命令还是超时？**
+A：有些机场对并发有限制，试试降低并发或者换节点
+
+**Q：TUN 模式和这种别名法有啥区别？**
+A：TUN 是全局代理，所有流量都走代理；别名法更灵活，想走就走不想走就不走。我个人更喜欢别名法，出了问题容易排查。
+
+---
+
 # 镜像站推荐列表
 
 ## 🏢 企业站
@@ -294,7 +406,7 @@ nvidia-smi --query-gpu=driver_version --format=csv
 
 ## 🏆 推荐使用（综合性能较好）
 1. **清华大学镜像站** - https://mirrors.tuna.tsinghua.edu.cn
-2. **中科大镜像站** - https://mirrors.ustc.edu.cn  
+2. **中科大镜像站** - https://mirrors.ustc.edu.cn
 3. **阿里云镜像站** - https://mirrors.aliyun.com
 4. **腾讯云镜像站** - https://mirrors.cloud.tencent.com
 
