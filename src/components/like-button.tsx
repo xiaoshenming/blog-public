@@ -13,7 +13,7 @@ type LikeButtonProps = {
 	delay?: number
 }
 
-const ENDPOINT = 'https://blog-liker.1181584752.workers.dev/api/like'
+const ENDPOINT = 'https://like.zmark.top/api/like'
 
 export default function LikeButton({ slug = 'xiaoshenming', delay, className }: LikeButtonProps) {
 	slug = BLOG_SLUG_KEY + slug
