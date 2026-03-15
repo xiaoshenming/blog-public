@@ -9,9 +9,10 @@
       "Claude"
     ],
     "date": "2026-03-16T22:00",
-    "summary": "从78%AI率到8.5%，我是如何用Claude Opus模型配合精心设计的提示词完成这场逆袭的",
+    "summary": "从66.6%AI率到8.5%，我是如何用Claude Opus模型配合精心设计的提示词完成这场逆袭的",
+    "cover": "/blogs/aigc-rewrite-experience/a8f680e856071235.png",
     "hidden": false,
-    "category": ""
+    "category": "总结"
   },
   {
     "slug": "mirror-sources-guide-complete",
