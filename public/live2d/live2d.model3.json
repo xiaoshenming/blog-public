@@ -3,7 +3,24 @@
 	"FileReferences": {
 		"Moc": "live2d.moc3",
 		"Textures": [
-			"live2d.2048/texture_00.png"
-		]
-	}
+			"live2d.4096/texture_00.png"
+		],
+		"Physics": "live2d.physics3.json",
+		"DisplayInfo": "live2d.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		}
+	]
 }
