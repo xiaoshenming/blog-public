@@ -14,3 +14,14 @@ export const GITHUB_CONFIG = {
 	APP_ID: process.env.NEXT_PUBLIC_GITHUB_APP_ID || '-',
 	ENCRYPT_KEY: process.env.NEXT_PUBLIC_GITHUB_ENCRYPT_KEY || 'wudishiduomejimo',
 } as const
+
+/**
+ * GitHub OAuth2 配置
+ */
+export const GITHUB_OAUTH2_CONFIG = {
+	CLIENT_ID: process.env.NEXT_PUBLIC_GITHUB_OAUTH2_CLIENT_ID || '',
+	SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:2025',
+	SCOPE: 'repo',
+	STATE_KEY: 'github_oauth_state',
+	TOKEN_KEY: 'github_oauth_token',
+} as const

@@ -4,13 +4,14 @@ import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { DialogModal } from '@/components/dialog-modal'
-import { useAuthStore } from '@/hooks/use-auth'
+import { useAuthStore, hasAnyAuth } from '@/hooks/use-auth'
 import { useConfigStore } from '../stores/config-store'
 import { pushSiteContent } from '../services/push-site-content'
 import type { SiteContent, CardStyles } from '../stores/config-store'
 import { SiteSettings, type FileItem, type ArtImageUploads, type BackgroundImageUploads, type SocialButtonImageUploads } from './site-settings'
 import { ColorConfig } from './color-config'
 import { HomeLayout } from './home-layout'
+import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
 
 interface ConfigDialogProps {
 	open: boolean
@@ -20,7 +21,8 @@ interface ConfigDialogProps {
 type TabType = 'site' | 'color' | 'layout'
 
 export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
-	const { isAuth, setPrivateKey } = useAuthStore()
+	const { setPrivateKey, clearAuth } = useAuthStore()
+	const isAuth = hasAnyAuth()
 	const { siteContent, setSiteContent, cardStyles, setCardStyles, regenerateBubbles } = useConfigStore()
 	const [formData, setFormData] = useState<SiteContent>(siteContent)
 	const [cardStylesData, setCardStylesData] = useState<CardStyles>(cardStyles)
@@ -297,6 +299,35 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 					)}
 					{activeTab === 'color' && <ColorConfig formData={formData} setFormData={setFormData} />}
 					{activeTab === 'layout' && <HomeLayout cardStylesData={cardStylesData} setCardStylesData={setCardStylesData} onClose={onClose} />}
+				</div>
+
+				{/* OAuth2 登录区域 */}
+				<div className='mt-6 border-t pt-4'>
+					{hasOAuth2Auth() ? (
+						<div className='flex items-center justify-between'>
+							<span className='text-secondary text-sm'>已通过 GitHub OAuth2 登录</span>
+							<button
+								onClick={() => {
+									clearAuth()
+									clearOAuth2Token()
+									toast.success('已退出 OAuth2 登录')
+								}}
+								className='rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-500 transition-colors hover:bg-red-500/20'>
+								退出登录
+							</button>
+						</div>
+					) : (
+						<motion.button
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
+							onClick={() => initiateGitHubOAuth2()}
+							className='flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm text-white transition-colors hover:bg-gray-800'>
+							<svg className='h-4 w-4' viewBox='0 0 16 16' fill='currentColor'>
+								<path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z' />
+							</svg>
+							使用 GitHub OAuth2 登录
+						</motion.button>
+					)}
 				</div>
 			</DialogModal>
 		</>
