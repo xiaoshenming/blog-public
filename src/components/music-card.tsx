@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import Card from '@/components/card'
 import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from '../app/(home)/stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import MusicSVG from '@/svgs/music.svg'
 import PlaySVG from '@/svgs/play.svg'
@@ -17,11 +18,13 @@ const MUSIC_FILES = ['/music/close-to-you.mp3']
 export default function MusicCard() {
 	const pathname = usePathname()
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
-	const styles = cardStyles.musicCard
-	const hiCardStyles = cardStyles.hiCard
-	const clockCardStyles = cardStyles.clockCard
-	const calendarCardStyles = cardStyles.calendarCard
+	const { styles, hiCardWidth, clockCardOffset, calendarCardHeight, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.musicCard,
+		hiCardWidth: s.cardStyles.hiCard.width,
+		clockCardOffset: s.cardStyles.clockCard.offset,
+		calendarCardHeight: s.cardStyles.calendarCard.height,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentIndex, setCurrentIndex] = useState(0)
@@ -42,10 +45,10 @@ export default function MusicCard() {
 
 		// Default position on home page
 		return {
-			x: styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardStyles.width / 2 - styles.offset,
-			y: styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardStyles.offset + CARD_SPACING + calendarCardStyles.height + CARD_SPACING
+			x: styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardWidth / 2 - styles.offset,
+			y: styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardOffset + CARD_SPACING + calendarCardHeight + CARD_SPACING
 		}
-	}, [isPlaying, isHomePage, center, styles, hiCardStyles, clockCardStyles, calendarCardStyles])
+	}, [isPlaying, isHomePage, center, styles, hiCardWidth, clockCardOffset, calendarCardHeight])
 
 	const { x, y } = position
 
@@ -138,7 +141,7 @@ export default function MusicCard() {
 	return (
 		<HomeDraggableLayer cardKey='musicCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className={clsx('flex items-center gap-3', !isHomePage && 'fixed')}>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-10.webp'

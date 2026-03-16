@@ -1,6 +1,7 @@
 import { useCenterStore } from '@/hooks/use-center'
 import Card from '@/components/card'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import Link from 'next/link'
 
@@ -20,10 +21,12 @@ function getGreeting() {
 
 export default function HiCard() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, username, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.hiCard,
+		username: s.siteContent.meta.username || 'Suni',
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 	const greeting = getGreeting()
-	const styles = cardStyles.hiCard
-	const username = siteContent.meta.username || 'Suni'
 
 	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x - styles.width / 2
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - styles.height / 2
@@ -31,7 +34,7 @@ export default function HiCard() {
 	return (
 		<HomeDraggableLayer cardKey='hiCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='relative text-center max-sm:static max-sm:translate-0'>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-1.webp'

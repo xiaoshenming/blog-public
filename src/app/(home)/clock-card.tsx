@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Card from '@/components/card'
 import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { useLayoutEditStore } from './stores/layout-edit-store'
 import { CARD_SPACING } from '@/consts'
 import { HomeDraggableLayer } from './home-draggable-layer'
@@ -12,12 +13,14 @@ import { HomeDraggableLayer } from './home-draggable-layer'
 export default function ClockCard() {
 	const router = useRouter()
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hiCardWidth, showSeconds, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.clockCard,
+		hiCardWidth: s.cardStyles.hiCard.width,
+		showSeconds: s.siteContent.clockShowSeconds ?? false,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 	const editing = useLayoutEditStore(state => state.editing)
 	const [time, setTime] = useState(new Date())
-	const styles = cardStyles.clockCard
-	const hiCardStyles = cardStyles.hiCard
-	const showSeconds = siteContent.clockShowSeconds ?? false
 
 	useEffect(() => {
 		const interval = showSeconds ? 1000 : 5000
@@ -32,13 +35,13 @@ export default function ClockCard() {
 	const minutes = time.getMinutes().toString().padStart(2, '0')
 	const seconds = time.getSeconds().toString().padStart(2, '0')
 
-	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardStyles.width / 2
+	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardWidth / 2
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - styles.offset - styles.height
 
 	return (
 		<HomeDraggableLayer cardKey='clockCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='p-2'>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-5.webp'

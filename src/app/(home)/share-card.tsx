@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Card from '@/components/card'
 import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import shareList from '@/app/share/list.json'
 import Link from 'next/link'
@@ -20,11 +21,13 @@ type ShareItem = {
 
 export default function ShareCard() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.shareCard,
+		hiCardStyles: s.cardStyles.hiCard,
+		socialButtonsStyles: s.cardStyles.socialButtons,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 	const [randomItem, setRandomItem] = useState<ShareItem | null>(null)
-	const styles = cardStyles.shareCard
-	const hiCardStyles = cardStyles.hiCard
-	const socialButtonsStyles = cardStyles.socialButtons
 
 	useEffect(() => {
 		const randomIndex = Math.floor(Math.random() * shareList.length)
@@ -41,7 +44,7 @@ export default function ShareCard() {
 	return (
 		<HomeDraggableLayer cardKey='shareCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y}>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-12.webp'

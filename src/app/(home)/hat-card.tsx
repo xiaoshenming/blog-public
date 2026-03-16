@@ -2,25 +2,27 @@ import { ANIMATION_DELAY } from '@/consts'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { useCenterStore } from '@/hooks/use-center'
 import { useSize } from '@/hooks/use-size'
 import { HomeDraggableLayer } from './home-draggable-layer'
 
 export default function HatCard() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hatIndex, hatFlipped } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.hatCard,
+		hatIndex: s.siteContent.currentHatIndex ?? 1,
+		hatFlipped: s.siteContent.hatFlipped ?? false,
+	})))
 	const { maxSM } = useSize()
-	const styles = cardStyles.hatCard
 
 	const [show, setShow] = useState(false)
 	const [number, setNumber] = useState(1)
 
 	useEffect(() => {
-		setTimeout(() => setShow(true), styles.order * ANIMATION_DELAY * 1000)
+		const timer = setTimeout(() => setShow(true), styles.order * ANIMATION_DELAY * 1000)
+		return () => clearTimeout(timer)
 	}, [styles.order])
-
-	const hatIndex = siteContent.currentHatIndex ?? 1
-	const hatFlipped = siteContent.hatFlipped ?? false
 
 	if (maxSM) return null
 
@@ -32,13 +34,12 @@ export default function HatCard() {
 	return (
 		<HomeDraggableLayer cardKey='hatCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<motion.div
-				initial={{ opacity: 0, scale: 0.6, left: x, top: y, width: styles.width, height: styles.height }}
-				animate={{ opacity: 1, scale: 1, left: x, top: y, width: styles.width, height: styles.height }}
-				whileHover={{ scale: 1.05 }}
-				whileTap={{ scale: 0.95 }}
-				onClick={() => setNumber(number + 1)}
-				className='absolute flex h-full w-full items-center justify-center'>
-				{new Array(number)
+				initial={{ opacity: 0, scale: 0.6 }}
+				animate={{ opacity: 1, scale: 1 }}
+				style={{ left: x, top: y, width: styles.width, height: styles.height }}
+				onClick={() => setNumber(Math.min(number + 1, 20))}
+				className='card-hover absolute flex h-full w-full items-center justify-center'>
+				{new Array(Math.min(number, 20))
 					.fill(0)
 					.map((_, index) =>
 						index === 0 ? (

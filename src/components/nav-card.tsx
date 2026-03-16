@@ -22,6 +22,7 @@ import clsx from 'clsx'
 import { cn } from '@/lib/utils'
 import { useSize } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { HomeDraggableLayer } from '@/app/(home)/home-draggable-layer'
 
 const list = [
@@ -65,9 +66,12 @@ export default function NavCard() {
 	const [show, setShow] = useState(false)
 	const { maxSM } = useSize()
 	const [hoveredIndex, setHoveredIndex] = useState<number>(0)
-	const { siteContent, cardStyles } = useConfigStore()
-	const styles = cardStyles.navCard
-	const hiCardStyles = cardStyles.hiCard
+	const { styles, hiCardStyles, enableChristmas, metaTitle } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.navCard,
+		hiCardStyles: s.cardStyles.hiCard,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+		metaTitle: s.siteContent.meta.title,
+	})))
 
 	const activeIndex = useMemo(() => {
 		const index = list.findIndex(item => pathname === item.href)
@@ -84,7 +88,10 @@ export default function NavCard() {
 		const fetchStatus = () => {
 			fetch('https://activity.zmark.top')
 				.then(res => res.json())
-				.then(data => setActivityStatus(data.status || '离线'))
+				.then(data => {
+					const newStatus = data.status || '离线'
+					setActivityStatus(prev => prev === newStatus ? prev : newStatus)
+				})
 				.catch(() => setActivityStatus('开发中'))
 		}
 		fetchStatus()
@@ -141,7 +148,7 @@ export default function NavCard() {
 					x={position.x}
 					y={position.y}
 					className={clsx(form != 'full' && 'overflow-hidden', form === 'mini' && 'p-3', form === 'icons' && 'flex items-center gap-6 p-3')}>
-					{form === 'full' && siteContent.enableChristmas && (
+					{form === 'full' && enableChristmas && (
 						<>
 							<img
 								src='/images/christmas/snow-4.webp'
@@ -156,7 +163,7 @@ export default function NavCard() {
 						<Image src='/images/avatar.png' alt='avatar' width={40} height={40} style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }} className='rounded-full' />
 						{form === 'full' && (
 							<div className='flex flex-col'>
-								<span className='font-averia mt-1 text-2xl leading-none font-medium'>{siteContent.meta.title}</span>
+								<span className='font-averia mt-1 text-2xl leading-none font-medium'>{metaTitle}</span>
 								<span className='text-brand mt-1 text-xs font-medium'>({activityStatus})</span>
 							</div>
 						)}

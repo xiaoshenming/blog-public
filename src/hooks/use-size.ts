@@ -50,8 +50,16 @@ export function useSizeInit() {
 	useEffect(() => {
 		const update = () => useSizeStore.getState().recalc()
 		update()
-		window.addEventListener('resize', update)
-		return () => window.removeEventListener('resize', update)
+		let rafId: number
+		const throttledUpdate = () => {
+			cancelAnimationFrame(rafId)
+			rafId = requestAnimationFrame(update)
+		}
+		window.addEventListener('resize', throttledUpdate)
+		return () => {
+			window.removeEventListener('resize', throttledUpdate)
+			cancelAnimationFrame(rafId)
+		}
 	}, [])
 }
 

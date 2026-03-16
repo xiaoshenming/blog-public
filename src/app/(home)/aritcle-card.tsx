@@ -2,6 +2,7 @@ import Card from '@/components/card'
 import { useCenterStore } from '@/hooks/use-center'
 import { useLatestBlog } from '@/hooks/use-blog-index'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -9,11 +10,13 @@ import { HomeDraggableLayer } from './home-draggable-layer'
 
 export default function ArticleCard() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.articleCard,
+		hiCardStyles: s.cardStyles.hiCard,
+		socialButtonsStyles: s.cardStyles.socialButtons,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 	const { blog, loading } = useLatestBlog()
-	const styles = cardStyles.articleCard
-	const hiCardStyles = cardStyles.hiCard
-	const socialButtonsStyles = cardStyles.socialButtons
 
 	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + hiCardStyles.width / 2 - socialButtonsStyles.width - CARD_SPACING - styles.width
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y + hiCardStyles.height / 2 + CARD_SPACING
@@ -21,7 +24,7 @@ export default function ArticleCard() {
 	return (
 		<HomeDraggableLayer cardKey='articleCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='space-y-2 max-sm:static'>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-9.webp'

@@ -2,6 +2,7 @@ import { useCenterStore } from '@/hooks/use-center'
 import GithubSVG from '@/svgs/github.svg'
 import { ANIMATION_DELAY, CARD_SPACING } from '@/consts'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import JuejinSVG from '@/svgs/juejin.svg'
 import EmailSVG from '@/svgs/email.svg'
 import XSVG from '@/svgs/x.svg'
@@ -50,17 +51,19 @@ interface SocialButtonConfig {
 
 export default function SocialButtons() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hiCardStyles, socialButtonsContent } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.socialButtons,
+		hiCardStyles: s.cardStyles.hiCard,
+		socialButtonsContent: s.siteContent.socialButtons,
+	})))
 	const { maxSM, init } = useSize()
-	const styles = cardStyles.socialButtons
-	const hiCardStyles = cardStyles.hiCard
 	const order = maxSM && init ? 0 : styles.order
 	const delay = maxSM && init ? 0 : 100
 
 	const sortedButtons = useMemo(() => {
-		const buttons = (siteContent.socialButtons || []) as SocialButtonConfig[]
+		const buttons = (socialButtonsContent || []) as SocialButtonConfig[]
 		return [...buttons].sort((a, b) => a.order - b.order)
-	}, [siteContent.socialButtons])
+	}, [socialButtonsContent])
 
 	const [showStates, setShowStates] = useState<Record<string, boolean>>({})
 	const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({})
@@ -260,11 +263,11 @@ export default function SocialButtons() {
 
 	return (
 		<HomeDraggableLayer cardKey='socialButtons' x={x} y={y} width={styles.width} height={styles.height}>
-			<motion.div className='absolute max-sm:static' animate={{ left: x, top: y }} initial={{ left: x, top: y }}>
+			<div className='absolute max-sm:static' style={{ left: x, top: y }}>
 				<div className='absolute top-0 left-0 flex flex-row-reverse items-center gap-3 max-sm:static' style={{ width: styles.width }}>
 					{sortedButtons.map(button => renderButton(button))}
 				</div>
-			</motion.div>
+			</div>
 		</HomeDraggableLayer>
 	)
 }

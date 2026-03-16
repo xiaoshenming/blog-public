@@ -1,6 +1,7 @@
 import Card from '@/components/card'
 import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from './stores/config-store'
+import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
@@ -11,24 +12,26 @@ dayjs.locale('zh-cn')
 
 export default function CalendarCard() {
 	const center = useCenterStore()
-	const { cardStyles, siteContent } = useConfigStore()
+	const { styles, hiCardWidth, clockCardOffset, enableChristmas } = useConfigStore(useShallow(s => ({
+		styles: s.cardStyles.calendarCard,
+		hiCardWidth: s.cardStyles.hiCard.width,
+		clockCardOffset: s.cardStyles.clockCard.offset,
+		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+	})))
 	const now = dayjs()
 	const currentDate = now.date()
 	const firstDayOfMonth = now.startOf('month')
 	const firstDayWeekday = (firstDayOfMonth.day() + 6) % 7
 	const daysInMonth = now.daysInMonth()
 	const currentWeekday = (now.day() + 6) % 7
-	const styles = cardStyles.calendarCard
-	const hiCardStyles = cardStyles.hiCard
-	const clockCardStyles = cardStyles.clockCard
 
-	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardStyles.width / 2
-	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardStyles.offset + CARD_SPACING
+	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardWidth / 2
+	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardOffset + CARD_SPACING
 
 	return (
 		<HomeDraggableLayer cardKey='calendarCard' x={x} y={y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='flex flex-col'>
-				{siteContent.enableChristmas && (
+				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-7.webp'
