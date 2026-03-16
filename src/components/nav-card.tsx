@@ -78,6 +78,20 @@ export default function NavCard() {
 		setShow(true)
 	}, [])
 
+	const [activityStatus, setActivityStatus] = useState('开发中')
+
+	useEffect(() => {
+		const fetchStatus = () => {
+			fetch('https://activity.zmark.top')
+				.then(res => res.json())
+				.then(data => setActivityStatus(data.status || '离线'))
+				.catch(() => setActivityStatus('开发中'))
+		}
+		fetchStatus()
+		const timer = setInterval(fetchStatus, 10000)
+		return () => clearInterval(timer)
+	}, [])
+
 	let form = useMemo(() => {
 		if (pathname == '/') return 'full'
 		else if (pathname == '/write') return 'mini'
@@ -141,7 +155,7 @@ export default function NavCard() {
 					<Link className='flex items-center gap-3' href='/'>
 						<Image src='/images/avatar.png' alt='avatar' width={40} height={40} style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }} className='rounded-full' />
 						{form === 'full' && <span className='font-averia mt-1 text-2xl leading-none font-medium'>{siteContent.meta.title}</span>}
-						{form === 'full' && <span className='text-brand mt-2 text-xs font-medium'>(开发中)</span>}
+						{form === 'full' && <span className='text-brand mt-2 text-xs font-medium'>({activityStatus})</span>}
 					</Link>
 
 					{(form === 'full' || form === 'icons') && (
