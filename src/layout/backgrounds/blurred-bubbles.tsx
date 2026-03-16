@@ -116,10 +116,28 @@ export default function BlurredBubblesBackground({
 		allocateGrid()
 
 		// Poisson-ish initial placement to avoid clusters
-		const bubbles: { x: number; y: number; r: number; color: string; vx: number; vy: number; jitter: number; blur: number }[] = []
+		const bubbles: { x: number; y: number; r: number; color: string; vx: number; vy: number; jitter: number; blur: number; cached: HTMLCanvasElement }[] = []
 		const minDist = Math.max(minRadius * 0.2, 80)
 		const maxTries = 5000
 		let tries = 0
+
+		// Pre-render a blurred circle to an offscreen canvas
+		function preRenderBubble(color: string, r: number, blur: number): HTMLCanvasElement {
+			const pad = blur * 2
+			const size = (r + pad) * 2
+			const offscreen = document.createElement('canvas')
+			offscreen.width = size
+			offscreen.height = size
+			const octx = offscreen.getContext('2d')!
+			octx.filter = `blur(${blur}px)`
+			octx.globalAlpha = 0.8
+			octx.fillStyle = color
+			octx.beginPath()
+			octx.arc(size / 2, size / 2, r, 0, Math.PI * 2)
+			octx.fill()
+			return offscreen
+		}
+
 		while (bubbles.length < count && tries < maxTries) {
 			tries++
 			const r = rand(minRadius, maxRadius)
@@ -135,15 +153,18 @@ export default function BlurredBubblesBackground({
 				}
 			}
 			if (ok) {
+				const blurVal = rand(200, 400)
+				const colorVal = colors[bubbles.length % colors.length | 0]
 				bubbles.push({
 					x,
 					y,
 					r,
-					color: colors[bubbles.length % colors.length | 0],
+					color: colorVal,
 					vx: rand(-0.2, 0.2),
 					vy: rand(-0.2, 0.2),
 					jitter: rand(0.6, 1.2),
-					blur: rand(200, 400)
+					blur: blurVal,
+					cached: preRenderBubble(colorVal, r, blurVal)
 				})
 			}
 		}
@@ -237,14 +258,9 @@ export default function BlurredBubblesBackground({
 		}
 		function draw() {
 			for (const b of bubbles) {
-				ctx.save()
-				ctx.filter = `blur(${b.blur}px)`
-				ctx.globalAlpha = 0.8
-				ctx.beginPath()
-				ctx.fillStyle = b.color
-				ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2)
-				ctx.fill()
-				ctx.restore()
+				const pad = b.blur * 2
+				const halfSize = b.r + pad
+				ctx.drawImage(b.cached, b.x - halfSize, b.y - halfSize)
 			}
 		}
 
@@ -313,8 +329,7 @@ export default function BlurredBubblesBackground({
 			animate={{ opacity: 1 }}
 			initial={{ opacity: 0 }}
 			transition={{ duration: 1 }}
-			className='fixed inset-0 z-0 overflow-hidden'
-			style={{ filter: 'blur(50px)' }}>
+			className='fixed inset-0 z-0 overflow-hidden'>
 			<canvas ref={ref} className='h-full w-full' style={{ display: 'block' }} />
 		</motion.div>
 	)

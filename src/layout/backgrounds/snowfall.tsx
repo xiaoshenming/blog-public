@@ -125,16 +125,22 @@ export default function SnowfallBackground({ zIndex, count = 125 }: { zIndex: nu
 			animId = requestAnimationFrame(frame)
 		}
 
+		let resizeRaf = 0
 		const onResize = () => {
-			w = window.innerWidth
-			h = window.innerHeight
-			canvas.width = w
-			canvas.height = h
+			if (resizeRaf) return
+			resizeRaf = requestAnimationFrame(() => {
+				w = window.innerWidth
+				h = window.innerHeight
+				canvas.width = w
+				canvas.height = h
+				resizeRaf = 0
+			})
 		}
 		window.addEventListener('resize', onResize)
 
 		return () => {
 			cancelAnimationFrame(animId)
+			cancelAnimationFrame(resizeRaf)
 			window.removeEventListener('resize', onResize)
 		}
 	}, [count])

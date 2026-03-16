@@ -91,31 +91,25 @@ export function WriteActions() {
 						<motion.button
 							initial={{ opacity: 0, scale: 0.6 }}
 							animate={{ opacity: 1, scale: 1 }}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							className='rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-100'
+							className='card-hover rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-100'
 							disabled={loading}
 							onClick={handleDelete}>
 							删除
 						</motion.button>
 
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleCancel}
 							disabled={saving}
-							className='bg-card rounded-xl border px-4 py-2 text-sm'>
+							className='card-hover bg-card rounded-xl border px-4 py-2 text-sm'>
 							取消
-						</motion.button>
+						</button>
 					</>
 				)}
 
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					whileHover={{ scale: 1.05 }}
-					whileTap={{ scale: 0.95 }}
-					className='bg-card rounded-xl border px-4 py-2 text-sm'
+					className='card-hover bg-card rounded-xl border px-4 py-2 text-sm'
 					disabled={loading}
 					onClick={handleImportMd}>
 					导入 MD
@@ -123,9 +117,7 @@ export function WriteActions() {
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					whileHover={{ scale: 1.05 }}
-					whileTap={{ scale: 0.95 }}
-					className='bg-card rounded-xl border px-6 py-2 text-sm'
+					className='card-hover bg-card rounded-xl border px-6 py-2 text-sm'
 					disabled={loading}
 					onClick={openPreview}>
 					预览
@@ -133,9 +125,7 @@ export function WriteActions() {
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					whileHover={{ scale: 1.05 }}
-					whileTap={{ scale: 0.95 }}
-					className='brand-btn px-6'
+					className='card-hover brand-btn px-6'
 					disabled={loading}
 					onClick={handleImportOrPublish}>
 					{buttonText}

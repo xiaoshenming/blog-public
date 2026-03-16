@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { motion, AnimatePresence } from 'motion/react'
 import { Heart } from 'lucide-react'
@@ -21,11 +21,12 @@ export default function LikeButton({ slug = 'xiaoshenming', delay, className }: 
 	const [show, setShow] = useState(false)
 	const [justLiked, setJustLiked] = useState(false)
 	const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([])
-
+	const particleTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
 	useEffect(() => {
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			setShow(true)
 		}, delay || 1000)
+		return () => clearTimeout(timer)
 	}, [])
 
 	useEffect(() => {
@@ -61,7 +62,8 @@ export default function LikeButton({ slug = 'xiaoshenming', delay, className }: 
 		setParticles(newParticles)
 
 		// Clear particles after animation
-		setTimeout(() => setParticles([]), 1000)
+		if (particleTimerRef.current) clearTimeout(particleTimerRef.current)
+		particleTimerRef.current = setTimeout(() => setParticles([]), 1000)
 
 		try {
 			const url = `${ENDPOINT}?slug=${encodeURIComponent(slug)}`
@@ -82,11 +84,9 @@ export default function LikeButton({ slug = 'xiaoshenming', delay, className }: 
 			<motion.button
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
-				whileHover={{ scale: 1.05 }}
-				whileTap={{ scale: 0.95 }}
 				aria-label='Like this post'
 				onClick={handleLike}
-				className={clsx('card heartbeat-container relative overflow-visible rounded-full p-3', className)}>
+				className={clsx('card card-hover heartbeat-container relative overflow-visible rounded-full p-3', className)}>
 				<AnimatePresence>
 					{particles.map(particle => (
 						<motion.div

@@ -187,35 +187,29 @@ export default function Page() {
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='fixed top-4 right-6 z-10 flex gap-3 max-sm:hidden'>
 				{isEditMode ? (
 					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
 							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						</button>
+						<button
 							onClick={() => setIsPreviewMode(prev => !prev)}
 							disabled={isSaving}
-							className={`rounded-xl border bg-white/60 px-6 py-2 text-sm`}>
+							className={`card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm`}>
 							{isPreviewMode ? '继续编辑' : '预览'}
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
+						</button>
+						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
 							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
+						</button>
 					</>
 				) : (
 					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleEnterEditMode}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
 							编辑
-						</motion.button>
+						</button>
 					)
 				)}
 			</motion.div>

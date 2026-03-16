@@ -12,12 +12,13 @@ import LikePosition from './like-position'
 import HatCard from './hat-card'
 import BeianCard from './beian-card'
 import { useSize } from '@/hooks/use-size'
-import { motion } from 'motion/react'
 import { useLayoutEditStore } from './stores/layout-edit-store'
 import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { toast } from 'sonner'
-import ConfigDialog from './config-dialog/index'
+import dynamic from 'next/dynamic'
+
+const ConfigDialog = dynamic(() => import('./config-dialog/index'), { ssr: false })
 import { useEffect } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 
@@ -66,17 +67,15 @@ export default function Home() {
 					<div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
 						<span className='text-xs text-gray-600'>正在编辑首页布局，拖拽卡片调整位置</span>
 						<div className='flex gap-2'>
-							<motion.button
+							<button
 								type='button'
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
 								onClick={handleCancel}
-								className='rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
+								className='card-hover rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
 								取消
-							</motion.button>
-							<motion.button type='button' whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSave} className='brand-btn px-3 py-1 text-xs'>
+							</button>
+							<button type='button' onClick={handleSave} className='brand-btn card-hover px-3 py-1 text-xs'>
 								保存偏移
-							</motion.button>
+							</button>
 						</div>
 					</div>
 				</div>

@@ -137,9 +137,7 @@ export default function ClockPage() {
 			<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className='w-full max-w-[600px] space-y-8'>
 				{/* Mode Selector */}
 				<div className='card relative flex gap-4 rounded-xl p-2'>
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
+					<button
 						onClick={() => {
 							setMode('stopwatch')
 							setIsRunning(false)
@@ -150,14 +148,12 @@ export default function ClockPage() {
 							initialTimerTimeRef.current = 0
 						}}
 						className={cn(
-							`flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
+							`card-hover flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
 							mode === 'stopwatch' ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand'
 						)}>
 						秒表
-					</motion.button>
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
+					</button>
+					<button
 						onClick={() => {
 							setMode('timer')
 							setIsRunning(false)
@@ -168,11 +164,11 @@ export default function ClockPage() {
 							initialTimerTimeRef.current = 0
 						}}
 						className={cn(
-							`flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
+							`card-hover flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
 							mode === 'timer' ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand'
 						)}>
 						计时器
-					</motion.button>
+					</button>
 				</div>
 
 				<motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className='card relative p-4'>
@@ -227,33 +223,27 @@ export default function ClockPage() {
 				{/* Control Buttons */}
 				<div className='flex items-center justify-center gap-4'>
 					{mode === 'stopwatch' && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleLap}
 							disabled={!isRunning}
-							className='flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 text-sm font-medium backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
+							className='card-hover flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 text-sm font-medium backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
 							计次
-						</motion.button>
+						</button>
 					)}
-					<motion.button
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
+					<button
 						onClick={handleStartPause}
 						disabled={!canStart}
-						className={`flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+						className={`card-hover flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
 							isRunning ? 'bg-brand-secondary hover:bg-brand-secondary/80' : 'bg-brand hover:bg-brand/80'
 						}`}>
 						{isRunning ? <Pause className='h-8 w-8' /> : <Play className='h-8 w-8' />}
-					</motion.button>
-					<motion.button
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
+					</button>
+					<button
 						onClick={handleReset}
 						disabled={isRunning && mode === 'stopwatch'}
-						className='flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
+						className='card-hover flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
 						<RotateCcw className='h-5 w-5' />
-					</motion.button>
+					</button>
 				</div>
 
 				{mode === 'stopwatch' && laps.length > 0 && (

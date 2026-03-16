@@ -337,17 +337,15 @@ export default function BlogPage() {
 							{ value: 'year', label: '年' },
 							...(enableCategories ? ([{ value: 'category', label: '分类' }] as const) : [])
 						].map(option => (
-							<motion.button
+							<button
 								key={option.value}
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
 								onClick={() => setDisplayMode(option.value as DisplayMode)}
 								className={cn(
-									'btn-rounded px-3 py-1.5 text-xs font-medium transition-all',
+									'card-hover btn-rounded px-3 py-1.5 text-xs font-medium transition-all',
 									displayMode === option.value ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand hover:bg-white/60'
 								)}>
 								{option.label}
-							</motion.button>
+							</button>
 						))}
 					</motion.div>
 				)}
@@ -373,18 +371,16 @@ export default function BlogPage() {
 									(() => {
 										const groupAllSelected = group.items.every(item => selectedSlugs.has(item.slug))
 										return (
-											<motion.button
-												whileHover={{ scale: 1.05 }}
-												whileTap={{ scale: 0.95 }}
+											<button
 												onClick={() => handleSelectGroup(groupKey)}
 												className={cn(
-													'rounded-lg border px-3 py-1 text-xs transition-colors',
+													'card-hover rounded-lg border px-3 py-1 text-xs transition-colors',
 													groupAllSelected
 														? 'border-brand/40 bg-brand/10 text-brand hover:bg-brand/20'
 														: 'text-secondary hover:border-brand/40 hover:text-brand border-transparent bg-white/60 hover:bg-white/80'
 												)}>
 												{groupAllSelected ? '取消全选' : '全选该分组'}
-											</motion.button>
+											</button>
 										)
 									})()}
 							</div>
@@ -448,11 +444,9 @@ export default function BlogPage() {
 						<motion.a
 							initial={{ opacity: 0, scale: 0.6 }}
 							animate={{ opacity: 1, scale: 1 }}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
 							href='https://github.com/xiaoshenming'
 							target='_blank'
-							className='card text-secondary static inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs'>
+							className='card-hover card text-secondary static inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs'>
 							<GithubSVG className='h-4 w-4' />
 							更多
 						</motion.a>
@@ -472,51 +466,41 @@ export default function BlogPage() {
 				{editMode ? (
 					<>
 						{enableCategories && (
-							<motion.button
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
+							<button
 								onClick={() => setCategoryModalOpen(true)}
 								disabled={saving}
-								className='rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
+								className='card-hover rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
 								分类
-							</motion.button>
+							</button>
 						)}
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleCancel}
 							disabled={saving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
 							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						</button>
+						<button
 							onClick={selectedCount === editableItems.length ? handleDeselectAll : handleSelectAll}
-							className='rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
+							className='card-hover rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
 							{selectedCount === editableItems.length ? '取消全选' : '全选'}
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						</button>
+						<button
 							onClick={handleDeleteSelected}
 							disabled={selectedCount === 0}
-							className='rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors disabled:opacity-60'>
+							className='card-hover rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors disabled:opacity-60'>
 							删除(已选:{selectedCount}篇)
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={saving} className='brand-btn px-6'>
+						</button>
+						<button onClick={handleSaveClick} disabled={saving} className='card-hover brand-btn px-6'>
 							{saving ? '保存中...' : buttonText}
-						</motion.button>
+						</button>
 					</>
 				) : (
 					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={toggleEditMode}
-							className='bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
 							编辑
-						</motion.button>
+						</button>
 					)
 				)}
 			</motion.div>

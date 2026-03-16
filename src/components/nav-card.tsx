@@ -86,6 +86,7 @@ export default function NavCard() {
 
 	useEffect(() => {
 		const fetchStatus = () => {
+			if (document.hidden) return
 			fetch('https://activity.zmark.top')
 				.then(res => res.json())
 				.then(data => {
@@ -95,7 +96,7 @@ export default function NavCard() {
 				.catch(() => setActivityStatus('开发中'))
 		}
 		fetchStatus()
-		const timer = setInterval(fetchStatus, 10000)
+		const timer = setInterval(fetchStatus, 30000)
 		return () => clearInterval(timer)
 	}, [])
 

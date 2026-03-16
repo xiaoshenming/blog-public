@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { ColorPicker } from '@/components/color-picker'
 import { XIcon } from 'lucide-react'
 import type { SiteContent } from '../stores/config-store'
@@ -186,20 +185,16 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 				<div className='mb-2 flex items-center justify-between gap-3'>
 					<label className='block text-sm font-medium'>背景颜色</label>
 					<div className='flex gap-2'>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						<button
 							onClick={handleRandomizeColors}
-							className='rounded-lg border bg-white/60 px-3 py-1 text-xs whitespace-nowrap'>
+							className='card-hover rounded-lg border bg-white/60 px-3 py-1 text-xs whitespace-nowrap'>
 							随机配色
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
+						</button>
+						<button
 							onClick={handleAddColor}
-							className='rounded-lg border bg-white/60 px-3 py-1 text-xs whitespace-nowrap'>
+							className='card-hover rounded-lg border bg-white/60 px-3 py-1 text-xs whitespace-nowrap'>
 							+ 添加颜色
-						</motion.button>
+						</button>
 					</div>
 				</div>
 				<div className='flex gap-3'>

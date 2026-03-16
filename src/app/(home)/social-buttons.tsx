@@ -49,6 +49,24 @@ interface SocialButtonConfig {
 	order: number
 }
 
+const iconMap: Record<SocialButtonType, React.ComponentType<{ className?: string }>> = {
+	github: GithubSVG,
+	juejin: JuejinSVG,
+	email: EmailSVG,
+	wechat: WechatSVG,
+	x: XSVG,
+	tg: TgSVG,
+	facebook: FacebookSVG,
+	tiktok: TiktokSVG,
+	instagram: InstagramSVG,
+	weibo: WeiboSVG,
+	xiaohongshu: XiaohongshuSVG,
+	zhihu: ZhihuSVG,
+	bilibili: BilibiliSVG,
+	qq: QqSVG,
+	link: () => null
+}
+
 export default function SocialButtons() {
 	const center = useCenterStore()
 	const { styles, hiCardStyles, socialButtonsContent } = useConfigStore(useShallow(s => ({
@@ -72,17 +90,20 @@ export default function SocialButtons() {
 
 	useEffect(() => {
 		const baseDelay = order * ANIMATION_DELAY * 1000
+		const timers: ReturnType<typeof setTimeout>[] = []
 
 		sortedButtons.forEach((button, index) => {
 			const showDelay = baseDelay + index * delay
-			setTimeout(() => {
+			timers.push(setTimeout(() => {
 				setShowStates(prev => ({ ...prev, [button.id]: true }))
-			}, showDelay)
+			}, showDelay))
 		})
 
-		setTimeout(() => {
+		timers.push(setTimeout(() => {
 			setShowStates(prev => ({ ...prev, container: true }))
-		}, baseDelay)
+		}, baseDelay))
+
+		return () => timers.forEach(t => clearTimeout(t))
 	}, [order, delay, sortedButtons])
 
 	useEffect(() => {
@@ -112,32 +133,13 @@ export default function SocialButtons() {
 
 	if (!showStates.container) return null
 
-	const iconMap: Record<SocialButtonType, React.ComponentType<{ className?: string }>> = {
-		github: GithubSVG,
-		juejin: JuejinSVG,
-		email: EmailSVG,
-		wechat: WechatSVG,
-		x: XSVG,
-		tg: TgSVG,
-		facebook: FacebookSVG,
-		tiktok: TiktokSVG,
-		instagram: InstagramSVG,
-		weibo: WeiboSVG,
-		xiaohongshu: XiaohongshuSVG,
-		zhihu: ZhihuSVG,
-		bilibili: BilibiliSVG,
-		qq: QqSVG,
-		link: () => null
-	}
-
 	const renderButton = (button: SocialButtonConfig) => {
 		if (!showStates[button.id]) return null
 
 		const commonProps = {
 			initial: { opacity: 0, scale: 0.6 } as const,
 			animate: { opacity: 1, scale: 1 } as const,
-			whileHover: { scale: 1.05 } as const,
-			whileTap: { scale: 0.95 } as const
+			className: 'card-hover' as const
 		}
 
 		const Icon = iconMap[button.type]
