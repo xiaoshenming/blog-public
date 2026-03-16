@@ -273,6 +273,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</div>
+				</div>
 
 				<div className='min-h-[200px]'>
 					{activeTab === 'site' && (
