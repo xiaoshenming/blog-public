@@ -13,6 +13,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.3",
     "@opennextjs/cloudflare": "^1.14.4",
     "@types/jsrsasign": "^10.5.15",
     "clsx": "^2.1.1",
@@ -41,6 +42,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.10.13",
     "code-inspector-plugin": "^1.2.10",
     "next-sitemap": "^4.2.3",
     "prettier": "^3.6.2",

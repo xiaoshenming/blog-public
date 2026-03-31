@@ -8,6 +8,7 @@ import { BlogPreview } from '@/components/blog-preview'
 import { loadBlog, type BlogConfig } from '@/lib/load-blog'
 import { useReadArticles } from '@/hooks/use-read-articles'
 import LiquidGrass from '@/components/liquid-grass'
+import PretextDemo from '@/components/pretext-demo'
 
 export default function Page() {
 	const params = useParams() as { id?: string | string[] }
@@ -70,6 +71,12 @@ export default function Page() {
 
 	return (
 		<>
+			{slug === 'pretext-text-layout-magic' && (
+				<div className='mx-auto max-w-[1140px] px-6 pt-28 pb-0 max-sm:px-2'>
+					<PretextDemo />
+				</div>
+			)}
+
 			<BlogPreview
 				markdown={blog.markdown}
 				title={title}

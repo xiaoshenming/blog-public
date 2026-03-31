@@ -1,5 +1,14 @@
 [
   {
+    "slug": "pretext-text-layout-magic",
+    "title": "Pretext：让文字像水一样流动的黑魔法",
+    "tags": ["pretext", "文本布局", "性能优化", "开源"],
+    "date": "2026-04-01T12:00",
+    "summary": "一个 15KB 零依赖的库，让文本测量快了 300-600 倍。拖动发光球体，看文字实时环绕流动。",
+    "hidden": false,
+    "category": "开源"
+  },
+  {
     "slug": "timezone-confusion-tonight-9pm",
     "title": "海外客户说「今晚9点」，我差点原地爆炸",
     "tags": [
