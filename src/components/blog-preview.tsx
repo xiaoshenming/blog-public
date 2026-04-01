@@ -15,9 +15,10 @@ type BlogPreviewProps = {
 	summary?: string
 	cover?: string
 	slug?: string
+	proseRef?: React.RefObject<HTMLDivElement | null>
 }
 
-export function BlogPreview({ markdown, title, tags, date, summary, cover, slug }: BlogPreviewProps) {
+export function BlogPreview({ markdown, title, tags, date, summary, cover, slug, proseRef }: BlogPreviewProps) {
 	const { maxSM: isMobile } = useSize()
 	const { content, toc, loading } = useMarkdownRender(markdown)
 	const { siteContent } = useConfigStore()
@@ -47,7 +48,7 @@ export function BlogPreview({ markdown, title, tags, date, summary, cover, slug 
 
 					{summary && summaryInContent && <div className='text-secondary mt-6 cursor-text text-center text-sm'>“{summary}”</div>}
 
-					<div className='prose mt-6 max-w-none cursor-text'>{content}</div>
+					<div ref={proseRef} className='prose mt-6 max-w-none cursor-text'>{content}</div>
 				</div>
 			</motion.article>
 

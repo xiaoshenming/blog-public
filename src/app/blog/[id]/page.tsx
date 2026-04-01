@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { motion } from 'motion/react'
@@ -8,13 +8,35 @@ import { BlogPreview } from '@/components/blog-preview'
 import { loadBlog, type BlogConfig } from '@/lib/load-blog'
 import { useReadArticles } from '@/hooks/use-read-articles'
 import LiquidGrass from '@/components/liquid-grass'
-import PretextDemo from '@/components/pretext-demo'
+import PretextDemo, { type PretextDemoHandle } from '@/components/pretext-demo'
+import DragonEscape from '@/components/pretext-demo/dragon-escape'
+import type { Creature } from '@/components/pretext-demo/creature'
+import '@/styles/dragon-burn.css'
 
 export default function Page() {
 	const params = useParams() as { id?: string | string[] }
 	const slug = Array.isArray(params?.id) ? params.id[0] : params?.id || ''
 	const router = useRouter()
 	const { markAsRead } = useReadArticles()
+	const pretextRef = useRef<PretextDemoHandle>(null)
+	const proseRef = useRef<HTMLDivElement>(null)
+	const [escapedDragon, setEscapedDragon] = useState<{ dragon: Creature; rect: DOMRect } | null>(null)
+
+	const isPretext = slug === 'pretext-text-layout-magic'
+
+	// 5 minute timer to trigger dragon escape (change to 5000 for dev testing)
+	const ESCAPE_DELAY = 5000
+	useEffect(() => {
+		if (!isPretext) return
+		const timer = setTimeout(() => {
+			pretextRef.current?.triggerEscape()
+		}, ESCAPE_DELAY)
+		return () => clearTimeout(timer)
+	}, [isPretext])
+
+	const handleEscape = useCallback((dragon: Creature, canvasRect: DOMRect) => {
+		setEscapedDragon({ dragon, rect: canvasRect })
+	}, [])
 
 	const [blog, setBlog] = useState<{ config: BlogConfig; markdown: string; cover?: string } | null>(null)
 	const [error, setError] = useState<string | null>(null)
@@ -71,9 +93,9 @@ export default function Page() {
 
 	return (
 		<>
-			{slug === 'pretext-text-layout-magic' && (
+			{isPretext && (
 				<div className='mx-auto max-w-[1140px] px-6 pt-28 pb-0 max-sm:px-2'>
-					<PretextDemo />
+					<PretextDemo ref={pretextRef} onEscape={handleEscape} />
 				</div>
 			)}
 
@@ -85,6 +107,7 @@ export default function Page() {
 				summary={blog.config.summary}
 				cover={blog.cover ? (blog.cover.startsWith('http') ? blog.cover : `${origin}${blog.cover}`) : undefined}
 				slug={slug}
+				proseRef={isPretext ? proseRef : undefined}
 			/>
 
 			<motion.button
@@ -96,6 +119,14 @@ export default function Page() {
 			</motion.button>
 
 			{slug === 'liquid-grass' && <LiquidGrass />}
+
+			{escapedDragon && (
+				<DragonEscape
+					dragon={escapedDragon.dragon}
+					startPos={escapedDragon.rect}
+					proseRef={proseRef}
+				/>
+			)}
 		</>
 	)
 }
