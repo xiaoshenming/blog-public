@@ -34,6 +34,8 @@ export default function DragonEscape({ dragon, startPos, proseRef, onCaptured }:
 		let chainProgress = 0
 		const CHAIN_DURATION = 800 // ms to pull dragon back
 		let chainStartTime = 0
+		let escapeTime = performance.now()
+		const CAPTURE_COOLDOWN = 5000 // 5s cooldown before capture detection starts
 		// Remember the canvas center for capture target
 		const captureTarget = {
 			x: startPos.left + startPos.width / 2,
@@ -156,7 +158,7 @@ export default function DragonEscape({ dragon, startPos, proseRef, onCaptured }:
 			const head = dragon.segments[0]!
 
 			// Check if dragon wandered back into the original canvas area
-			if (!captured && capturePhase === 'none') {
+			if (!captured && capturePhase === 'none' && now - escapeTime > CAPTURE_COOLDOWN) {
 				// Refresh capture target from current scroll position
 				const canvasEl = document.querySelector('[data-pretext-canvas]')
 				if (canvasEl) {
