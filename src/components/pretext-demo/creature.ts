@@ -112,8 +112,9 @@ export function stepCreature(c: Creature, now: number, tx: number, ty: number): 
 	const head = c.segments[0]!
 	const dx = tx - head.x, dy = ty - head.y
 	const dist = Math.sqrt(dx * dx + dy * dy)
-	const stiffness = 0.006
-	const damping = 0.92
+	// Distance-adaptive stiffness: stronger pull when far, gentle when close
+	const stiffness = dist > 200 ? 0.018 : dist > 80 ? 0.010 : 0.006
+	const damping = 0.93
 	if (dist > 1) { head.vx += dx * stiffness; head.vy += dy * stiffness }
 	head.vx *= damping; head.vy *= damping
 	head.x += head.vx; head.y += head.vy
@@ -123,7 +124,7 @@ export function stepCreature(c: Creature, now: number, tx: number, ty: number): 
 		let angleDiff = targetAngle - head.angle
 		while (angleDiff > Math.PI) angleDiff -= Math.PI * 2
 		while (angleDiff < -Math.PI) angleDiff += Math.PI * 2
-		head.angle += angleDiff * 0.12
+		head.angle += angleDiff * 0.15
 	}
 	for (let i = 1; i < c.segments.length; i++) {
 		const leader = c.segments[i - 1]!

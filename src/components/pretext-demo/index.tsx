@@ -140,21 +140,28 @@ export type PretextDemoHandle = {
 
 type PretextDemoProps = {
 	onEscape?: (dragon: Creature, canvasRect: DOMRect) => void
+	captured?: boolean
 }
 
-const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function PretextDemo({ onEscape }, ref) {
+const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function PretextDemo({ onEscape, captured }, ref) {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [show, setShow] = useState(false)
 	const dragonRef = useRef<Creature | null>(null)
 	const escapingRef = useRef(false)
+	const capturedRef = useRef(false)
 	const onEscapeRef = useRef(onEscape)
 	onEscapeRef.current = onEscape
 
 	useEffect(() => { setShow(true) }, [])
 
+	// Sync captured prop to ref
+	useEffect(() => {
+		if (captured) capturedRef.current = true
+	}, [captured])
+
 	useImperativeHandle(ref, () => ({
 		triggerEscape() {
-			escapingRef.current = true
+			if (!capturedRef.current) escapingRef.current = true
 		},
 	}))
 
@@ -173,17 +180,26 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 		let escapePhase: 'none' | 'fly-to-bottom' | 'burn-border' | 'done' = 'none'
 		let burnStart = 0
 		const BURN_DURATION = 1500
+		// Pre-rendered burn hole for performance
+		let burnHoleCanvas: HTMLCanvasElement | null = null
+		let burnHoleLastProgress = -1
 
 		const wander = { x: 0, y: 0, vx: 0, vy: 0, nextTurn: 0, nextFire: 0 }
 
 		function updateWander(now: number, W: number, H: number) {
 			const pad = 60
 			if (now >= wander.nextTurn) {
-				const angle = Math.random() * Math.PI * 2
-				const speed = 0.6 + Math.random() * 0.8
-				wander.vx = Math.cos(angle) * speed
-				wander.vy = Math.sin(angle) * speed
-				wander.nextTurn = now + 1500 + Math.random() * 3000
+				// Pick a distant target point, not just a velocity
+				const tx = pad + Math.random() * (W - pad * 2)
+				const ty = pad + Math.random() * (H - pad * 2)
+				const dx = tx - wander.x, dy = ty - wander.y
+				const dist = Math.sqrt(dx * dx + dy * dy)
+				const speed = 1.5 + Math.random() * 2.0
+				if (dist > 1) {
+					wander.vx = (dx / dist) * speed
+					wander.vy = (dy / dist) * speed
+				}
+				wander.nextTurn = now + 800 + Math.random() * 2000
 			}
 			wander.x += wander.vx; wander.y += wander.vy
 			if (wander.x < pad) { wander.x = pad; wander.vx = Math.abs(wander.vx) }
@@ -215,13 +231,45 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 		}
 
 		function drawBurnHole(W: number, H: number, progress: number) {
-			const hx = W / 2
-			const hy = H
-			const hr = progress * 80
+			const hx = W / 2, hy = H, hr = progress * 80
+			// Only re-render the offscreen hole when progress changes enough
+			const quantized = Math.round(progress * 30) / 30
+			if (quantized !== burnHoleLastProgress || !burnHoleCanvas) {
+				burnHoleLastProgress = quantized
+				if (!burnHoleCanvas) {
+					burnHoleCanvas = document.createElement('canvas')
+				}
+				const dpr = window.devicePixelRatio || 1
+				const bw = Math.round(W * dpr), bh = Math.round(H * dpr)
+				if (burnHoleCanvas.width !== bw || burnHoleCanvas.height !== bh) {
+					burnHoleCanvas.width = bw; burnHoleCanvas.height = bh
+				}
+				const bctx = burnHoleCanvas.getContext('2d')!
+				bctx.clearRect(0, 0, bw, bh)
+				bctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+				// Ember glow edge
+				bctx.shadowColor = '#ff4400'
+				bctx.shadowBlur = 20 * progress
+				bctx.strokeStyle = '#8B4513'
+				bctx.lineWidth = 3
+				bctx.beginPath()
+				for (let a = 0; a < Math.PI * 2; a += 0.15) {
+					const wobble = 1 + Math.sin(a * 5 + progress * 10) * 0.15 + Math.cos(a * 3) * 0.1
+					const r = hr * wobble
+					const px = hx + Math.cos(a) * r
+					const py = hy + Math.sin(a) * r * 0.6
+					if (a === 0) bctx.moveTo(px, py)
+					else bctx.lineTo(px, py)
+				}
+				bctx.closePath()
+				bctx.stroke()
+				bctx.shadowBlur = 0
+			}
+			// Cut the hole with destination-out (cheap — no shadow)
 			ctx.save()
 			ctx.globalCompositeOperation = 'destination-out'
 			ctx.beginPath()
-			for (let a = 0; a < Math.PI * 2; a += 0.1) {
+			for (let a = 0; a < Math.PI * 2; a += 0.15) {
 				const wobble = 1 + Math.sin(a * 5 + progress * 10) * 0.15 + Math.cos(a * 3) * 0.1
 				const r = hr * wobble
 				const px = hx + Math.cos(a) * r
@@ -232,24 +280,8 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 			ctx.closePath()
 			ctx.fill()
 			ctx.restore()
-			// Glowing ember edge
-			ctx.save()
-			ctx.shadowColor = '#ff4400'
-			ctx.shadowBlur = 20 * progress
-			ctx.strokeStyle = '#8B4513'
-			ctx.lineWidth = 3
-			ctx.beginPath()
-			for (let a = 0; a < Math.PI * 2; a += 0.1) {
-				const wobble = 1 + Math.sin(a * 5 + progress * 10) * 0.15 + Math.cos(a * 3) * 0.1
-				const r = hr * wobble
-				const px = hx + Math.cos(a) * r
-				const py = hy + Math.sin(a) * r * 0.6
-				if (a === 0) ctx.moveTo(px, py)
-				else ctx.lineTo(px, py)
-			}
-			ctx.closePath()
-			ctx.stroke()
-			ctx.restore()
+			// Stamp the pre-rendered glow
+			ctx.drawImage(burnHoleCanvas, 0, 0, canvas.width, canvas.height, 0, 0, W, H)
 		}
 
 		function render(now: number) {
@@ -301,7 +333,8 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 			} else if (escapePhase === 'burn-border') {
 				const progress = Math.min(1, (now - burnStart) / BURN_DURATION)
 				stepCreature(dragon, now, W / 2, H + 10)
-				spawnFire(dragon)
+				// Throttle fire during burn — only spawn every 3rd frame, cap at 30 particles
+				if (dragon.fire.length < 30 && Math.random() < 0.35) spawnFire(dragon)
 				if (dragon.fire.length > 0) stepFire(dragon, now)
 				const lines = layoutText(prepared, dragon, W, H, 20)
 				ctx.fillStyle = '#0f0f23'; ctx.fillRect(0, 0, W, H)
@@ -316,12 +349,24 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 				raf = requestAnimationFrame(render)
 				return
 			} else if (escapePhase === 'done') {
-				const lines = layoutText(prepared, dragon, W, H, 20)
-				ctx.fillStyle = '#0f0f23'; ctx.fillRect(0, 0, W, H)
-				ctx.font = FONT; ctx.textBaseline = 'top'; ctx.fillStyle = TEXT_COLOR
-				for (const line of lines) ctx.fillText(line.text, Math.round(line.x), Math.round(line.y))
-				drawBurnHole(W, H, 1)
-				return
+				if (capturedRef.current) {
+					// Dragon was captured — restore to normal mode
+					escapePhase = 'none'
+					escapingRef.current = false
+					// Reset dragon position to center
+					const head = dragon.segments[0]!
+					head.x = W / 2; head.y = H / 2
+					wander.x = W / 2; wander.y = H / 2
+					// Fall through to normal mode below
+				} else {
+					const lines = layoutText(prepared, dragon, W, H, 20)
+					ctx.fillStyle = '#0f0f23'; ctx.fillRect(0, 0, W, H)
+					ctx.font = FONT; ctx.textBaseline = 'top'; ctx.fillStyle = TEXT_COLOR
+					for (const line of lines) ctx.fillText(line.text, Math.round(line.x), Math.round(line.y))
+					drawBurnHole(W, H, 1)
+					raf = requestAnimationFrame(render)
+					return
+				}
 			}
 			// Normal mode
 			updateWander(now, W, H)
@@ -377,6 +422,7 @@ const PretextDemo = forwardRef<PretextDemoHandle, PretextDemoProps>(function Pre
 		<div style={{ margin: '0 0 16px' }}>
 			<canvas
 				ref={canvasRef}
+				data-pretext-canvas
 				style={{
 					width: '100%',
 					height: 500,

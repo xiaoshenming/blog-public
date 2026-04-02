@@ -21,6 +21,7 @@ export default function Page() {
 	const pretextRef = useRef<PretextDemoHandle>(null)
 	const proseRef = useRef<HTMLDivElement>(null)
 	const [escapedDragon, setEscapedDragon] = useState<{ dragon: Creature; rect: DOMRect } | null>(null)
+	const [dragonCaptured, setDragonCaptured] = useState(false)
 
 	const isPretext = slug === 'pretext-text-layout-magic'
 
@@ -36,6 +37,11 @@ export default function Page() {
 
 	const handleEscape = useCallback((dragon: Creature, canvasRect: DOMRect) => {
 		setEscapedDragon({ dragon, rect: canvasRect })
+	}, [])
+
+	const handleCaptured = useCallback(() => {
+		setEscapedDragon(null)
+		setDragonCaptured(true)
 	}, [])
 
 	const [blog, setBlog] = useState<{ config: BlogConfig; markdown: string; cover?: string } | null>(null)
@@ -95,7 +101,7 @@ export default function Page() {
 		<>
 			{isPretext && (
 				<div className='mx-auto max-w-[1140px] px-6 pt-28 pb-0 max-sm:px-2'>
-					<PretextDemo ref={pretextRef} onEscape={handleEscape} />
+					<PretextDemo ref={pretextRef} onEscape={handleEscape} captured={dragonCaptured} />
 				</div>
 			)}
 
@@ -125,6 +131,7 @@ export default function Page() {
 					dragon={escapedDragon.dragon}
 					startPos={escapedDragon.rect}
 					proseRef={proseRef}
+					onCaptured={handleCaptured}
 				/>
 			)}
 		</>
