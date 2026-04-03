@@ -69,25 +69,24 @@ export default function DragonEscape({ dragon, startPos, proseRef, onCaptured }:
 		}
 
 		function updateWander(now: number) {
-			const prose = proseRef.current
-			if (!prose) return
-			const rect = prose.getBoundingClientRect()
-			const pad = 60
-			const minX = rect.left + pad, maxX = rect.right - pad
-			const minY = rect.top + pad, maxY = rect.bottom - pad
+			// Full viewport roaming — dragon is free to fly anywhere on screen!
+			const pad = 40
+			const minX = pad, maxX = window.innerWidth - pad
+			const minY = pad, maxY = window.innerHeight - pad
 
 			if (now >= wander.nextTurn) {
-				// Pick a distant random target within prose, not just a random velocity
+				// Pick a random target across the entire viewport
 				const tx = minX + Math.random() * (maxX - minX)
 				const ty = minY + Math.random() * (maxY - minY)
 				const dx = tx - wander.x, dy = ty - wander.y
 				const dist = Math.sqrt(dx * dx + dy * dy)
-				const speed = 2.0 + Math.random() * 2.5
+				// Faster speed for full-screen roaming, more energetic
+				const speed = 3.0 + Math.random() * 3.0
 				if (dist > 1) {
 					wander.vx = (dx / dist) * speed
 					wander.vy = (dy / dist) * speed
 				}
-				wander.nextTurn = now + 600 + Math.random() * 1800
+				wander.nextTurn = now + 500 + Math.random() * 1500
 			}
 			wander.x += wander.vx; wander.y += wander.vy
 			if (wander.x < minX) { wander.x = minX; wander.vx = Math.abs(wander.vx) }
