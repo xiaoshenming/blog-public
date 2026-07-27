@@ -24,7 +24,7 @@ export default function MusicMiniBar() {
 		if (!initialized) void init()
 	}, [init, initialized])
 
-	if (pathname === '/music') return null
+	if (pathname.startsWith('/music')) return null
 
 	return (
 		<div

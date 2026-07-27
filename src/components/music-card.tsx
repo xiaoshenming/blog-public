@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Pause } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import Card from '@/components/card'
@@ -15,6 +15,7 @@ import { useMusicStore } from '@/app/music/music-store'
 
 export default function MusicCard() {
 	const router = useRouter()
+	const pathname = usePathname()
 	const center = useCenterStore()
 	const { styles, hiCardWidth, clockCardOffset, calendarCardHeight, enableChristmas } = useConfigStore(
 		useShallow(s => ({
@@ -48,6 +49,8 @@ export default function MusicCard() {
 		}),
 		[center, styles, hiCardWidth, clockCardOffset, calendarCardHeight]
 	)
+
+	if (pathname.startsWith('/music')) return null
 
 	return (
 		<HomeDraggableLayer cardKey='musicCard' x={position.x} y={position.y} width={styles.width} height={styles.height}>
