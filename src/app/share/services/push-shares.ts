@@ -12,8 +12,16 @@ export type PushSharesParams = {
 	logoItems?: Map<string, LogoItem>
 }
 
-export async function pushShares(params: PushSharesParams): Promise<void> {
+export async function pushShares(params: PushSharesParams): Promise<Share[]> {
 	const { shares, logoItems } = params
+
+	const blobShares = shares.filter(share => share.logo.startsWith('blob:'))
+	if (blobShares.length > 0) {
+		const missing = blobShares.filter(share => !logoItems?.has(share.url))
+		if (missing.length > 0) {
+			throw new Error(`图标未上传完成：${missing.map(share => share.name).join('、')}`)
+		}
+	}
 
 	// 获取认证 token（自动从全局认证状态获取）
 	const token = await getAuthToken()
@@ -82,5 +90,6 @@ export async function pushShares(params: PushSharesParams): Promise<void> {
 	await updateRef(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, `heads/${GITHUB_CONFIG.BRANCH}`, commitData.sha)
 
 	toast.success('发布成功！')
-}
 
+	return updatedShares
+}

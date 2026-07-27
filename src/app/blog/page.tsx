@@ -20,6 +20,7 @@ import { readFileAsText } from '@/lib/file-utils'
 import { cn } from '@/lib/utils'
 import { saveBlogEdits } from './services/save-blog-edits'
 import { Check } from 'lucide-react'
+import { BlogCoverHoverPreview, useBlogCoverHover } from './components/blog-cover-hover'
 import { CategoryModal } from './components/category-modal'
 
 type DisplayMode = 'day' | 'week' | 'month' | 'year' | 'category'
@@ -42,6 +43,7 @@ export default function BlogPage() {
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 	const [categoryList, setCategoryList] = useState<string[]>([])
 	const [newCategory, setNewCategory] = useState('')
+	const { cancelCoverPreview, onCoverLinkMouseEnter, hoverCoverPreview, mousePosition } = useBlogCoverHover(editMode)
 
 	useEffect(() => {
 		if (!editMode) {
@@ -356,6 +358,7 @@ export default function BlogPage() {
 
 					return (
 						<motion.div
+							onMouseLeave={cancelCoverPreview}
 							key={groupKey}
 							initial={{ opacity: 0, scale: 0.95 }}
 							whileInView={{ opacity: 1, scale: 1 }}
@@ -390,6 +393,8 @@ export default function BlogPage() {
 									const isSelected = selectedSlugs.has(it.slug)
 									return (
 										<Link
+											onMouseEnter={() => onCoverLinkMouseEnter(it.cover)}
+											onMouseLeave={cancelCoverPreview}
 											href={`/blog/${it.slug}`}
 											key={it.slug}
 											onClick={event => handleItemClick(event, it.slug)}
@@ -504,6 +509,8 @@ export default function BlogPage() {
 					)
 				)}
 			</motion.div>
+
+			<BlogCoverHoverPreview preview={hoverCoverPreview} position={mousePosition} />
 
 			<CategoryModal
 				open={categoryModalOpen}

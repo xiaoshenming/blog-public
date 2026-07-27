@@ -42,12 +42,18 @@ export default function Page() {
 		setIsCreateDialogOpen(true)
 	}
 
-	const handleSaveShare = (updatedShare: Share) => {
+	const handleSaveShare = (updatedShare: Share, logoItem?: LogoItem) => {
 		if (editingShare) {
-			const updated = shares.map(s => (s.url === editingShare.url ? updatedShare : s))
-			setShares(updated)
+			setShares(shares.map(s => (s.url === editingShare.url ? updatedShare : s)))
 		} else {
 			setShares([...shares, updatedShare])
+		}
+		if (logoItem) {
+			setLogoItems(prev => {
+				const newMap = new Map(prev)
+				newMap.set(updatedShare.url, logoItem)
+				return newMap
+			})
 		}
 	}
 
@@ -81,12 +87,13 @@ export default function Page() {
 		setIsSaving(true)
 
 		try {
-			await pushShares({
+			const updatedShares = await pushShares({
 				shares,
 				logoItems
 			})
 
-			setOriginalShares(shares)
+			setShares(updatedShares)
+			setOriginalShares(updatedShares)
 			setLogoItems(new Map())
 			setIsEditMode(false)
 			toast.success('保存成功！')
