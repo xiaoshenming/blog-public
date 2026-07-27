@@ -1,5 +1,49 @@
 [
   {
+    "slug": "liuxiandong-night-after-work",
+    "title": "留仙洞的夜，灯火通明",
+    "tags": [
+      "深圳",
+      "留仙洞",
+      "工作",
+      "Agent"
+    ],
+    "date": "2026-07-24",
+    "summary": "聚餐后走进留仙洞的夜色，在灯火通明的写字楼和燥热空气里，看见深圳的班味，也得到一点项目稳步推进后的轻松。",
+    "cover": "/blogs/liuxiandong-night-after-work/IMG_20260724_210740.jpg",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "birthday-in-shenzhen",
+    "title": "在深圳，补过一个属于自己的生日",
+    "tags": [
+      "生日",
+      "深圳",
+      "电影",
+      "生活记录"
+    ],
+    "date": "2026-07-19",
+    "summary": "在工作压力和陌生城市之间，用一顿晚餐、一段夜间散步和两场电影，补过一个迟来的生日。",
+    "cover": "/blogs/birthday-in-shenzhen/微信图片_2026-07-27_191543_150.jpg",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "birthday-almost-forgotten",
+    "title": "差一点忘记了自己的生日",
+    "tags": [
+      "生日",
+      "生活记录",
+      "大学回忆"
+    ],
+    "date": "2026-07-17",
+    "summary": "忙到晚上十一点四十分才想起自己的生日，也借着翻找旧照片，重新看见大学里那些不算多却很重要的人。",
+    "cover": "/blogs/birthday-almost-forgotten/Image_1784303578785_188.jpg",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
     "slug": "pretext-text-layout-magic",
     "title": "Pretext：让文字像水一样流动的黑魔法",
     "tags": [
