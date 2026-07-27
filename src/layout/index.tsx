@@ -10,22 +10,24 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { ScrollTopButton } from '@/components/scroll-top-button'
 import MusicCard from '@/components/music-card'
+import MusicMiniBar from '@/components/music-mini-bar'
 
 export default function Layout({ children }: PropsWithChildren) {
 	useCenterInit()
 	useSizeInit()
-	const { musicCardEnabled, backgroundImages, currentBackgroundImageId, backgroundColors, regenerateKey } = useConfigStore(useShallow(s => ({
-		musicCardEnabled: s.cardStyles.musicCard?.enabled,
-		backgroundImages: (s.siteContent as any).backgroundImages as Array<{ id: string; url: string }> | undefined,
-		currentBackgroundImageId: s.siteContent.currentBackgroundImageId,
-		backgroundColors: s.siteContent.backgroundColors,
-		regenerateKey: s.regenerateKey,
-	})))
+	const { musicCardEnabled, backgroundImages, currentBackgroundImageId, backgroundColors, regenerateKey } = useConfigStore(
+		useShallow(s => ({
+			musicCardEnabled: s.cardStyles.musicCard?.enabled,
+			backgroundImages: (s.siteContent as any).backgroundImages as Array<{ id: string; url: string }> | undefined,
+			currentBackgroundImageId: s.siteContent.currentBackgroundImageId,
+			backgroundColors: s.siteContent.backgroundColors,
+			regenerateKey: s.regenerateKey
+		}))
+	)
 	const { maxSM, init } = useSize()
 
 	const images = backgroundImages ?? []
-	const currentBackgroundImage =
-		currentBackgroundImageId && currentBackgroundImageId.trim() ? images.find(item => item.id === currentBackgroundImageId) : null
+	const currentBackgroundImage = currentBackgroundImageId && currentBackgroundImageId.trim() ? images.find(item => item.id === currentBackgroundImageId) : null
 
 	return (
 		<>
@@ -65,7 +67,8 @@ export default function Layout({ children }: PropsWithChildren) {
 				{!maxSM && musicCardEnabled !== false && <MusicCard />}
 			</main>
 
-			{maxSM && init && <ScrollTopButton className='bg-brand/20 fixed right-6 bottom-8 z-50 shadow-md' />}
+			{maxSM && init && musicCardEnabled !== false && <MusicMiniBar />}
+			{maxSM && init && <ScrollTopButton className='bg-brand/20 fixed right-6 bottom-20 z-50 shadow-md' />}
 		</>
 	)
 }
