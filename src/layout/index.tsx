@@ -9,15 +9,14 @@ import { useSize, useSizeInit } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { ScrollTopButton } from '@/components/scroll-top-button'
-import MusicCard from '@/components/music-card'
-import MusicMiniBar from '@/components/music-mini-bar'
+import { usePathname } from 'next/navigation'
 
 export default function Layout({ children }: PropsWithChildren) {
 	useCenterInit()
 	useSizeInit()
-	const { musicCardEnabled, backgroundImages, currentBackgroundImageId, backgroundColors, regenerateKey } = useConfigStore(
+	const pathname = usePathname()
+	const { backgroundImages, currentBackgroundImageId, backgroundColors, regenerateKey } = useConfigStore(
 		useShallow(s => ({
-			musicCardEnabled: s.cardStyles.musicCard?.enabled,
 			backgroundImages: (s.siteContent as any).backgroundImages as Array<{ id: string; url: string }> | undefined,
 			currentBackgroundImageId: s.siteContent.currentBackgroundImageId,
 			backgroundColors: s.siteContent.backgroundColors,
@@ -63,12 +62,9 @@ export default function Layout({ children }: PropsWithChildren) {
 			<main className='relative z-10 h-full'>
 				{children}
 				<NavCard />
-
-				{!maxSM && musicCardEnabled !== false && <MusicCard />}
 			</main>
 
-			{maxSM && init && musicCardEnabled !== false && <MusicMiniBar />}
-			{maxSM && init && <ScrollTopButton className='bg-brand/20 fixed right-6 bottom-20 z-50 shadow-md' />}
+			{maxSM && init && <ScrollTopButton className={`bg-brand/20 fixed right-6 z-50 shadow-md ${pathname === '/' ? 'bottom-20' : 'bottom-6'}`} />}
 		</>
 	)
 }

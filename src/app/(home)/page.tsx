@@ -21,15 +21,19 @@ import dynamic from 'next/dynamic'
 const ConfigDialog = dynamic(() => import('./config-dialog/index'), { ssr: false })
 import { useEffect } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
+import MusicCard from '@/components/music-card'
+import MusicMiniBar from '@/components/music-mini-bar'
 
 export default function Home() {
 	const { maxSM } = useSize()
-	const { cardStyles, configDialogOpen, setConfigDialogOpen, enableChristmas } = useConfigStore(useShallow(s => ({
-		cardStyles: s.cardStyles,
-		configDialogOpen: s.configDialogOpen,
-		setConfigDialogOpen: s.setConfigDialogOpen,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-	})))
+	const { cardStyles, configDialogOpen, setConfigDialogOpen, enableChristmas } = useConfigStore(
+		useShallow(s => ({
+			cardStyles: s.cardStyles,
+			configDialogOpen: s.configDialogOpen,
+			setConfigDialogOpen: s.setConfigDialogOpen,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined
+		}))
+	)
 	const editing = useLayoutEditStore(state => state.editing)
 	const saveEditing = useLayoutEditStore(state => state.saveEditing)
 	const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
@@ -67,10 +71,7 @@ export default function Home() {
 					<div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
 						<span className='text-xs text-gray-600'>正在编辑首页布局，拖拽卡片调整位置</span>
 						<div className='flex gap-2'>
-							<button
-								type='button'
-								onClick={handleCancel}
-								className='card-hover rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
+							<button type='button' onClick={handleCancel} className='card-hover rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
 								取消
 							</button>
 							<button type='button' onClick={handleSave} className='brand-btn card-hover px-3 py-1 text-xs'>
@@ -93,8 +94,10 @@ export default function Home() {
 				{cardStyles.likePosition?.enabled !== false && <LikePosition />}
 				{cardStyles.hatCard?.enabled !== false && <HatCard />}
 				{cardStyles.beianCard?.enabled !== false && <BeianCard />}
+				{!maxSM && cardStyles.musicCard?.enabled !== false && <MusicCard />}
 			</div>
 
+			{maxSM && cardStyles.musicCard?.enabled !== false && <MusicMiniBar />}
 			{enableChristmas && <SnowfallBackground zIndex={2} count={!maxSM ? 125 : 20} />}
 			<ConfigDialog open={configDialogOpen} onClose={() => setConfigDialogOpen(false)} />
 		</>

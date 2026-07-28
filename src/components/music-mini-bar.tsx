@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Music, Pause, Play } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '@/app/music/music-store'
 
 export default function MusicMiniBar() {
-	const pathname = usePathname()
 	const router = useRouter()
 	const { track, isPlaying, progress, initialized, init, togglePlay } = useMusicStore(
 		useShallow(s => ({
@@ -23,8 +22,6 @@ export default function MusicMiniBar() {
 	useEffect(() => {
 		if (!initialized) void init()
 	}, [init, initialized])
-
-	if (pathname.startsWith('/music')) return null
 
 	return (
 		<div
