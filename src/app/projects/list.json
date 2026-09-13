@@ -1,81 +1,84 @@
 [
 	{
-		"name": "Pixel Motion",
+		"name": "OpenArcade · 午夜街机",
+		"year": 2026,
+		"description": "为她而建、也向所有人开放的可插拔微游戏厅。门户、宿主策略和游戏卡带完全分离，新游戏通过 SDK 接入，不接触宿主状态。已上线 30 款卡带，全部确定性生成、可重放、构造性可解。",
+		"image": "/images/project/openarcade.svg",
+		"url": "https://game.zmark.top/",
+		"tags": [
+			"React 19",
+			"TypeScript",
+			"游戏",
+			"SDK"
+		],
+		"github": "https://github.com/xiaoshenming/OpenArcade"
+	},
+	{
+		"name": "pptx-storyboard · 分镜成片",
+		"year": 2026,
+		"description": "把 PowerPoint 原生动画变成带讲解的视频：解析每页动画时间戳，自动切分镜、生成讲解词、神经语音配音，最后渲染出带字幕的 1080p 成片。全程本地运行，19 页课件实测 7 分钟成片。",
+		"image": "/images/project/pptx-storyboard.svg",
+		"url": "https://github.com/xiaoshenming/pptx-storyboard",
+		"tags": [
+			"PowerPoint",
+			"视频",
+			"神经语音",
+			"GPU"
+		],
+		"github": "https://github.com/xiaoshenming/pptx-storyboard"
+	},
+	{
+		"name": "dsh-session-surgeon",
+		"year": 2026,
+		"description": "DeepSeek Harness 会话急救插件：修好打不开的会话文件（seq 断档、zstd 损坏、孤立代理对），还能复制会话 ID 到新对话接着聊。也是我第一个攒到 star 的项目。",
+		"image": "/images/project/dsh-session-surgeon.svg",
+		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
+		"tags": [
+			"DeepSeek",
+			"DSH 插件",
+			"会话修复"
+		],
+		"github": "https://github.com/xiaoshenming/dsh-session-surgeon"
+	},
+	{
+		"name": "CC Switch Auth Converter",
+		"year": 2026,
+		"description": "纯静态单页工具，一个 index.html、零依赖、零构建。在浏览器本地把任意 Codex / ChatGPT 认证 JSON 转成 CC Switch 可导入的 auth.json，令牌不出设备。",
+		"image": "/images/project/ccswitch-auth-converter.svg",
+		"url": "https://ccswitch.zmark.top/",
+		"tags": [
+			"纯静态",
+			"零依赖",
+			"CC Switch",
+			"本地优先"
+		],
+		"github": "https://github.com/xiaoshenming/ccswitch-auth-converter"
+	},
+	{
+		"name": "我的博客",
 		"year": 2025,
-		"description": "网页端像素绘画工具，支持组件化画布，多画布同时绘画，色彩变量",
-		"image": "https://pixel-motion.yysuni.com/favicon.svg",
-		"url": "https://pixel-motion.yysuni.com/",
+		"description": "你现在看的这个网站。基于开源博客项目 2025-blog 搭建，前端即后台：不写代码也能写作和管理内容。记录前端开发、探索和笔记。",
+		"image": "https://blog.zmark.top/favicon.png",
+		"url": "https://blog.zmark.top",
 		"tags": [
-			"像素画",
-			"React",
-			"Figma",
-			"阮周刊"
-		]
-	},
-	{
-		"name": "Path Motion",
-		"year": 2025,
-		"description": "在线 svg path 工具，针对 path 绘制、压缩、运动等功能",
-		"image": "https://path-motion.yysuni.com/favicon.svg",
-		"url": "https://path-motion.yysuni.com/canvas",
-		"tags": [
-			"SVG",
-			"Path",
-			"Motion",
-			"阮周刊"
+			"Next.js 16",
+			"React 19",
+			"Tailwind 4"
 		],
-		"github": "https://github.com/YYsuni/path-motion"
+		"github": "https://github.com/xiaoshenming/blog-public"
 	},
 	{
-		"name": "JSON Viewer",
-		"year": 2023,
-		"description": "React 的 JSON 查看/编辑组件，组件的实现方式依赖于 html 原生逻辑，比较轻量化。第二个用心的组件，学习了前辈的包装方式，介绍方式，网站样式。用户也慢慢多了起来。",
-		"image": "https://jv.yysuni.com/favicon.svg",
-		"url": "https://jv.yysuni.com/",
+		"name": "multi-tool",
+		"year": 2026,
+		"description": "基于 niri + noctalia-shell 的 Linux 桌面多功能小工具，QML 编写。",
+		"image": "/images/project/multi-tool.svg",
+		"url": "https://github.com/xiaoshenming/multi-tool",
 		"tags": [
-			"React",
-			"JSON",
-			"Viewer",
-			"阮周刊"
+			"QML",
+			"Wayland",
+			"niri",
+			"Linux"
 		],
-		"github": "https://github.com/YYsuni/react18-json-view",
-		"npm": "https://www.npmjs.com/package/react18-json-view"
-	},
-	{
-		"name": "第一版 Blog 网站",
-		"year": 2023,
-		"description": "最开始是觉得掘金这种网站写文章挺好的。后面还是想写一个自己网站，体现自己的风格。MDX 还可以自己写组件到 blog，直接交互，多好。。。没想到为以后埋下了坑。",
-		"image": "https://blog-archive.yysuni.com/favicons/android-chrome-512x512.png",
-		"url": "https://blog-archive.yysuni.com/",
-		"tags": [
-			"Next.js",
-			"MDX"
-		]
-	},
-	{
-		"name": "Blockies",
-		"year": 2023,
-		"description": " Blockies React组件，SVG 实现，用于生成区块链地址的图标。这是我的第一个有人用的组件，虽然人不多",
-		"image": "/images/blockies.svg",
-		"url": "https://blockies-react-svg.vercel.app/",
-		"tags": [
-			"React",
-			"SVG",
-			"Blockies"
-		],
-		"github": "https://github.com/YYsuni/blockies-react-svg",
-		"npm": "https://www.npmjs.com/package/blockies-react-svg"
-	},
-	{
-		"name": "Vue3 组件库",
-		"year": 2021,
-		"description": "比较让人怀念的一个组件库了，那个时候每个前端程序员都想做一套自己的组件库，我也是。写出来的时候特别让自己开心，觉得好看，舒服。那时也第一次学会免费的 github/gitee pages 部署页面，但也倒腾半天，现在用 vercel 重新上线放着吧。",
-		"image": "/images/vue-kit.webp",
-		"url": "http://archive-suni.vercel.app/#/",
-		"tags": [
-			"Vue",
-			"Library"
-		],
-		"github": "https://github.com/YYsuni/archive-suni"
+		"github": "https://github.com/xiaoshenming/multi-tool"
 	}
 ]
