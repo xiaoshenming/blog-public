@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useMotionValueEvent } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
@@ -14,6 +14,14 @@ import VisualizerChrome, { stepVisualizerMode } from './visualizer-chrome'
 
 const MODE_STORAGE_KEY = 'music-visualizer-mode'
 const CHROME_IDLE_MS = 2600
+
+const FOCUSABLE_SELECTOR =
+	'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+/** 沉浸层内的可聚焦元素；操作层淡出时仍在 DOM 里，失焦可见性由 onFocusCapture 唤回 */
+function focusableIn(root: HTMLElement | null) {
+	return root ? Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)) : []
+}
 
 function readStoredMode(): VisualizerMode {
 	try {
@@ -59,6 +67,9 @@ export default function LyricVisualizer() {
 	const [lineIndex, setLineIndex] = useState(-1)
 	const [chromeVisible, setChromeVisible] = useState(true)
 	const idleTimer = useRef<number | null>(null)
+	const dialogRef = useRef<HTMLDivElement>(null)
+	const restoreFocusRef = useRef<HTMLElement | null>(null)
+	const keyboardNav = useRef(false)
 
 	useEffect(() => {
 		setMode(readStoredMode())
@@ -76,8 +87,17 @@ export default function LyricVisualizer() {
 	const revealChrome = useCallback(() => {
 		setChromeVisible(true)
 		if (idleTimer.current !== null) window.clearTimeout(idleTimer.current)
-		idleTimer.current = window.setTimeout(() => setChromeVisible(false), CHROME_IDLE_MS)
+		idleTimer.current = window.setTimeout(() => {
+			// 键盘导航途中不淡出，否则焦点会停在看不见的按钮上
+			if (keyboardNav.current && dialogRef.current?.contains(document.activeElement)) return
+			setChromeVisible(false)
+		}, CHROME_IDLE_MS)
 	}, [])
+
+	const onPointerActivity = useCallback(() => {
+		keyboardNav.current = false
+		revealChrome()
+	}, [revealChrome])
 
 	useMotionValueEvent(playbackTime, 'change', time => {
 		const next = findLineIndex(lyricLines, time)
@@ -109,6 +129,48 @@ export default function LyricVisualizer() {
 		}
 	}, [open, mode, close, selectMode, revealChrome])
 
+	// 打开时记下触发元素，关闭后把焦点还回去（对话框卸载后 activeElement 会落到 body）
+	useEffect(() => {
+		if (!open) return
+		restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+		return () => {
+			const target = restoreFocusRef.current
+			restoreFocusRef.current = null
+			if (target?.isConnected) target.focus()
+		}
+	}, [open])
+
+	// 焦点移入对话框；切换模式会重建 theme，此时焦点已在层内，不再抢
+	useEffect(() => {
+		if (!open || !theme) return
+		const dialog = dialogRef.current
+		if (dialog && !dialog.contains(document.activeElement)) dialog.focus()
+	}, [open, theme])
+
+	const onDialogKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
+		if (event.key !== 'Tab') return
+		keyboardNav.current = true
+		const dialog = dialogRef.current
+		const items = focusableIn(dialog)
+		if (!dialog || items.length === 0) {
+			event.preventDefault()
+			return
+		}
+		const first = items[0]
+		const last = items[items.length - 1]
+		const active = document.activeElement
+		// 焦点跑到层外时先拉回来，其余交给浏览器按 DOM 顺序走
+		if (!dialog.contains(active)) {
+			event.preventDefault()
+			first.focus()
+			return
+		}
+		if (event.shiftKey ? active === first || active === dialog : active === last || active === dialog) {
+			event.preventDefault()
+			;(event.shiftKey ? last : first).focus()
+		}
+	}, [])
+
 	if (typeof document === 'undefined') return null
 
 	return createPortal(
@@ -116,17 +178,21 @@ export default function LyricVisualizer() {
 			{open && theme && (
 				<motion.div
 					key='lyric-visualizer'
+					ref={dialogRef}
 					role='dialog'
 					aria-modal='true'
 					aria-label='沉浸歌词'
+					tabIndex={-1}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.35 }}
-					className='fixed inset-0 z-[100] bg-black text-white'
+					className='fixed inset-0 z-[100] bg-black text-white outline-none'
 					style={{ cursor: chromeVisible ? 'auto' : 'none' }}
-					onPointerMove={revealChrome}
-					onPointerDown={revealChrome}>
+					onPointerMove={onPointerActivity}
+					onPointerDown={onPointerActivity}
+					onKeyDown={onDialogKeyDown}
+					onFocusCapture={revealChrome}>
 					<VisualizerRenderer
 						mode={mode}
 						currentTime={playbackTime}
