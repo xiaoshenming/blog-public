@@ -116,6 +116,9 @@ export default function LyricVisualizer() {
 			{open && theme && (
 				<motion.div
 					key='lyric-visualizer'
+					role='dialog'
+					aria-modal='true'
+					aria-label='沉浸歌词'
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}

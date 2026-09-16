@@ -62,6 +62,7 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 							<button
 								key={entry.mode}
 								type='button'
+								aria-pressed={entry.mode === mode}
 								onClick={() => onSelectMode(entry.mode)}
 								className={`shrink-0 rounded-full px-3 py-1 text-xs transition ${entry.mode === mode ? 'bg-white text-black' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}>
 								{entry.label}

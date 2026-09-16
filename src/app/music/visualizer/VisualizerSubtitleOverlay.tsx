@@ -23,8 +23,10 @@ export const getUpcomingLyricsClassName = (blur = true): string => `truncate max
 // Upstream read these from the player's bottom-bar layout (usePlayerSubtitleBottomPx): a shared
 // baseline the user could raise, plus clearance for the control capsule. The blog has no such bar,
 // so the geometry is fixed at upstream's defaults; only the "controls hidden" transition survives.
+// Clearance is 96 instead of upstream's 80: the blog transport capsule + shortcut hint stack to
+// ~120px, which overlapped the subtitle at 112px total.
 const SUBTITLE_BASE_BOTTOM_PX = 32
-const SUBTITLE_CONTROL_BAR_CLEARANCE_PX = 80
+const SUBTITLE_CONTROL_BAR_CLEARANCE_PX = 96
 const SUBTITLE_PRESENCE_SPRING = { stiffness: 280, damping: 28 } as const
 
 const useSubtitleBottomPx = (isPlayerChromeHidden: boolean): MotionValue<number> => {
