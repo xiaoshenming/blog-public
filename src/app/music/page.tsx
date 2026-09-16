@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Disc3, Loader2, Music2 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { Disc3, Loader2, Maximize2, Music2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from './music-store'
@@ -10,8 +11,11 @@ import MusicControls from './components/music-controls'
 import LyricsPanel from './components/lyrics-panel'
 import PlaylistPanel from './components/playlist-panel'
 
+// 沉浸歌词层只在客户端按需加载，避免把整套动效带进首屏
+const LyricVisualizer = dynamic(() => import('./components/lyric-visualizer'), { ssr: false })
+
 export default function MusicPage() {
-	const { track, isPlaying, initialized, loading, usingFallback, error, init } = useMusicStore(
+	const { track, isPlaying, initialized, loading, usingFallback, error, hasLyrics, init, setVisualizerOpen } = useMusicStore(
 		useShallow(s => ({
 			track: s.playlist[s.currentIndex],
 			isPlaying: s.isPlaying,
@@ -19,7 +23,9 @@ export default function MusicPage() {
 			loading: s.loading,
 			usingFallback: s.usingFallback,
 			error: s.error,
-			init: s.init
+			hasLyrics: s.lyricLines.length > 0,
+			init: s.init,
+			setVisualizerOpen: s.setVisualizerOpen
 		}))
 	)
 
@@ -54,7 +60,16 @@ export default function MusicPage() {
 						{usingFallback && <p className='text-secondary mt-4 text-center text-xs'>在线歌单暂不可用，已切换到本地音乐</p>}
 						{error && <p className='mt-2 text-center text-xs text-red-500'>{error}</p>}
 					</div>
-					<div className='mt-8 border-t border-white/40 md:mt-0 md:border-t-0 md:border-l'>
+					<div className='relative mt-8 border-t border-white/40 md:mt-0 md:border-t-0 md:border-l'>
+						<button
+							type='button'
+							onClick={() => setVisualizerOpen(true)}
+							disabled={!hasLyrics}
+							title={hasLyrics ? '全屏沉浸歌词' : '这首歌没有歌词'}
+							className='text-secondary hover:text-brand absolute top-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1.5 text-xs backdrop-blur transition disabled:cursor-not-allowed disabled:opacity-40 md:top-3 md:right-3'>
+							<Maximize2 className='h-3.5 w-3.5' />
+							沉浸歌词
+						</button>
 						{loading && !track ? (
 							<div className='text-secondary flex h-full items-center justify-center gap-2 text-sm'>
 								<Loader2 className='h-4 w-4 animate-spin' /> 正在加载
@@ -72,6 +87,7 @@ export default function MusicPage() {
 					<PlaylistPanel />
 				</aside>
 			</motion.div>
+			<LyricVisualizer />
 		</div>
 	)
 }
