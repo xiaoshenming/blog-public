@@ -4,14 +4,18 @@ import type { Metadata } from 'next'
 import Layout from '@/layout'
 import Head from '@/layout/head'
 import siteContent from '@/config/site-content.json'
+import { getFontOption } from '@/config/fonts'
 import { Averia_Gruesa_Libre } from 'next/font/google'
 
 const averiaFont = Averia_Gruesa_Libre({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-averia-next' })
 
 const {
 	meta: { title, description },
-	theme
+	theme,
+	font: fontId
 } = siteContent
+
+const font = getFontOption(fontId)
 
 export const metadata: Metadata = {
 	title,
@@ -35,13 +39,14 @@ const htmlStyle = {
 	'--color-bg': theme.colorBg,
 	'--color-border': theme.colorBorder,
 	'--color-card': theme.colorCard,
-	'--color-article': theme.colorArticle
+	'--color-article': theme.colorArticle,
+	'--font-sans': font.family
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='en' suppressHydrationWarning style={htmlStyle} className={averiaFont.variable}>
-			<Head />
+			<Head fontCssHref={font.cssHref} />
 
 			<body>
 				<script

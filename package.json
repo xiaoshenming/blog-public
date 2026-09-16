@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 2025",
-    "svg": "node scripts/gen-svgs-index.js",
+		"svg": "node scripts/gen-svgs-index.js",
+		"font:split": "npx -y cn-font-split run --css.fontDisplay swap --css.compress true --css.commentUnicodes false --testHtml false --reporter false",
     "build": "next build",
     "start": "next start",
     "build:cf": "opennextjs-cloudflare build",

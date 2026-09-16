@@ -9,7 +9,9 @@ import { pushSiteContent } from '../services/push-site-content'
 import type { SiteContent, CardStyles } from '../stores/config-store'
 import { SiteSettings, type FileItem, type ArtImageUploads, type BackgroundImageUploads, type SocialButtonImageUploads } from './site-settings'
 import { ColorConfig } from './color-config'
+import { FontConfig } from './font-config'
 import { HomeLayout } from './home-layout'
+import { applyFont } from '@/lib/font'
 import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
 
 interface ConfigDialogProps {
@@ -17,7 +19,7 @@ interface ConfigDialogProps {
 	onClose: () => void
 }
 
-type TabType = 'site' | 'color' | 'layout'
+type TabType = 'site' | 'color' | 'font' | 'layout'
 
 export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 	const { setPrivateKey, clearAuth } = useAuthStore()
@@ -126,6 +128,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			setSiteContent(formData)
 			setCardStyles(cardStylesData)
 			updateThemeVariables(formData.theme)
+			applyFont(formData.font)
 			setFaviconItem(null)
 			setAvatarItem(null)
 			setArtImageUploads({})
@@ -176,6 +179,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			}
 		}
 		updateThemeVariables(originalData.theme)
+		applyFont(originalData.font)
 		setFaviconItem(null)
 		setAvatarItem(null)
 		setArtImageUploads({})
@@ -216,6 +220,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			}
 		}
 		updateThemeVariables(formData.theme)
+		applyFont(formData.font)
 
 		onClose()
 	}
@@ -225,6 +230,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 	const tabs: { id: TabType; label: string }[] = [
 		{ id: 'site', label: '网站设置' },
 		{ id: 'color', label: '色彩配置' },
+		{ id: 'font', label: '字体' },
 		{ id: 'layout', label: '首页布局' }
 	]
 
@@ -243,13 +249,13 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			/>
 
 			<DialogModal open={open} onClose={handleCancel} className='card scrollbar-none max-h-[90vh] min-h-[600px] w-[640px] overflow-y-auto'>
-				<div className='mb-6 flex items-center justify-between'>
+				<div className='mb-6 flex flex-wrap items-center justify-between gap-y-3'>
 					<div className='flex gap-1'>
 						{tabs.map(tab => (
 							<button
 								key={tab.id}
 								onClick={() => setActiveTab(tab.id)}
-								className={`relative px-4 py-2 text-sm font-medium transition-colors ${
+								className={`relative px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
 									activeTab === tab.id ? 'text-brand' : 'text-secondary hover:text-primary'
 								}`}>
 								{tab.label}
@@ -257,19 +263,19 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 							</button>
 						))}
 					</div>
-					<div className='flex gap-3'>
+					<div className='ml-auto flex gap-3'>
 						<button
 							onClick={handlePreview}
-							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm'>
+							className='card-hover bg-card rounded-xl border px-5 py-2 text-sm whitespace-nowrap'>
 							预览
 						</button>
 						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm'>
+							className='card-hover bg-card rounded-xl border px-5 py-2 text-sm whitespace-nowrap'>
 							取消
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-5 whitespace-nowrap'>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</div>
@@ -293,6 +299,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 						/>
 					)}
 					{activeTab === 'color' && <ColorConfig formData={formData} setFormData={setFormData} />}
+					{activeTab === 'font' && <FontConfig formData={formData} setFormData={setFormData} />}
 					{activeTab === 'layout' && <HomeLayout cardStylesData={cardStylesData} setCardStylesData={setCardStylesData} onClose={onClose} />}
 				</div>
 

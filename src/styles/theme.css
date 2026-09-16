@@ -8,7 +8,8 @@
 	--color-card: #ffffff66;
 	--color-article: #ffffffcc;
 
-	--font-averia: var(--font-averia-next, 'Averia Gruesa Libre'), sans-serif;
+	/* Averia 只有拉丁字形，中文回退到站点当前字体（--font-sans），这样切换字体时标题里的汉字也会跟着变 */
+	--font-averia: var(--font-averia-next, 'Averia Gruesa Libre'), var(--font-sans);
 	--font-sans:
 		'PingFang SC', -apple-system, system-ui, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif, BlinkMacSystemFont, 'Helvetica Neue',
 		'Hiragino Sans GB', 'Microsoft YaHei', Arial;
