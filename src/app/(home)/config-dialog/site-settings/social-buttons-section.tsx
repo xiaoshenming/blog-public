@@ -2,10 +2,12 @@
 
 import { useRef } from 'react'
 import { toast } from 'sonner'
-import type { SiteContent } from '../../stores/config-store'
+import * as stylex from '@stylexjs/stylex'
 import { Select } from '@/components/select'
-import type { SocialButtonImageUploads } from './types'
 import { hashFileSHA256 } from '@/lib/file-utils'
+import { colors } from '@/styles/tokens.stylex'
+import type { SiteContent } from '../../stores/config-store'
+import type { SocialButtonImageUploads } from './types'
 
 type SocialButtonType =
 	| 'github'
@@ -38,6 +40,151 @@ interface SocialButtonsSectionProps {
 	socialButtonImageUploads: SocialButtonImageUploads
 	setSocialButtonImageUploads: React.Dispatch<React.SetStateAction<SocialButtonImageUploads>>
 }
+
+/** 原 Tailwind → StyleX 对照（space-y-2 改为弹性列 + 间距 8） */
+const styles = stylex.create({
+	label: {
+		marginBottom: 8,
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	emptyHint: {
+		marginBottom: 8,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#6a7282'
+	},
+	list: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8,
+		whiteSpace: 'nowrap'
+	},
+	row: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8
+	},
+	fileInput: {
+		display: 'none'
+	},
+	/** 微信/QQ 行内输入与预览区 */
+	imageArea: {
+		display: 'flex',
+		flex: '1',
+		alignItems: 'center',
+		gap: 8
+	},
+	relative: {
+		position: 'relative'
+	},
+	previewImage: {
+		height: 40,
+		width: 40,
+		borderRadius: 8,
+		objectFit: 'cover'
+	},
+	/** 半透明次级背景输入框（自适应/固定宽度用变体覆盖） */
+	fieldBase: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	fieldFlex: {
+		flex: '1'
+	},
+	fieldWide: {
+		width: 128
+	},
+	fieldNarrow: {
+		width: 64,
+		paddingInline: 8
+	},
+	removeImageButton: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#fb2c36',
+		'@media (hover: hover)': {
+			':hover': {
+				color: '#e40014'
+			}
+		}
+	},
+	/** 卡片底色描边按钮 */
+	cardButton: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: colors.card,
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500
+	},
+	actions: {
+		display: 'flex',
+		gap: 4
+	},
+	moveButton: {
+		borderRadius: 4,
+		paddingInline: 8,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#f3f4f6'
+			}
+		},
+		':disabled': {
+			cursor: 'not-allowed',
+			color: '#d1d5dc'
+		}
+	},
+	removeButton: {
+		borderRadius: 4,
+		paddingInline: 8,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#fb2c36',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#fef2f2'
+			}
+		}
+	},
+	addButton: {
+		display: 'flex',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'dashed',
+		borderColor: colors.border,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				borderColor: 'color-mix(in oklab, var(--color-brand) 60%, transparent)',
+				backgroundColor: colors.card
+			}
+		}
+	}
+})
 
 export function SocialButtonsSection({ formData, setFormData, socialButtonImageUploads, setSocialButtonImageUploads }: SocialButtonsSectionProps) {
 	const buttons = (formData.socialButtons || []) as SocialButtonConfig[]
@@ -143,11 +290,11 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 
 	return (
 		<div>
-			<label className='mb-2 block text-sm font-medium'>社交按钮</label>
-			{buttons.length === 0 && <p className='mb-2 text-xs text-gray-500'>暂未配置社交按钮，点击下方「+」添加。</p>}
-			<div className='space-y-2 whitespace-nowrap'>
+			<label {...stylex.props(styles.label)}>社交按钮</label>
+			{buttons.length === 0 && <p {...stylex.props(styles.emptyHint)}>暂未配置社交按钮，点击下方「+」添加。</p>}
+			<div {...stylex.props(styles.list)}>
 				{sortedButtons.map((button, index) => (
-					<div key={button.id} className='flex items-center gap-2'>
+					<div key={button.id} {...stylex.props(styles.row)}>
 						<Select
 							value={button.type}
 							onChange={value => handleUpdateButton(button.id, { type: value as SocialButtonType })}
@@ -171,43 +318,43 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 							]}
 						/>
 						{button.type === 'wechat' || button.type === 'qq' ? (
-							<div className='flex flex-1 items-center gap-2'>
+							<div {...stylex.props(styles.imageArea)}>
 								<input
 									ref={el => {
 										imageInputRefs.current[button.id] = el
 									}}
 									type='file'
 									accept='image/*'
-									className='hidden'
+									{...stylex.props(styles.fileInput)}
 									onChange={e => handleImageSelect(button.id, e)}
 								/>
 								{socialButtonImageUploads[button.id]?.type === 'file' ? (
-									<div className='relative flex flex-1 items-center gap-2'>
+									<div {...stylex.props(styles.imageArea, styles.relative)}>
 										<img
 											src={(socialButtonImageUploads[button.id] as { type: 'file'; file: File; previewUrl: string; hash?: string }).previewUrl}
 											alt='preview'
-											className='h-10 w-10 rounded-lg object-cover'
+											{...stylex.props(styles.previewImage)}
 										/>
 										<input
 											type='text'
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
 											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
-											className='bg-secondary/10 flex-1 rounded-lg border px-3 py-1.5 text-xs'
+											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
-										<button type='button' onClick={() => handleRemoveImage(button.id)} className='text-xs text-red-500 hover:text-red-600'>
+										<button type='button' onClick={() => handleRemoveImage(button.id)} {...stylex.props(styles.removeImageButton)}>
 											删除图片
 										</button>
 									</div>
 								) : button.value && button.value.startsWith('/images/social-buttons/') ? (
-									<div className='relative flex flex-1 items-center gap-2'>
-										<img src={button.value} alt='preview' className='h-10 w-10 rounded-lg object-cover' />
+									<div {...stylex.props(styles.imageArea, styles.relative)}>
+										<img src={button.value} alt='preview' {...stylex.props(styles.previewImage)} />
 										<input
 											type='text'
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
 											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
-											className='bg-secondary/10 flex-1 rounded-lg border px-3 py-1.5 text-xs'
+											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
 									</div>
 								) : (
@@ -217,12 +364,12 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
 											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
-											className='bg-secondary/10 flex-1 rounded-lg border px-3 py-1.5 text-xs'
+											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
 										<button
 											type='button'
 											onClick={() => imageInputRefs.current[button.id]?.click()}
-											className='bg-card rounded-lg border px-3 py-1.5 text-xs font-medium'>
+											{...stylex.props(styles.cardButton)}>
 											上传图片
 										</button>
 									</>
@@ -234,7 +381,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								value={button.value}
 								onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
 								placeholder={button.type === 'email' ? 'example@email.com' : 'https://example.com'}
-								className='bg-secondary/10 flex-1 rounded-lg border px-3 py-1.5 text-xs'
+								{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 							/>
 						)}
 						{button.type !== 'email' && button.type !== 'wechat' && button.type !== 'qq' && (
@@ -243,7 +390,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								value={button.label || ''}
 								onChange={e => handleUpdateButton(button.id, { label: e.target.value })}
 								placeholder='标签文本（可选）'
-								className='bg-secondary/10 w-32 rounded-lg border px-3 py-1.5 text-xs'
+								{...stylex.props(styles.fieldBase, styles.fieldWide)}
 							/>
 						)}
 						<input
@@ -257,24 +404,24 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 							}}
 							min={1}
 							placeholder='顺序'
-							className='bg-secondary/10 w-16 rounded-lg border px-2 py-1.5 text-xs'
+							{...stylex.props(styles.fieldBase, styles.fieldNarrow)}
 						/>
-						<div className='flex gap-1'>
+						<div {...stylex.props(styles.actions)}>
 							<button
 								type='button'
 								onClick={() => handleMoveButton(button.id, 'up')}
 								disabled={index === 0}
-								className='rounded px-2 py-1 text-xs hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300'>
+								{...stylex.props(styles.moveButton)}>
 								↑
 							</button>
 							<button
 								type='button'
 								onClick={() => handleMoveButton(button.id, 'down')}
 								disabled={index === sortedButtons.length - 1}
-								className='rounded px-2 py-1 text-xs hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300'>
+								{...stylex.props(styles.moveButton)}>
 								↓
 							</button>
-							<button type='button' onClick={() => handleRemoveButton(button.id)} className='rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50'>
+							<button type='button' onClick={() => handleRemoveButton(button.id)} {...stylex.props(styles.removeButton)}>
 								删除
 							</button>
 						</div>
@@ -283,7 +430,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 				<button
 					type='button'
 					onClick={handleAddButton}
-					className='hover:border-brand/60 text-secondary hover:bg-card flex w-full items-center justify-center rounded-xl border border-dashed py-2 text-sm'>
+					{...stylex.props(styles.addButton)}>
 					+ 添加按钮
 				</button>
 			</div>

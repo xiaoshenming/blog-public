@@ -6,7 +6,112 @@ import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 雪花装饰：绝对定位、不响应指针事件（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	},
+	/** Card 覆盖：小屏改静态 */
+	cardStatic: {
+		'@media (width < 40rem)': {
+			position: 'static'
+		}
+	},
+	/** 标题：次级色、小号、下外边距 8（分摊原纵向间距；雪花绝对定位不参与布局） */
+	title: {
+		marginBottom: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 占位块：固定高度 60、Flex 居中 */
+	placeholder: {
+		display: 'flex',
+		height: 60,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	/** 提示文字：次级色、小号 */
+	hint: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 文章链接：Flex、透明度过渡、悬停变淡（悬停变体包在指针设备媒体查询内） */
+	articleLink: {
+		display: 'flex',
+		transitionProperty: 'opacity',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		transitionDuration: '150ms',
+		'@media (hover: hover)': {
+			':hover': {
+				opacity: 0.8
+			}
+		}
+	},
+	/** 封面图：48×48、小圆角、描边、裁切填充、右外边距 12 */
+	cover: {
+		marginRight: 12,
+		height: 48,
+		width: 48,
+		flexShrink: 0,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		objectFit: 'cover'
+	},
+	/** 无封面占位：次级色、网格居中、半透明白底、48×48、小圆角、右外边距 12 */
+	coverFallback: {
+		marginRight: 12,
+		display: 'grid',
+		height: 48,
+		width: 48,
+		flexShrink: 0,
+		placeItems: 'center',
+		borderRadius: 12,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		color: colors.secondary
+	},
+	/** 占满剩余宽度 */
+	body: {
+		flex: '1'
+	},
+	/** 文章标题：单行裁切、小号、中等字重 */
+	articleTitle: {
+		display: '-webkit-box',
+		WebkitBoxOrient: 'vertical',
+		WebkitLineClamp: 1,
+		overflow: 'hidden',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	/** 摘要：三行裁切、次级色、小号、上外边距 4 */
+	summary: {
+		marginTop: 4,
+		display: '-webkit-box',
+		WebkitBoxOrient: 'vertical',
+		WebkitLineClamp: 3,
+		overflow: 'hidden',
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 日期：次级色、小号、上外边距 12 */
+	date: {
+		marginTop: 12,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	}
+})
 
 export default function ArticleCard() {
 	const center = useCenterStore()
@@ -23,40 +128,40 @@ export default function ArticleCard() {
 
 	return (
 		<HomeDraggableLayer cardKey='articleCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='space-y-2 max-sm:static'>
+			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={[sx.cardStatic]}>
 				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-9.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							className={stylex.props(sx.snow).className}
 							style={{ width: 140, left: -12, top: -16, opacity: 0.8 }}
 						/>
 					</>
 				)}
 
-				<h2 className='text-secondary text-sm'>最新文章</h2>
+				<h2 {...stylex.props(sx.title)}>最新文章</h2>
 
 				{loading ? (
-					<div className='flex h-[60px] items-center justify-center'>
-						<span className='text-secondary text-xs'>加载中...</span>
+					<div {...stylex.props(sx.placeholder)}>
+						<span {...stylex.props(sx.hint)}>加载中...</span>
 					</div>
 				) : blog ? (
-					<Link href={`/blog/${blog.slug}`} className='flex transition-opacity hover:opacity-80'>
+					<Link href={`/blog/${blog.slug}`} {...stylex.props(sx.articleLink)}>
 						{blog.cover ? (
-							<img src={blog.cover} alt='cover' className='mr-3 h-12 w-12 shrink-0 rounded-xl border object-cover' />
+							<img src={blog.cover} alt='cover' {...stylex.props(sx.cover)} />
 						) : (
-							<div className='text-secondary mr-3 grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/60'>+</div>
+							<div {...stylex.props(sx.coverFallback)}>+</div>
 						)}
-						<div className='flex-1'>
-							<h3 className='line-clamp-1 text-sm font-medium'>{blog.title || blog.slug}</h3>
-							{blog.summary && <p className='text-secondary mt-1 line-clamp-3 text-xs'>{blog.summary}</p>}
-							<p className='text-secondary mt-3 text-xs'>{dayjs(blog.date).format('YYYY/M/D')}</p>
+						<div {...stylex.props(sx.body)}>
+							<h3 {...stylex.props(sx.articleTitle)}>{blog.title || blog.slug}</h3>
+							{blog.summary && <p {...stylex.props(sx.summary)}>{blog.summary}</p>}
+							<p {...stylex.props(sx.date)}>{dayjs(blog.date).format('YYYY/M/D')}</p>
 						</div>
 					</Link>
 				) : (
-					<div className='flex h-[60px] items-center justify-center'>
-						<span className='text-secondary text-xs'>暂无文章</span>
+					<div {...stylex.props(sx.placeholder)}>
+						<span {...stylex.props(sx.hint)}>暂无文章</span>
 					</div>
 				)}
 			</Card>

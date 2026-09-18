@@ -4,7 +4,32 @@ import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import { useRouter } from 'next/navigation'
+import * as stylex from '@stylexjs/stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 雪花装饰：绝对定位、不响应指针事件（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	},
+	/** Card 覆盖：收紧内边距、小屏改静态并清除位移（内边距覆盖 card.base） */
+	cardLayout: {
+		padding: 8,
+		'@media (width < 40rem)': {
+			position: 'static',
+			translate: '0px 0px'
+		}
+	},
+	/** 艺术图：铺满容器、32px 圆角、裁切填充 */
+	art: {
+		height: '100%',
+		width: '100%',
+		borderRadius: 32,
+		objectFit: 'cover'
+	}
+})
 
 export default function ArtCard() {
 	const center = useCenterStore()
@@ -26,19 +51,19 @@ export default function ArtCard() {
 
 	return (
 		<HomeDraggableLayer cardKey='artCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card className='p-2 max-sm:static max-sm:translate-0' order={styles.order} width={styles.width} height={styles.height} x={x} y={y}>
+			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={[sx.cardLayout]}>
 				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-3.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							className={stylex.props(sx.snow).className}
 							style={{ width: 160, right: -8, top: -16, opacity: 0.9 }}
 						/>
 					</>
 				)}
 
-				<img onClick={() => router.push('/pictures')} src={artUrl} alt='wall art' className='h-full w-full rounded-[32px] object-cover' />
+				<img onClick={() => router.push('/pictures')} src={artUrl} alt='wall art' {...stylex.props(sx.art)} />
 			</Card>
 		</HomeDraggableLayer>
 	)

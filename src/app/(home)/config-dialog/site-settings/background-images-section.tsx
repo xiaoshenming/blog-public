@@ -2,7 +2,10 @@
 
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
+import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
+import { cn } from '@/lib/utils'
+import { colors } from '@/styles/tokens.stylex'
 import type { SiteContent } from '../../stores/config-store'
 import type { BackgroundImageUploads, FileItem } from './types'
 
@@ -12,6 +15,164 @@ interface BackgroundImagesSectionProps {
 	backgroundImageUploads: BackgroundImageUploads
 	setBackgroundImageUploads: React.Dispatch<React.SetStateAction<BackgroundImageUploads>>
 }
+
+/** 原 Tailwind → StyleX 对照（group 悬停显隐保留字符串类；选中态描边与投影合并为单层阴影） */
+const styles = stylex.create({
+	header: {
+		marginBottom: 8,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	},
+	label: {
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	clearButton: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 12,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500,
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	},
+	fileInput: {
+		display: 'none'
+	},
+	grid: {
+		display: 'grid',
+		gap: 12,
+		gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+		'@media (width < 40rem)': {
+			gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
+		}
+	},
+	itemWrap: {
+		position: 'relative'
+	},
+	/** 缩略图按钮（选中态：2px 品牌描边 + 卡片投影） */
+	thumbButton: {
+		display: 'block',
+		width: '100%',
+		overflow: 'hidden',
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	thumbActive: {
+		boxShadow: '0 0 0 2px var(--color-brand), 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%)'
+	},
+	thumbIdle: {
+		'@media (hover: hover)': {
+			':hover': {
+				borderColor: 'color-mix(in oklab, var(--color-brand) 60%, transparent)'
+			}
+		}
+	},
+	thumbImage: {
+		height: 96,
+		width: '100%',
+		objectFit: 'cover'
+	},
+	badge: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		top: 4,
+		left: 4,
+		borderRadius: 9999,
+		backgroundColor: colors.brand,
+		paddingInline: 8,
+		paddingBlock: 2,
+		fontSize: 10,
+		color: colors.white,
+		boxShadow: '0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%)'
+	},
+	removeButton: {
+		position: 'absolute',
+		top: 4,
+		right: 4,
+		display: 'none',
+		borderRadius: 9999,
+		backgroundColor: 'rgb(255 255 255 / 90%)',
+		paddingInline: 6,
+		paddingBlock: 2,
+		fontSize: 10,
+		color: colors.secondary,
+		boxShadow: '0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%)'
+	},
+	addCell: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	addButton: {
+		display: 'flex',
+		height: 96,
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'dashed',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 40%)',
+		fontSize: 24,
+		lineHeight: '32px',
+		color: '#99a1af',
+		'@media (hover: hover)': {
+			':hover': {
+				borderColor: 'color-mix(in oklab, var(--color-brand) 60%, transparent)',
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	},
+	urlRow: {
+		marginTop: 12,
+		display: 'flex',
+		gap: 8
+	},
+	urlInput: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	cardButton: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: colors.card,
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500
+	}
+})
 
 export function BackgroundImagesSection({ formData, setFormData, backgroundImageUploads, setBackgroundImageUploads }: BackgroundImagesSectionProps) {
 	const backgroundInputRef = useRef<HTMLInputElement>(null)
@@ -112,20 +273,20 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 
 	return (
 		<div>
-			<div className='mb-2 flex items-center justify-between'>
-				<label className='block text-sm font-medium'>背景图片</label>
+			<div {...stylex.props(styles.header)}>
+				<label {...stylex.props(styles.label)}>背景图片</label>
 				{formData.currentBackgroundImageId && formData.currentBackgroundImageId.trim() && (
 					<button
 						type='button'
 						onClick={handleClearBackgroundImage}
-						className='text-secondary rounded-lg border bg-white/60 px-3 py-1 text-xs font-medium hover:bg-white/80'>
+						{...stylex.props(styles.clearButton)}>
 						取消设置
 					</button>
 				)}
 			</div>
-			<input ref={backgroundInputRef} type='file' accept='image/*' className='hidden' onChange={handleBackgroundFileSelect} />
+			<input ref={backgroundInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleBackgroundFileSelect} />
 
-			<div className='grid grid-cols-4 gap-3 max-sm:grid-cols-3'>
+			<div {...stylex.props(styles.grid)}>
 				{((formData.backgroundImages ?? []) as Array<{ id: string; url: string }>)
 					.filter(item => item.url && item.url.trim() !== '')
 					.map(item => {
@@ -134,37 +295,35 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 						const src = uploadItem?.type === 'file' ? uploadItem.previewUrl : item.url
 
 						return (
-							<div key={item.id} className='group relative'>
+							<div key={item.id} className={cn(stylex.props(styles.itemWrap).className, 'group')}>
 								<button
 									type='button'
 									onClick={() => handleSetCurrentBackgroundImage(item.id)}
-									className={`block w-full overflow-hidden rounded-xl border bg-white/60 transition-all ${
-										isActive ? 'ring-brand shadow-md ring-2' : 'hover:border-brand/60'
-									}`}>
-									<img src={src} alt='background preview' className='h-24 w-full object-cover' />
+									{...stylex.props(styles.thumbButton, isActive ? styles.thumbActive : styles.thumbIdle)}>
+									<img src={src} alt='background preview' {...stylex.props(styles.thumbImage)} />
 								</button>
 								{isActive && (
-									<span className='bg-brand pointer-events-none absolute top-1 left-1 rounded-full px-2 py-0.5 text-[10px] text-white shadow'>当前使用</span>
+									<span {...stylex.props(styles.badge)}>当前使用</span>
 								)}
 								<button
 									type='button'
 									onClick={() => handleRemoveBackgroundImage(item.id)}
-									className='text-secondary absolute top-1 right-1 hidden rounded-full bg-white/90 px-1.5 py-0.5 text-[10px] shadow group-hover:block'>
+									className={cn(stylex.props(styles.removeButton).className, 'group-hover:block')}>
 									删除
 								</button>
 							</div>
 						)
 					})}
-				<div className='flex items-center justify-center'>
+				<div {...stylex.props(styles.addCell)}>
 					<button
 						type='button'
 						onClick={() => backgroundInputRef.current?.click()}
-						className='hover:border-brand/60 flex h-24 w-full items-center justify-center rounded-xl border border-dashed bg-white/40 text-2xl text-gray-400 hover:bg-white/80'>
+						{...stylex.props(styles.addButton)}>
 						+
 					</button>
 				</div>
 			</div>
-			<div className='mt-3 flex gap-2'>
+			<div {...stylex.props(styles.urlRow)}>
 				<input
 					type='url'
 					value={backgroundUrlInput}
@@ -176,9 +335,9 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 						}
 					}}
 					placeholder='输入图片 URL'
-					className='bg-secondary/10 flex-1 rounded-lg border px-3 py-1.5 text-xs'
+					{...stylex.props(styles.urlInput)}
 				/>
-				<button type='button' onClick={handleBackgroundUrlSubmit} className='bg-card rounded-lg border px-3 py-1.5 text-xs font-medium'>
+				<button type='button' onClick={handleBackgroundUrlSubmit} {...stylex.props(styles.cardButton)}>
 					添加 URL
 				</button>
 			</div>

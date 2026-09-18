@@ -1,5 +1,7 @@
 'use client'
 
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 import type { SiteContent } from '../../stores/config-store'
 
 interface SiteMetaFormProps {
@@ -7,38 +9,66 @@ interface SiteMetaFormProps {
 	setFormData: React.Dispatch<React.SetStateAction<SiteContent>>
 }
 
+/** 原 Tailwind → StyleX 对照（输入框样式统一复用） */
+const styles = stylex.create({
+	grid: {
+		display: 'grid',
+		gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+		gap: 8
+	},
+	label: {
+		marginBottom: 8,
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	field: {
+		width: '100%',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	}
+})
+
 export function SiteMetaForm({ formData, setFormData }: SiteMetaFormProps) {
 	return (
 		<>
-			<div className='grid grid-cols-2 gap-2'>
+			<div {...stylex.props(styles.grid)}>
 				<div>
-					<label className='mb-2 block text-sm font-medium'>站点标题</label>
+					<label {...stylex.props(styles.label)}>站点标题</label>
 					<input
 						type='text'
 						value={formData.meta.title}
 						onChange={e => setFormData({ ...formData, meta: { ...formData.meta, title: e.target.value } })}
-						className='bg-secondary/10 w-full rounded-lg border px-4 py-2 text-sm'
+						{...stylex.props(styles.field)}
 					/>
 				</div>
 
 				<div>
-					<label className='mb-2 block text-sm font-medium'>用户名</label>
+					<label {...stylex.props(styles.label)}>用户名</label>
 					<input
 						type='text'
 						value={formData.meta.username || ''}
 						onChange={e => setFormData({ ...formData, meta: { ...formData.meta, username: e.target.value } })}
-						className='bg-secondary/10 w-full rounded-lg border px-4 py-2 text-sm'
+						{...stylex.props(styles.field)}
 					/>
 				</div>
 			</div>
 
 			<div>
-				<label className='mb-2 block text-sm font-medium'>站点描述</label>
+				<label {...stylex.props(styles.label)}>站点描述</label>
 				<textarea
 					value={formData.meta.description}
 					onChange={e => setFormData({ ...formData, meta: { ...formData.meta, description: e.target.value } })}
 					rows={3}
-					className='bg-secondary/10 w-full rounded-lg border px-4 py-2 text-sm'
+					{...stylex.props(styles.field)}
 				/>
 			</div>
 		</>

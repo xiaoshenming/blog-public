@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
+import * as stylex from '@stylexjs/stylex'
 import { DialogModal } from '@/components/dialog-modal'
 import { useAuthStore, hasAnyAuth } from '@/hooks/use-auth'
 import { useConfigStore } from '../stores/config-store'
@@ -13,6 +14,9 @@ import { FontConfig } from './font-config'
 import { HomeLayout } from './home-layout'
 import { applyFont } from '@/lib/font'
 import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 interface ConfigDialogProps {
 	open: boolean
@@ -20,6 +24,156 @@ interface ConfigDialogProps {
 }
 
 type TabType = 'site' | 'color' | 'font' | 'layout'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；DialogModal 传参按约定保留字符串类） */
+const styles = stylex.create({
+	/** 隐藏的文件输入 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 弹窗头部：底距、两端对齐、允许换行 */
+	header: {
+		marginBottom: 24,
+		display: 'flex',
+		flexWrap: 'wrap',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		rowGap: 12
+	},
+	/** 页签组 */
+	tabs: {
+		display: 'flex',
+		gap: 4
+	},
+	/** 页签按钮（选中态由条件样式叠加） */
+	tabButton: {
+		position: 'relative',
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		whiteSpace: 'nowrap',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	tabActive: {
+		color: colors.brand
+	},
+	tabInactive: {
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.primary
+			}
+		}
+	},
+	/** 选中页签的下划线 */
+	tabIndicator: {
+		position: 'absolute',
+		right: 0,
+		bottom: 0,
+		left: 0,
+		height: 2,
+		backgroundColor: colors.brand
+	},
+	/** 右上操作按钮组 */
+	actions: {
+		marginLeft: 'auto',
+		display: 'flex',
+		gap: 12
+	},
+	/** 描边按钮（预览/取消） */
+	outlineButton: {
+		backgroundColor: colors.card,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 20,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		whiteSpace: 'nowrap'
+	},
+	/** 保存按钮：覆盖品牌按钮横向内边距 */
+	saveButton: {
+		paddingInline: 20,
+		whiteSpace: 'nowrap'
+	},
+	/** 页签内容区最小高度 */
+	content: {
+		minHeight: 200
+	},
+	/** OAuth2 区域：上边框与间距 */
+	oauthSection: {
+		marginTop: 24,
+		borderTopWidth: 1,
+		borderTopStyle: 'solid',
+		borderTopColor: colors.border,
+		paddingTop: 16
+	},
+	oauthRow: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	},
+	oauthText: {
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 退出登录按钮（红色系色板无令牌，固化实测值） */
+	logoutButton: {
+		borderRadius: 8,
+		backgroundColor: 'color-mix(in oklab, #fb2c36 10%, transparent)',
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#fb2c36',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, #fb2c36 20%, transparent)'
+			}
+		}
+	},
+	/** GitHub 登录按钮（深灰底色，悬停加深） */
+	githubButton: {
+		display: 'flex',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		borderRadius: 12,
+		backgroundColor: '#101828',
+		paddingInline: 16,
+		paddingBlock: 10,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.white,
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#1e2939'
+			}
+		}
+	},
+	/** GitHub 图标尺寸 */
+	githubIcon: {
+		width: 16,
+		height: 16
+	}
+})
 
 export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 	const { setPrivateKey, clearAuth } = useAuthStore()
@@ -240,7 +394,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await handleChoosePrivateKey(f)
@@ -249,39 +403,32 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			/>
 
 			<DialogModal open={open} onClose={handleCancel} className='card scrollbar-none max-h-[90vh] min-h-[600px] w-[640px] overflow-y-auto'>
-				<div className='mb-6 flex flex-wrap items-center justify-between gap-y-3'>
-					<div className='flex gap-1'>
+				<div {...stylex.props(styles.header)}>
+					<div {...stylex.props(styles.tabs)}>
 						{tabs.map(tab => (
 							<button
 								key={tab.id}
 								onClick={() => setActiveTab(tab.id)}
-								className={`relative px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
-									activeTab === tab.id ? 'text-brand' : 'text-secondary hover:text-primary'
-								}`}>
+								{...stylex.props(styles.tabButton, activeTab === tab.id ? styles.tabActive : styles.tabInactive)}>
 								{tab.label}
-								{activeTab === tab.id && <div className='bg-brand absolute right-0 bottom-0 left-0 h-0.5' />}
+								{activeTab === tab.id && <div {...stylex.props(styles.tabIndicator)} />}
 							</button>
 						))}
 					</div>
-					<div className='ml-auto flex gap-3'>
-						<button
-							onClick={handlePreview}
-							className='card-hover bg-card rounded-xl border px-5 py-2 text-sm whitespace-nowrap'>
+					<div {...stylex.props(styles.actions)}>
+						<button onClick={handlePreview} {...stylex.props(card.hover, styles.outlineButton)}>
 							预览
 						</button>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='card-hover bg-card rounded-xl border px-5 py-2 text-sm whitespace-nowrap'>
+						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.outlineButton)}>
 							取消
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-5 whitespace-nowrap'>
+						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(brandBtn.base, card.hover, styles.saveButton)}>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</div>
 				</div>
 
-				<div className='min-h-[200px]'>
+				<div {...stylex.props(styles.content)}>
 					{activeTab === 'site' && (
 						<SiteSettings
 							formData={formData}
@@ -304,25 +451,23 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				</div>
 
 				{/* OAuth2 登录区域 */}
-				<div className='mt-6 border-t pt-4'>
+				<div {...stylex.props(styles.oauthSection)}>
 					{hasOAuth2Auth() ? (
-						<div className='flex items-center justify-between'>
-							<span className='text-secondary text-sm'>已通过 GitHub OAuth2 登录</span>
+						<div {...stylex.props(styles.oauthRow)}>
+							<span {...stylex.props(styles.oauthText)}>已通过 GitHub OAuth2 登录</span>
 							<button
 								onClick={() => {
 									clearAuth()
 									clearOAuth2Token()
 									toast.success('已退出 OAuth2 登录')
 								}}
-								className='rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-500 transition-colors hover:bg-red-500/20'>
+								{...stylex.props(styles.logoutButton)}>
 								退出登录
 							</button>
 						</div>
 					) : (
-						<button
-							onClick={() => initiateGitHubOAuth2()}
-							className='card-hover flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm text-white transition-colors hover:bg-gray-800'>
-							<svg className='h-4 w-4' viewBox='0 0 16 16' fill='currentColor'>
+						<button onClick={() => initiateGitHubOAuth2()} {...stylex.props(card.hover, styles.githubButton)}>
+							<svg {...stylex.props(styles.githubIcon)} viewBox='0 0 16 16' fill='currentColor'>
 								<path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z' />
 							</svg>
 							使用 GitHub OAuth2 登录

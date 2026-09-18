@@ -8,7 +8,49 @@ import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { useLayoutEditStore } from './stores/layout-edit-store'
 import { CARD_SPACING } from '@/consts'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
+import { card } from '@/styles/shared/card.stylex'
+import { colors } from '@/styles/tokens.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 雪花装饰：绝对定位、不响应指针事件（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	},
+	/** Card 覆盖：收紧内边距 */
+	cardPadding: {
+		padding: 8
+	},
+	/** 时钟面板：半透明次级色底、Flex 居中、可点击（圆角由 card.rounded 承接） */
+	face: {
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 20%, transparent)',
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		cursor: 'pointer',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 6,
+		padding: 8
+	},
+	/** 冒号：纵向 Flex、居中、间距 8 */
+	colon: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		gap: 8
+	},
+	/** 冒号圆点：品牌色 6×6 */
+	dot: {
+		backgroundColor: colors.primary,
+		height: 6,
+		width: 6
+	}
+})
 
 export default function ClockCard() {
 	const router = useRouter()
@@ -40,19 +82,19 @@ export default function ClockCard() {
 
 	return (
 		<HomeDraggableLayer cardKey='clockCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='p-2'>
+			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={[sx.cardPadding]}>
 				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-5.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							className={stylex.props(sx.snow).className}
 							style={{ width: 60, left: 2, bottom: 2, opacity: 0.6 }}
 						/>
 						<img
 							src='/images/christmas/snow-6.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							className={stylex.props(sx.snow).className}
 							style={{ width: 80, right: -4, top: -10, opacity: 0.6 }}
 						/>
 					</>
@@ -63,7 +105,7 @@ export default function ClockCard() {
 							router.push('/clock')
 						}
 					}}
-					className='bg-secondary/20 card-rounded flex h-full w-full cursor-pointer items-center justify-center gap-1.5 p-2'>
+					{...stylex.props(card.rounded, sx.face)}>
 					<SevenSegmentDigit value={parseInt(hours[0])} />
 					<SevenSegmentDigit value={parseInt(hours[1])} />
 					<Colon />
@@ -141,9 +183,9 @@ function SevenSegmentDigit({ value, className }: SevenSegmentDigitProps) {
 
 function Colon({ className }: { className?: string }) {
 	return (
-		<div className={`flex flex-col justify-center gap-2 ${className}`}>
-			<div className='bg-primary h-1.5 w-1.5' />
-			<div className='bg-primary h-1.5 w-1.5' />
+		<div className={cn(stylex.props(sx.colon).className, className)}>
+			<div {...stylex.props(sx.dot)} />
+			<div {...stylex.props(sx.dot)} />
 		</div>
 	)
 }

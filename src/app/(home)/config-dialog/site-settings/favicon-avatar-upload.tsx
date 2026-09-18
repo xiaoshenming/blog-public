@@ -2,7 +2,10 @@
 
 import { useRef } from 'react'
 import { toast } from 'sonner'
+import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
+import { cn } from '@/lib/utils'
+import { colors } from '@/styles/tokens.stylex'
 import type { FileItem } from './types'
 
 interface FaviconAvatarUploadProps {
@@ -11,6 +14,71 @@ interface FaviconAvatarUploadProps {
 	avatarItem: FileItem | null
 	setAvatarItem: React.Dispatch<React.SetStateAction<FileItem | null>>
 }
+
+/** 原 Tailwind → StyleX 对照（group 悬停显隐保留字符串类） */
+const styles = stylex.create({
+	grid: {
+		display: 'grid',
+		gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+		gap: 16
+	},
+	label: {
+		marginBottom: 8,
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	fileInput: {
+		display: 'none'
+	},
+	/** 上传框通用部分 */
+	frame: {
+		position: 'relative',
+		height: 80,
+		width: 80,
+		cursor: 'pointer',
+		overflow: 'hidden',
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)'
+	},
+	radiusSquare: {
+		borderRadius: 8
+	},
+	radiusRound: {
+		borderRadius: 9999
+	},
+	image: {
+		height: '100%',
+		width: '100%',
+		objectFit: 'cover'
+	},
+	/** 悬停遮罩（显隐沿用字符串类） */
+	overlay: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'rgb(0 0 0 / 40%)',
+		opacity: 0,
+		transitionProperty: 'opacity',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	overlayText: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.white
+	},
+	clickLayer: {
+		position: 'absolute',
+		inset: 0
+	}
+})
 
 export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, setAvatarItem }: FaviconAvatarUploadProps) {
 	const faviconInputRef = useRef<HTMLInputElement>(null)
@@ -47,37 +115,37 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 	}
 
 	return (
-		<div className='grid grid-cols-2 gap-4'>
+		<div {...stylex.props(styles.grid)}>
 			<div>
-				<label className='mb-2 block text-sm font-medium'>Favicon</label>
-				<input ref={faviconInputRef} type='file' accept='image/*' className='hidden' onChange={handleFaviconFileSelect} />
-				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border bg-white/60'>
+				<label {...stylex.props(styles.label)}>Favicon</label>
+				<input ref={faviconInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleFaviconFileSelect} />
+				<div className={cn(stylex.props(styles.frame, styles.radiusSquare).className, 'group')}>
 					{faviconItem?.type === 'file' ? (
-						<img src={faviconItem.previewUrl} alt='favicon preview' className='h-full w-full object-cover' />
+						<img src={faviconItem.previewUrl} alt='favicon preview' {...stylex.props(styles.image)} />
 					) : (
-						<img src='/favicon.png' alt='current favicon' className='h-full w-full object-cover' />
+						<img src='/favicon.png' alt='current favicon' {...stylex.props(styles.image)} />
 					)}
-					<div className='pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100'>
-						<span className='text-xs text-white'>{faviconItem ? '更换' : '上传'}</span>
+					<div className={cn(stylex.props(styles.overlay, styles.radiusSquare).className, 'group-hover:opacity-100')}>
+						<span {...stylex.props(styles.overlayText)}>{faviconItem ? '更换' : '上传'}</span>
 					</div>
 
-					<div className='absolute inset-0' onClick={() => faviconInputRef.current?.click()} />
+					<div {...stylex.props(styles.clickLayer)} onClick={() => faviconInputRef.current?.click()} />
 				</div>
 			</div>
 
 			<div>
-				<label className='mb-2 block text-sm font-medium'>Avatar</label>
-				<input ref={avatarInputRef} type='file' accept='image/*' className='hidden' onChange={handleAvatarFileSelect} />
-				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-full border bg-white/60'>
+				<label {...stylex.props(styles.label)}>Avatar</label>
+				<input ref={avatarInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleAvatarFileSelect} />
+				<div className={cn(stylex.props(styles.frame, styles.radiusRound).className, 'group')}>
 					{avatarItem?.type === 'file' ? (
-						<img src={avatarItem.previewUrl} alt='avatar preview' className='h-full w-full object-cover' />
+						<img src={avatarItem.previewUrl} alt='avatar preview' {...stylex.props(styles.image)} />
 					) : (
-						<img src='/images/avatar.png' alt='current avatar' className='h-full w-full object-cover' />
+						<img src='/images/avatar.png' alt='current avatar' {...stylex.props(styles.image)} />
 					)}
-					<div className='pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100'>
-						<span className='text-xs text-white'>{avatarItem ? '更换' : '上传'}</span>
+					<div className={cn(stylex.props(styles.overlay, styles.radiusRound).className, 'group-hover:opacity-100')}>
+						<span {...stylex.props(styles.overlayText)}>{avatarItem ? '更换' : '上传'}</span>
 					</div>
-					<div className='absolute inset-0' onClick={() => avatarInputRef.current?.click()} />
+					<div {...stylex.props(styles.clickLayer)} onClick={() => avatarInputRef.current?.click()} />
 				</div>
 			</div>
 		</div>

@@ -1,5 +1,7 @@
 'use client'
 
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 import type { SiteContent } from '../../stores/config-store'
 
 interface BeianFormProps {
@@ -7,29 +9,64 @@ interface BeianFormProps {
 	setFormData: React.Dispatch<React.SetStateAction<SiteContent>>
 }
 
+/** 原 Tailwind → StyleX 对照（space-y-2 与标题自带 mb-2 同值 8，等价保留） */
+const styles = stylex.create({
+	sectionLabel: {
+		marginBottom: 8,
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	grid: {
+		display: 'grid',
+		gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+		gap: 8
+	},
+	fieldLabel: {
+		marginBottom: 4,
+		display: 'block',
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#4a5565'
+	},
+	input: {
+		width: '100%',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	}
+})
+
 export function BeianForm({ formData, setFormData }: BeianFormProps) {
 	return (
-		<div className='space-y-2'>
-			<label className='mb-2 block text-sm font-medium'>备案信息</label>
-			<div className='grid grid-cols-2 gap-2'>
+		<div>
+			<label {...stylex.props(styles.sectionLabel)}>备案信息</label>
+			<div {...stylex.props(styles.grid)}>
 				<div>
-					<label className='mb-1 block text-xs text-gray-600'>备案号</label>
+					<label {...stylex.props(styles.fieldLabel)}>备案号</label>
 					<input
 						type='text'
 						value={formData.beian?.text || ''}
 						onChange={e => setFormData({ ...formData, beian: { ...(formData.beian || { text: '', link: '' }), text: e.target.value } })}
 						placeholder='例如：京ICP备12345678号'
-						className='bg-secondary/10 w-full rounded-lg border px-4 py-2 text-sm'
+						{...stylex.props(styles.input)}
 					/>
 				</div>
 				<div>
-					<label className='mb-1 block text-xs text-gray-600'>备案链接（可选）</label>
+					<label {...stylex.props(styles.fieldLabel)}>备案链接（可选）</label>
 					<input
 						type='url'
 						value={formData.beian?.link || ''}
 						onChange={e => setFormData({ ...formData, beian: { ...(formData.beian || { text: '', link: '' }), link: e.target.value } })}
 						placeholder='https://beian.miit.gov.cn/'
-						className='bg-secondary/10 w-full rounded-lg border px-4 py-2 text-sm'
+						{...stylex.props(styles.input)}
 					/>
 				</div>
 			</div>

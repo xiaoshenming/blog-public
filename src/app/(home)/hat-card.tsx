@@ -5,7 +5,32 @@ import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { useCenterStore } from '@/hooks/use-center'
 import { useSize } from '@/hooks/use-size'
+import * as stylex from '@stylexjs/stylex'
+import { card } from '@/styles/shared/card.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 外壳：绝对定位、Flex 居中（悬停过渡/缩放由 card.hover 承接） */
+	shell: {
+		position: 'absolute',
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	/** 帽子图：铺满容器、保持比例（尺寸覆盖保留内联 style） */
+	hatImage: {
+		height: '100%',
+		width: '100%',
+		objectFit: 'contain'
+	},
+	/** 堆叠帽：绝对定位 */
+	hatImageStacked: {
+		position: 'absolute'
+	}
+})
 
 export default function HatCard() {
 	const center = useCenterStore()
@@ -36,9 +61,9 @@ export default function HatCard() {
 			<motion.div
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
+				{...stylex.props(card.hover, sx.shell)}
 				style={{ left: x, top: y, width: styles.width, height: styles.height }}
-				onClick={() => setNumber(Math.min(number + 1, 20))}
-				className='card-hover absolute flex h-full w-full items-center justify-center'>
+				onClick={() => setNumber(Math.min(number + 1, 20))}>
 				{new Array(Math.min(number, 20))
 					.fill(0)
 					.map((_, index) =>
@@ -47,7 +72,7 @@ export default function HatCard() {
 								key={index}
 								src={`/images/hats/${hatIndex}.webp`}
 								alt='hat'
-								className='h-full w-full object-contain'
+								{...stylex.props(sx.hatImage)}
 								style={{ width: styles.width, height: styles.height, transform: hatFlipped ? 'scaleX(-1)' : 'none' }}
 							/>
 						) : (
@@ -55,7 +80,7 @@ export default function HatCard() {
 								key={index}
 								src={`/images/hats/${hatIndex}.webp`}
 								alt='hat'
-								className='absolute h-full w-full object-contain'
+								{...stylex.props(sx.hatImage, sx.hatImageStacked)}
 								style={{ width: styles.width, height: styles.height, transform: hatFlipped ? 'scaleX(-1)' : 'none', bottom: index * 16 }}
 							/>
 						)

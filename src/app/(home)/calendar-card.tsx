@@ -5,10 +5,74 @@ import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
-import { cn } from '@/lib/utils'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
+import { util } from '@/styles/shared/util.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
 
 dayjs.locale('zh-cn')
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 雪花装饰：绝对定位、不响应指针事件（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	},
+	/** Card 覆盖：纵向弹性布局 */
+	cardColumn: {
+		display: 'flex',
+		flexDirection: 'column'
+	},
+	/** 日期标题：次级色、小号文字 */
+	dateLabel: {
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 月历网格：次级色、小号文字、7 列、高 206、上边距 12、间距 8、占满剩余空间 */
+	monthGrid: {
+		marginTop: 12,
+		display: 'grid',
+		height: 206,
+		flex: '1',
+		gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+		gap: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 小尺寸形态：更小字号（同次 props 后写覆盖） */
+	monthGridCompact: {
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	/** 星期单元格：居中、中等字重 */
+	cell: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontWeight: 500
+	},
+	/** 当前星期：品牌色 */
+	weekdayActive: {
+		color: colors.brand
+	},
+	/** 日期单元格：居中、小圆角 */
+	dayCell: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 8
+	},
+	/** 今天：描边加粗 + 中等字重（渐变背景由 util.bgLinear 承接） */
+	dayToday: {
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		fontWeight: 500
+	}
+})
 
 export default function CalendarCard() {
 	const center = useCenterStore()
@@ -30,26 +94,26 @@ export default function CalendarCard() {
 
 	return (
 		<HomeDraggableLayer cardKey='calendarCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='flex flex-col'>
+			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={[sx.cardColumn]}>
 				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-7.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							className={stylex.props(sx.snow).className}
 							style={{ width: 150, right: -12, top: -12, opacity: 0.8 }}
 						/>
 					</>
 				)}
 
-				<h3 className='text-secondary text-sm'>
+				<h3 {...stylex.props(sx.dateLabel)}>
 					{now.format('YYYY/M/D')} {now.format('ddd')}
 				</h3>
-				<ul className={cn('text-secondary mt-3 grid h-[206px] flex-1 grid-cols-7 gap-2 text-sm', (styles.height < 240 || styles.width < 240) && 'text-xs')}>
+				<ul {...stylex.props(sx.monthGrid, (styles.height < 240 || styles.width < 240) && sx.monthGridCompact)}>
 					{new Array(7).fill(0).map((_, index) => {
 						const isCurrentWeekday = index === currentWeekday
 						return (
-							<li key={index} className={cn('flex items-center justify-center font-medium', isCurrentWeekday && 'text-brand')}>
+							<li key={index} {...stylex.props(sx.cell, isCurrentWeekday && sx.weekdayActive)}>
 								{dates[index]}
 							</li>
 						)
@@ -63,7 +127,7 @@ export default function CalendarCard() {
 						const day = index + 1
 						const isToday = day === currentDate
 						return (
-							<li key={day} className={cn('flex items-center justify-center rounded-lg', isToday && 'bg-linear border font-medium')}>
+							<li key={day} {...stylex.props(sx.dayCell, isToday && util.bgLinear, isToday && sx.dayToday)}>
 								{day}
 							</li>
 						)
