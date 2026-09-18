@@ -1,0 +1,232 @@
+/*
+  Tailwind v4 preflight 移植版（源：tailwindcss@4.1.16 preflight.css）
+
+  背景：Phase 4 拆除 Tailwind 时 preflight 一并消失，但其中大量「隐性重置」并未被
+  任何替代方案承接 —— 实测回归：`<a>` 恢复浏览器默认蓝紫下划线、全站
+  box-sizing 变回 content-box。本文件按上游原样移植，仅将 Tailwind 私有函数
+  `--theme(...)` 替换为固化值（--font-sans 走本站令牌，其余用默认栈）。
+
+  放置于 @layer base：优先级低于 StyleX 原子类（priority1-9），
+  与拆除前 Tailwind preflight 的层序位置一致。
+*/
+
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		box-sizing: border-box; /* 1. padding/border 不计入宽高 */
+		margin: 0; /* 2. 清除默认外边距 */
+		padding: 0; /* 2. 清除默认内边距 */
+		border: 0 solid; /* 3. 重置边框（solid、宽 0） */
+	}
+
+	html,
+	:host {
+		line-height: 1.5; /* 1. 一致的行高 */
+		-webkit-text-size-adjust: 100%; /* 2. 禁止 iOS 旋转后字号调整 */
+		tab-size: 4; /* 3. 可读的 tab 宽度 */
+		font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'); /* 4. 站点字体链 */
+		font-feature-settings: normal; /* 5. */
+		font-variation-settings: normal; /* 6. */
+		-webkit-tap-highlight-color: transparent; /* 7. 禁用 iOS 点按高亮 */
+	}
+
+	hr {
+		height: 0; /* 1. Firefox 高度修正 */
+		color: inherit; /* 2. Firefox 边框色继承修正 */
+		border-top-width: 1px; /* 3. 默认 1px 实线 */
+	}
+
+	abbr:where([title]) {
+		text-decoration: underline dotted;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-size: inherit;
+		font-weight: inherit;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: inherit;
+	}
+
+	b,
+	strong {
+		font-weight: bolder;
+	}
+
+	code,
+	kbd,
+	samp,
+	pre {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; /* 1. 默认 mono 栈 */
+		font-feature-settings: normal; /* 2. */
+		font-variation-settings: normal; /* 3. */
+		font-size: 1em; /* 4. 修正浏览器 em 字号 */
+	}
+
+	small {
+		font-size: 80%;
+	}
+
+	sub,
+	sup {
+		font-size: 75%;
+		line-height: 0;
+		position: relative;
+		vertical-align: baseline;
+	}
+
+	sub {
+		bottom: -0.25em;
+	}
+
+	sup {
+		top: -0.5em;
+	}
+
+	table {
+		text-indent: 0; /* 1. Chrome/Safari 缩进清除 */
+		border-color: inherit; /* 2. 边框色继承修正 */
+		border-collapse: collapse; /* 3. 移除边框间隙 */
+	}
+
+	:-moz-focusring {
+		outline: auto;
+	}
+
+	progress {
+		vertical-align: baseline;
+	}
+
+	summary {
+		display: list-item;
+	}
+
+	ol,
+	ul,
+	menu {
+		list-style: none;
+	}
+
+	img,
+	svg,
+	video,
+	canvas,
+	audio,
+	iframe,
+	embed,
+	object {
+		display: block; /* 1. 替换元素默认块级 */
+		vertical-align: middle; /* 2. 合理的中线对齐 */
+	}
+
+	img,
+	video {
+		max-width: 100%;
+		height: auto;
+	}
+
+	button,
+	input,
+	select,
+	optgroup,
+	textarea,
+	::file-selector-button {
+		font: inherit; /* 1. 字体继承 */
+		font-feature-settings: inherit;
+		font-variation-settings: inherit;
+		letter-spacing: inherit;
+		color: inherit;
+		border-radius: 0; /* 2. 移除圆角 */
+		background-color: transparent; /* 3. 移除背景色 */
+		opacity: 1; /* 4. 一致的禁用态 */
+	}
+
+	:where(select:is([multiple], [size])) optgroup {
+		font-weight: bolder;
+	}
+
+	:where(select:is([multiple], [size])) optgroup option {
+		padding-inline-start: 20px;
+	}
+
+	::file-selector-button {
+		margin-inline-end: 4px;
+	}
+
+	::placeholder {
+		opacity: 1;
+	}
+
+	/* 占位符颜色 = 当前文字色 50%（Safari 17 以下不支持 color-mix(currentcolor) 时跳过） */
+	@supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+		::placeholder {
+			color: color-mix(in oklab, currentcolor 50%, transparent);
+		}
+	}
+
+	textarea {
+		resize: vertical;
+	}
+
+	::-webkit-search-decoration {
+		-webkit-appearance: none;
+	}
+
+	::-webkit-date-and-time-value {
+		min-height: 1lh; /* 1. iOS Safari 空值同高 */
+		text-align: inherit; /* 2. iOS Safari 文本对齐 */
+	}
+
+	::-webkit-datetime-edit {
+		display: inline-flex;
+	}
+
+	::-webkit-datetime-edit-fields-wrapper {
+		padding: 0;
+	}
+
+	::-webkit-datetime-edit,
+	::-webkit-datetime-edit-year-field,
+	::-webkit-datetime-edit-month-field,
+	::-webkit-datetime-edit-day-field,
+	::-webkit-datetime-edit-hour-field,
+	::-webkit-datetime-edit-minute-field,
+	::-webkit-datetime-edit-second-field,
+	::-webkit-datetime-edit-millisecond-field,
+	::-webkit-datetime-edit-meridiem-field {
+		padding-block: 0;
+	}
+
+	::-webkit-calendar-picker-indicator {
+		line-height: 1;
+	}
+
+	:-moz-ui-invalid {
+		box-shadow: none;
+	}
+
+	button,
+	input:where([type='button'], [type='reset'], [type='submit']),
+	::file-selector-button {
+		appearance: button;
+	}
+
+	::-webkit-inner-spin-button,
+	::-webkit-outer-spin-button {
+		height: auto;
+	}
+
+	[hidden]:where(:not([hidden='until-found'])) {
+		display: none !important;
+	}
+}
