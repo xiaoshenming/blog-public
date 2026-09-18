@@ -19,7 +19,6 @@ import ShareOutlineSVG from '@/svgs/share-outline.svg'
 import WebsiteFilledSVG from '@/svgs/website-filled.svg'
 import WebsiteOutlineSVG from '@/svgs/website-outline.svg'
 import { usePathname } from 'next/navigation'
-import clsx from 'clsx'
 import { colors, fonts } from '@/styles/tokens.stylex'
 import { useSize } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
@@ -171,6 +170,21 @@ const sx = stylex.create({
 	labelActive: {
 		color: colors.primary,
 		fontWeight: 500
+	},
+	/** Card 覆盖：overflow-hidden（mini/icons 形态） */
+	cardOverflow: {
+		overflow: 'hidden'
+	},
+	/** Card 覆盖：p-3（mini 形态）——stylex 合并后写覆盖 card.base 的 padding 24 */
+	cardMini: {
+		padding: 12
+	},
+	/** Card 覆盖：flex items-center gap-6 p-3（icons 形态） */
+	cardIcons: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 24,
+		padding: 12
 	}
 })
 
@@ -256,14 +270,19 @@ export default function NavCard() {
 	if (show)
 		return (
 			<HomeDraggableLayer cardKey='navCard' x={position.x} y={position.y} width={styles.width} height={styles.height}>
-				{/* Card 级 form 覆盖保留 Tailwind 字符串：stylex 类经 Card 的 cn() 跨组件合并时同属性冲突按声明字典序裁决（padding 12px 会输给 card.base 的 24px），沿用共存期 utilities 层序覆盖 */}
 				<Card
 					order={styles.order}
 					width={size.width}
 					height={size.height}
 					x={position.x}
 					y={position.y}
-					className={clsx(form != 'full' && 'overflow-hidden', form === 'mini' && 'p-3', form === 'icons' && 'flex items-center gap-6 p-3')}>
+					style={
+						form === 'mini'
+							? [sx.cardOverflow, sx.cardMini]
+							: form === 'icons'
+								? [sx.cardOverflow, sx.cardIcons]
+								: undefined
+					}>
 					{form === 'full' && enableChristmas && (
 						<>
 							<img

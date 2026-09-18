@@ -6,10 +6,13 @@ import { cn } from '@/lib/utils'
 import { useEffect, useRef, useState } from 'react'
 import { useSize } from '@/hooks/use-size'
 import * as stylex from '@stylexjs/stylex'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 
 interface Props {
 	className?: string
+	/** 覆盖样式（同一次 stylex.props() 内合并，后写覆盖）——消费方迁移后优先使用 */
+	style?: StyleXStyles
 	order: number
 	width: number
 	height?: number
@@ -18,7 +21,7 @@ interface Props {
 	children: React.ReactNode
 }
 
-export default function Card({ children, order, width, height, x, y, className }: Props) {
+export default function Card({ children, order, width, height, x, y, className, style: styleOverride }: Props) {
 	const { maxSM, init } = useSize()
 	const [show, setShow] = useState(false)
 	const hasAnimated = useRef(false)
@@ -34,7 +37,7 @@ export default function Card({ children, order, width, height, x, y, className }
 		return () => clearTimeout(timer)
 	}, [x, y, order])
 
-	const { className: sx, style } = stylex.props(card.base, card.squircle, card.hover)
+	const { className: sx, style } = stylex.props(card.base, card.squircle, card.hover, styleOverride)
 
 	if (show)
 		return (
