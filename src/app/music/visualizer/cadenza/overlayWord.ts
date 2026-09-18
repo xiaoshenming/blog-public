@@ -10,12 +10,16 @@ import { clamp } from './textUtils'
 // owns these directly instead of going through React so per-frame updates stay off the render path.
 
 export const createOverlayWordNodes = (): OverlayWordNodes => {
+	// 原 Tailwind 运行时类名（absolute left-0 top-0 / whitespace-nowrap）
+	// 随拆除改为内联样式，与本文件其余 DOM 属性写法保持一致
 	const outer = document.createElement('div')
-	outer.className = 'absolute left-0 top-0'
+	outer.style.position = 'absolute'
+	outer.style.left = '0'
+	outer.style.top = '0'
 	outer.setAttribute('aria-hidden', 'true')
 
 	const inner = document.createElement('div')
-	inner.className = 'whitespace-nowrap'
+	inner.style.whiteSpace = 'nowrap'
 	inner.style.lineHeight = '1'
 	inner.style.display = 'inline-block'
 	inner.style.position = 'relative'
