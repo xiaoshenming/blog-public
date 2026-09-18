@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from 'react'
 import { AnimatePresence, motion, type MotionValue, type Variants, useMotionValueEvent } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 import type { Theme, Word as WordType } from '../types'
 import { buildWordGraphemeTimings } from '../lyrics/graphemeTiming'
 import { resolveThemeFontWeight } from '../fontStacks'
@@ -30,6 +32,47 @@ interface PartitaWordProps {
 	isChorus?: boolean
 	fontSize: string
 }
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 单词根容器：行内块、不换行（位移旋转仍由变体动画控制） */
+	word: {
+		position: 'relative',
+		display: 'inline-block',
+		transformOrigin: 'center',
+		whiteSpace: 'nowrap',
+		willChange: 'transform'
+	},
+	/** 高亮层：绝对铺满、禁止选中 */
+	glowLayer: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		display: 'block',
+		userSelect: 'none'
+	},
+	/** 主体层：位于高亮层之上 */
+	bodyLayer: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'block'
+	},
+	/** 副歌波纹：等比方圆、居中扩散（颜色与模糊保留内联） */
+	ripple: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		zIndex: 0,
+		aspectRatio: '1',
+		height: '150%',
+		translate: '-50% -50%',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border
+	}
+})
 
 const PartitaWord: React.FC<PartitaWordProps> = ({
 	word,
@@ -76,7 +119,7 @@ const PartitaWord: React.FC<PartitaWordProps> = ({
 			variants={layoutVariants}
 			initial='waiting'
 			animate={status}
-			className='relative inline-block origin-center whitespace-nowrap will-change-transform'
+			{...stylex.props(styles.word)}
 			style={{
 				fontSize,
 				fontWeight: resolveThemeFontWeight(theme, 700),
@@ -84,7 +127,7 @@ const PartitaWord: React.FC<PartitaWordProps> = ({
 				marginRight: '0.8rem'
 			}}>
 			{/* Glow Layer */}
-			<span className='pointer-events-none absolute inset-0 block select-none' aria-hidden='true'>
+			<span {...stylex.props(styles.glowLayer)} aria-hidden='true'>
 				{graphemeTimings.length > 1 ? (
 					graphemeTimings.map((timing, index) => {
 						const glowCustom: PartitaGlowVariantCustom = {
@@ -109,7 +152,7 @@ const PartitaWord: React.FC<PartitaWordProps> = ({
 			</span>
 
 			{/* Body Layer */}
-			<motion.span variants={bodyVariants} custom={wordCustom} className='relative z-10 block'>
+			<motion.span variants={bodyVariants} custom={wordCustom} {...stylex.props(styles.bodyLayer)}>
 				{word.text}
 			</motion.span>
 
@@ -118,7 +161,7 @@ const PartitaWord: React.FC<PartitaWordProps> = ({
 				{isChorus && status === 'active' && (
 					<motion.span
 						key='ripple'
-						className='pointer-events-none absolute top-1/2 left-1/2 z-0 aspect-square h-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full border-1'
+						{...stylex.props(styles.ripple)}
 						style={{ borderColor: activeColor, filter: 'blur(1px)' }}
 						initial={{ scale: 0.2, opacity: 0.8 }}
 						animate={{ scale: rippleScale, opacity: 0 }}

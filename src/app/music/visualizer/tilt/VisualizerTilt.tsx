@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { DEFAULT_TILT_TUNING } from '../types'
 import { getLineRenderEndTime } from '../lyrics/renderHints'
 import type { VisualizerSharedProps } from '../definition'
@@ -22,6 +23,40 @@ type VisualizerTiltProps = VisualizerSharedProps
 // Upstream rendered t('ui.waitingForMusic') here; that key is an empty string in both the zh-CN and
 // en locales, so the idle state shows no text. Kept empty to match.
 const WAITING_FOR_MUSIC_TEXT = ''
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 舞台：七成视口高、内容居中 */
+	stage: {
+		pointerEvents: 'none',
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		height: '70vh',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 32
+	},
+	/** 歌词行堆叠：纵向居中，宽屏加大行距 */
+	lines: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		rowGap: 12,
+		'@media (width >= 40rem)': {
+			rowGap: 16
+		}
+	},
+	/** 空场占位：绝对定位、半透明（颜色保留内联） */
+	emptyText: {
+		position: 'absolute',
+		fontSize: 24,
+		lineHeight: '32px',
+		opacity: 0.5
+	}
+})
 
 const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean }> = props => {
 	const {
@@ -112,7 +147,7 @@ const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean }> =
 
 	return (
 		<VisualizerShell theme={theme} audioPower={audioPower} audioBands={audioBands} sharedProps={props}>
-			<div className='pointer-events-none relative z-10 flex h-[70vh] w-full items-center justify-center p-8'>
+			<div {...stylex.props(styles.stage)}>
 				<AnimatePresence mode='popLayout'>
 					{showText && activeLine && layout ? (
 						<motion.div
@@ -120,7 +155,7 @@ const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean }> =
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0, transition: { duration: 0.45, ease: 'easeInOut' } }}
-							className='flex flex-col items-center justify-center gap-y-3 sm:gap-y-4'>
+							{...stylex.props(styles.lines)}>
 							{layout.segments.map((segment, si) => (
 								<TiltLine
 									key={`seg-${si}-${segment.text}`}
@@ -143,7 +178,7 @@ const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean }> =
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className='absolute text-2xl opacity-50'
+							{...stylex.props(styles.emptyText)}
 							style={{ color: theme.secondaryColor }}>
 							{WAITING_FOR_MUSIC_TEXT}
 						</motion.div>

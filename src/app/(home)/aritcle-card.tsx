@@ -128,7 +128,7 @@ export default function ArticleCard() {
 
 	return (
 		<HomeDraggableLayer cardKey='articleCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={[sx.cardStatic]}>
+			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} style={sx.cardStatic}>
 				{enableChristmas && (
 					<>
 						<img

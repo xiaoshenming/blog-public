@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { animate, motion, useMotionValue, useSpring } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { DEFAULT_CLADDAGH_TUNING } from '../types'
 import { buildLineGraphemeTimeline } from '../lyrics/graphemeTiming'
 import { resolveThemeFontStack, resolveThemeFontWeight } from '../fontStacks'
@@ -24,6 +25,30 @@ interface DebugWindow {
 	visualizerRx?: number
 	visualizerRy?: number
 }
+
+/** 回环模式样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 根容器：铺满、纵向居中、隐藏溢出、禁选中 */
+	root: {
+		position: 'relative',
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		overflow: 'hidden',
+		userSelect: 'none'
+	},
+	/** 背景层：底层、不响应指针 */
+	backdrop: {
+		position: 'absolute',
+		inset: 0,
+		zIndex: 1,
+		overflow: 'hidden',
+		pointerEvents: 'none'
+	}
+})
 
 const VisualizerCladdagh: React.FC<VisualizerSharedProps> = props => {
 	const {
@@ -195,9 +220,9 @@ const VisualizerCladdagh: React.FC<VisualizerSharedProps> = props => {
 				exit={{ opacity: 0, scale: 1.04, filter: 'blur(4px)' }}
 				transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
 				ref={containerRef}
-				className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden select-none'>
+				{...stylex.props(sx.root)}>
 				{/* Background Dedicated Visuals */}
-				<div className='pointer-events-none absolute inset-0 z-[1] overflow-hidden'>
+				<div {...stylex.props(sx.backdrop)}>
 					{/* Center Axis Line with blurred/faded endpoints */}
 					{claddaghTuning.showAxisLine && (
 						<div

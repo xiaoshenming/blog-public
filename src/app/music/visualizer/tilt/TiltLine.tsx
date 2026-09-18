@@ -2,6 +2,7 @@
 
 import React, { useInsertionEffect, useMemo, useRef } from 'react'
 import { motion, motionValue, type MotionValue } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Line, Theme, TiltColorScheme } from '../types'
 import { resolveThemeFontWeight } from '../fontStacks'
 import { REM_PX, type TiltSegment } from './tiltLayout'
@@ -23,6 +24,18 @@ interface TiltLineProps {
 	segmentEndTime?: number
 	activeLine?: Line | null
 }
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 行内文本不换行 */
+	nowrap: {
+		whiteSpace: 'nowrap'
+	},
+	/** 逐字行内块（缩放仍由 MotionValue 控制） */
+	charInline: {
+		display: 'inline-block'
+	}
+})
 
 const TiltLine: React.FC<TiltLineProps> = ({
 	segment,
@@ -122,7 +135,7 @@ const TiltLine: React.FC<TiltLineProps> = ({
 				animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
 				exit={{ opacity: 0, y: -12 }}
 				transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-				className='whitespace-nowrap'
+				{...stylex.props(styles.nowrap)}
 				style={{
 					fontSize: normalFontSize,
 					color: colors.normal,
@@ -154,7 +167,7 @@ const TiltLine: React.FC<TiltLineProps> = ({
 								delay: visible && !isSpace ? ci * 0.04 : 0,
 								ease: [0.25, 0.46, 0.45, 0.94]
 							}}
-							className='inline-block'
+							{...stylex.props(styles.charInline)}
 							style={{
 								scale: charScaleMvs.current[ti],
 								transition: 'transform 0.06s ease-out',
@@ -174,7 +187,7 @@ const TiltLine: React.FC<TiltLineProps> = ({
 			animate={visible ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.92 }}
 			exit={{ opacity: 0, y: -16, scale: 0.95 }}
 			transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-			className='whitespace-nowrap'
+			{...stylex.props(styles.nowrap)}
 			style={{
 				fontSize: tiltFontSize,
 				color: colors.tilt,
@@ -214,7 +227,7 @@ const TiltLine: React.FC<TiltLineProps> = ({
 							delay: visible && !isSpace ? ci * 0.05 : 0,
 							ease: [0.25, 0.46, 0.45, 0.94]
 						}}
-						className='inline-block'
+						{...stylex.props(styles.charInline)}
 						style={{
 							scale: charScaleMvs.current[ti],
 							transition: 'transform 0.06s ease-out',

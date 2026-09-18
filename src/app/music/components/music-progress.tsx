@@ -1,8 +1,30 @@
 'use client'
 
+import * as stylex from '@stylexjs/stylex'
 import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '../music-store'
 import { formatMusicTime } from '../music-utils'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 进度滑条：品牌色强调，原纵向间隔落在其下边距 */
+	range: {
+		accentColor: colors.brand,
+		width: '100%',
+		cursor: 'pointer',
+		marginBottom: 8
+	},
+	/** 时间行：两端对齐、等宽数字 */
+	timeRow: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		color: colors.secondary,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontVariantNumeric: 'tabular-nums'
+	}
+})
 
 export default function MusicProgress() {
 	const { progress, currentTime, duration, seek } = useMusicStore(
@@ -15,7 +37,7 @@ export default function MusicProgress() {
 	)
 
 	return (
-		<div className='space-y-2'>
+		<div>
 			<input
 				type='range'
 				min='0'
@@ -24,9 +46,9 @@ export default function MusicProgress() {
 				value={progress}
 				aria-label='播放进度'
 				onChange={event => seek(Number(event.target.value))}
-				className='accent-brand w-full cursor-pointer'
+				{...stylex.props(styles.range)}
 			/>
-			<div className='text-secondary flex justify-between text-xs tabular-nums'>
+			<div {...stylex.props(styles.timeRow)}>
 				<span>{formatMusicTime(currentTime)}</span>
 				<span>{formatMusicTime(duration)}</span>
 			</div>

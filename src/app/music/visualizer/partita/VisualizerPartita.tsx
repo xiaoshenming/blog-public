@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { DEFAULT_PARTITA_TUNING, type Line } from '../types'
 import { getLineRenderEndTime } from '../lyrics/renderHints'
 import { shouldPreheatLine, useVisualizerRuntime } from '../runtime'
@@ -31,6 +32,58 @@ type VisualizerPartitaProps = VisualizerSharedProps
 // as an empty string: the idle block is intentionally blank. Kept as an inline constant so the host
 // can give it copy without touching the renderer.
 const WAITING_FOR_MUSIC_TEXT = ''
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 舞台：七成视口高、内容居中 */
+	stage: {
+		pointerEvents: 'none',
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		height: '70vh',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 32,
+		willChange: 'transform'
+	},
+	/** 歌词行：反向排列、纵向拉伸 */
+	lineRow: {
+		display: 'flex',
+		width: '100%',
+		maxWidth: '64rem',
+		flexDirection: 'row-reverse',
+		alignItems: 'stretch',
+		justifyContent: 'center'
+	},
+	/** 列容器：最小尺寸与水平内边距 */
+	column: {
+		position: 'relative',
+		display: 'flex',
+		minHeight: '24rem',
+		minWidth: '3.8rem',
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingInline: 12
+	},
+	/** 列内词块堆叠：顶部对齐的纵向排列 */
+	columnInner: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-start'
+	},
+	/** 空场占位：绝对定位、半透明（字号与颜色保留内联） */
+	emptyText: {
+		position: 'absolute',
+		fontSize: 24,
+		lineHeight: '32px',
+		opacity: 0.5
+	}
+})
 
 const VisualizerPartita: React.FC<VisualizerPartitaProps> = props => {
 	const {
@@ -117,7 +170,7 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = props => {
 	return (
 		<VisualizerShell theme={theme} audioPower={audioPower} audioBands={audioBands} sharedProps={props}>
 			<motion.div
-				className='pointer-events-none relative z-10 flex h-[70vh] w-full items-center justify-center p-8 will-change-transform'
+				{...stylex.props(styles.stage)}
 				animate={lyricContainerFloat.animate}
 				transition={lyricContainerFloat.transition}>
 				<AnimatePresence mode='popLayout'>
@@ -127,7 +180,7 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = props => {
 							initial={activeLineContainerMotion.initial}
 							animate={activeLineContainerMotion.animate}
 							exit={activeLineContainerMotion.exit}
-							className='flex w-full max-w-5xl flex-row-reverse items-stretch justify-center'
+							{...stylex.props(styles.lineRow)}
 							style={{
 								perspective: `${sequentialLayout.lineConfig.perspective}px`,
 								gap: sequentialLayout.lineConfig.columnGap,
@@ -135,8 +188,8 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = props => {
 							}}>
 							{sequentialLayout.columns.map(column => {
 								return (
-									<div key={column.id} className='relative flex min-h-[24rem] min-w-[3.8rem] items-center justify-center px-3'>
-										<div className='relative z-10 flex flex-col items-center justify-start'>
+									<div key={column.id} {...stylex.props(styles.column)}>
+										<div {...stylex.props(styles.columnInner)}>
 											{column.words.map(({ chunkWords, displayWords, config, rowIndex }) => (
 												<PartitaChunk
 													key={`${config.id}`}
@@ -169,7 +222,7 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = props => {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className='absolute text-2xl opacity-50'
+							{...stylex.props(styles.emptyText)}
 							style={{
 								color: theme.secondaryColor,
 								fontSize: emptyFontSize

@@ -3,6 +3,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { motion, type MotionValue } from 'motion/react'
 import { ChevronLeft } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
 import type { AudioBands, Theme } from './types'
 import { resolveThemeFontStack, resolveThemeFontWeight } from './fontStacks'
 import type { VisualizerSharedProps } from './definition'
@@ -41,6 +43,61 @@ interface VisualizerShellProps {
 const PLAYER_CHROME_HOTSPOT_SIZE = 120
 const TOUCH_GUIDE_DISPLAY_MS = 1400
 const BACK_BUTTON_LABEL = '返回'
+
+/** 外壳样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 根容器：铺满、纵向居中、隐藏溢出；颜色过渡 1s */
+	shell: {
+		position: 'relative',
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		overflow: 'hidden',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '1s',
+		transitionTimingFunction: 'cubic-bezier(.4, 0, .2, 1)'
+	},
+	/** 字体类别兜底（真实字体栈由内联样式注入） */
+	fontSans: {
+		fontFamily: 'var(--font-sans)'
+	},
+	fontSerif: {
+		fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif'
+	},
+	fontMono: {
+		fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+	},
+	/** 左上角返回按钮：圆形毛玻璃、悬停提亮（可见性由内联样式控制） */
+	backButton: {
+		position: 'absolute',
+		top: 24,
+		left: 24,
+		zIndex: 30,
+		display: 'flex',
+		height: 40,
+		width: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		backgroundColor: 'rgb(0 0 0 / 20%)',
+		color: 'rgb(255 255 255 / 60%)',
+		backdropFilter: 'blur(12px)',
+		pointerEvents: 'auto',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '.15s',
+		transitionTimingFunction: 'cubic-bezier(.4, 0, .2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 10%)'
+			}
+		}
+	}
+})
 
 // Upstream resolved a sized cover variant here (getSizedCoverUrl). The blog serves one cover
 // per song, so the URL is used as-is.
@@ -102,14 +159,14 @@ const VisualizerShell = forwardRef<HTMLDivElement, VisualizerShellProps>(
 			[onPlayerPanelGuideHotspotChange]
 		)
 
-		// Keep the tailwind font utility roughly aligned with the theme category,
-		// but still let the real resolved font stack win through inline style.
-		const fontClassName = theme.fontStyle === 'mono' ? 'font-mono' : theme.fontStyle === 'serif' ? 'font-serif' : 'font-sans'
+		// 字体类别样式仅作兜底，真实字体栈仍由内联样式决定。
+		const fontStyle = theme.fontStyle === 'mono' ? sx.fontMono : theme.fontStyle === 'serif' ? sx.fontSerif : sx.fontSans
+		const { className: shellClass } = stylex.props(sx.shell, fontStyle)
 
 		return (
 			<div
 				ref={ref}
-				className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden ${fontClassName} transition-colors duration-1000 ${className}`.trim()}
+				className={cn(shellClass, className)}
 				style={{
 					backgroundColor: 'transparent',
 					fontFamily: resolveThemeFontStack(theme),
@@ -158,7 +215,7 @@ const VisualizerShell = forwardRef<HTMLDivElement, VisualizerShellProps>(
 							event.stopPropagation()
 							resolvedOnBack()
 						}}
-						className='pointer-events-auto absolute top-6 left-6 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-black/20 text-white/60 backdrop-blur-md transition-colors hover:bg-white/10'
+						className={stylex.props(sx.backButton).className}
 						style={{ pointerEvents: isBackButtonVisible ? 'auto' : 'none' }}>
 						<ChevronLeft size={20} />
 					</motion.button>

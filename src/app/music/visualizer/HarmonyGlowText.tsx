@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react'
 import { motion, type MotionValue, useTransform } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Line, LyricBackgroundVocal, Theme, Word } from './types'
 import { resolveThemeFontStack, resolveThemeFontWeight } from './fontStacks'
 import { buildLineGraphemeTimeline } from './lyrics/graphemeTiming'
@@ -13,6 +14,30 @@ import { resolveWordColor } from './wordColoring'
 // One background-vocal line with a grapheme-accurate fill sweep: the dimmed text is always
 // there, and a masked bright copy is revealed from the left as `currentTime` moves through the
 // timed words. Used only by VisualizerHarmonyOverlay.
+
+/** 文字样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 外层：行内块、保留空白与换行、词内可断行 */
+	root: {
+		position: 'relative',
+		display: 'inline-block',
+		overflowWrap: 'break-word',
+		whiteSpace: 'pre-wrap'
+	},
+	/** 高亮层：绝对定位叠放、不响应指针 */
+	glowLayer: {
+		position: 'absolute',
+		display: 'block',
+		whiteSpace: 'pre-wrap',
+		pointerEvents: 'none'
+	},
+	/** 高亮层内文：块级、保留空白与换行 */
+	glowInner: {
+		display: 'block',
+		overflowWrap: 'break-word',
+		whiteSpace: 'pre-wrap'
+	}
+})
 
 interface HarmonyTextPart {
 	key: string
@@ -115,7 +140,7 @@ const HarmonyGlowText: React.FC<HarmonyGlowTextProps> = ({ vocal, currentTime, t
 
 	return (
 		<span
-			className='relative inline-block overflow-visible break-words whitespace-pre-wrap'
+			className={stylex.props(sx.root).className}
 			style={{
 				fontFamily,
 				fontSize: `clamp(${(0.95 * subtitleFontScale).toFixed(3)}rem, ${(1.8 * subtitleFontScale).toFixed(3)}vw, ${(1.3 * subtitleFontScale).toFixed(3)}rem)`,
@@ -125,7 +150,7 @@ const HarmonyGlowText: React.FC<HarmonyGlowTextProps> = ({ vocal, currentTime, t
 			{renderParts(false)}
 			<motion.span
 				aria-hidden
-				className='pointer-events-none absolute block whitespace-pre-wrap'
+				className={stylex.props(sx.glowLayer).className}
 				style={{
 					left: -glowPaddingPx,
 					right: -glowPaddingPx,
@@ -138,7 +163,7 @@ const HarmonyGlowText: React.FC<HarmonyGlowTextProps> = ({ vocal, currentTime, t
 					WebkitMaskRepeat: 'no-repeat',
 					maskRepeat: 'no-repeat'
 				}}>
-				<span className='block break-words whitespace-pre-wrap'>{renderParts(true)}</span>
+				<span {...stylex.props(sx.glowInner)}>{renderParts(true)}</span>
 			</motion.span>
 		</span>
 	)

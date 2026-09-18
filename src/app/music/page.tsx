@@ -5,14 +5,251 @@ import dynamic from 'next/dynamic'
 import { Disc3, Loader2, Maximize2, Music2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
+import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from './music-store'
 import MusicProgress from './components/music-progress'
 import MusicControls from './components/music-controls'
 import LyricsPanel from './components/lyrics-panel'
 import PlaylistPanel from './components/playlist-panel'
+import { card } from '@/styles/shared/card.stylex'
+import { util } from '@/styles/shared/util.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 // 沉浸歌词层只在客户端按需加载，避免把整套动效带进首屏
 const LyricVisualizer = dynamic(() => import('./components/lyric-visualizer'), { ssr: false })
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
+const styles = stylex.create({
+	/** 页面主容器：居中限宽，顶部给导航留高 */
+	page: {
+		marginInline: 'auto',
+		minHeight: '100%',
+		maxWidth: 1152,
+		paddingInline: 16,
+		paddingTop: 112,
+		paddingBottom: 96,
+		'@media (width >= 40rem)': {
+			paddingInline: 24
+		}
+	},
+	/** 主体两栏：大屏右侧固定 340px */
+	shell: {
+		display: 'grid',
+		gap: 20,
+		'@media (width >= 64rem)': {
+			gridTemplateColumns: 'minmax(0, 1fr) 340px'
+		}
+	},
+	/** 播放器卡片：相对定位覆盖卡片基底，内部两栏 */
+	playerCard: {
+		position: 'relative',
+		display: 'grid',
+		minHeight: 590,
+		overflow: 'hidden',
+		padding: 20,
+		'@media (width >= 40rem)': {
+			padding: 32
+		},
+		'@media (width >= 48rem)': {
+			gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+		}
+	},
+	/** 左列：纵向居中 */
+	stage: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center'
+	},
+	/** 唱片正方形外框 */
+	discBox: {
+		marginInline: 'auto',
+		aspectRatio: '1 / 1',
+		width: '100%',
+		maxWidth: 330
+	},
+	/** 唱片本体：深色圆盘 + 大投影；播放中旋转，时长由内联样式覆盖 */
+	disc: {
+		position: 'relative',
+		height: '100%',
+		width: '100%',
+		overflow: 'hidden',
+		borderRadius: 9999,
+		backgroundColor: 'rgb(0 0 0 / 85%)',
+		padding: '12%',
+		boxShadow: '0 25px 50px -12px rgb(0 0 0 / 25%)'
+	},
+	/** 唱片装饰环 */
+	discRing: {
+		position: 'absolute',
+		inset: '8%',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: 'rgb(255 255 255 / 10%)'
+	},
+	discRingInner: {
+		position: 'absolute',
+		inset: '18%',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: 'rgb(255 255 255 / 10%)'
+	},
+	/** 唱片中心：品牌色光盘 */
+	discCore: {
+		position: 'relative',
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		overflow: 'hidden',
+		borderRadius: 9999,
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 20%, transparent)'
+	},
+	cover: {
+		height: '100%',
+		width: '100%',
+		objectFit: 'cover'
+	},
+	discIcon: {
+		height: 80,
+		width: 80,
+		color: colors.brand
+	},
+	/** 曲目信息 */
+	meta: {
+		marginTop: 28,
+		textAlign: 'center'
+	},
+	title: {
+		color: colors.primary,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 24,
+		lineHeight: '32px',
+		fontWeight: 600
+	},
+	artist: {
+		color: colors.secondary,
+		marginTop: 4,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 进度与播控 */
+	controls: {
+		marginTop: 28
+	},
+	fallbackNote: {
+		color: colors.secondary,
+		marginTop: 16,
+		textAlign: 'center',
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	errorNote: {
+		marginTop: 8,
+		textAlign: 'center',
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#fb2c36'
+	},
+	/** 右列歌词区：小屏上分隔线，大屏改左分隔线 */
+	lyricsCol: {
+		position: 'relative',
+		marginTop: 32,
+		borderTopWidth: 1,
+		borderTopStyle: 'solid',
+		borderColor: 'rgb(255 255 255 / 40%)',
+		'@media (width >= 48rem)': {
+			marginTop: 0,
+			borderTopWidth: 0,
+			borderLeftWidth: 1,
+			borderLeftStyle: 'solid'
+		}
+	},
+	/** 沉浸歌词入口：半透明白底胶囊 */
+	immersiveBtn: {
+		position: 'absolute',
+		top: 8,
+		right: 8,
+		zIndex: 10,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 6,
+		borderRadius: 9999,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary,
+		backdropFilter: 'blur(8px)',
+		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.brand
+			}
+		},
+		':disabled': {
+			cursor: 'not-allowed',
+			opacity: 0.4
+		},
+		'@media (width >= 48rem)': {
+			top: 12,
+			right: 12
+		}
+	},
+	btnIcon: {
+		height: 14,
+		width: 14
+	},
+	/** 加载占位 */
+	loadingBox: {
+		display: 'flex',
+		height: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	loadIcon: {
+		height: 16,
+		width: 16
+	},
+	/** 歌单卡片 */
+	playlistCard: {
+		position: 'relative',
+		overflow: 'hidden',
+		padding: 0
+	},
+	playlistHeader: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8,
+		borderBottomWidth: 1,
+		borderBottomStyle: 'solid',
+		borderColor: 'rgb(255 255 255 / 40%)',
+		paddingInline: 24,
+		paddingBlock: 20
+	},
+	playlistIcon: {
+		height: 20,
+		width: 20,
+		color: colors.brand
+	},
+	playlistTitle: {
+		fontWeight: 500
+	}
+})
 
 export default function MusicPage() {
 	const { track, isPlaying, initialized, loading, usingFallback, error, hasLyrics, init, setVisualizerOpen } = useMusicStore(
@@ -34,55 +271,53 @@ export default function MusicPage() {
 	}, [init, initialized])
 
 	return (
-		<div className='mx-auto min-h-full max-w-6xl px-4 pt-28 pb-24 sm:px-6'>
-			<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className='grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]'>
-				<section className='card relative grid min-h-[590px] overflow-hidden p-5 sm:p-8 md:grid-cols-2'>
-					<div className='flex flex-col justify-center'>
-						<div className='mx-auto aspect-square w-full max-w-[330px]'>
-							<div
-								className={`relative h-full w-full overflow-hidden rounded-full bg-black/85 p-[12%] shadow-2xl ${isPlaying ? 'animate-spin' : ''}`}
-								style={{ animationDuration: '24s' }}>
-								<div className='absolute inset-[8%] rounded-full border border-white/10' />
-								<div className='absolute inset-[18%] rounded-full border border-white/10' />
-								<div className='bg-brand/20 relative flex h-full w-full items-center justify-center overflow-hidden rounded-full'>
-									{track?.pic ? <img src={track.pic} alt={track.name} className='h-full w-full object-cover' /> : <Disc3 className='text-brand h-20 w-20' />}
+		<div {...stylex.props(styles.page)}>
+			<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} {...stylex.props(styles.shell)}>
+				<section {...stylex.props(card.base, styles.playerCard)}>
+					<div {...stylex.props(styles.stage)}>
+						<div {...stylex.props(styles.discBox)}>
+							<div {...stylex.props(styles.disc, isPlaying && util.spinner)} style={{ animationDuration: '24s' }}>
+								<div {...stylex.props(styles.discRing)} />
+								<div {...stylex.props(styles.discRingInner)} />
+								<div {...stylex.props(styles.discCore)}>
+									{track?.pic ? <img src={track.pic} alt={track.name} {...stylex.props(styles.cover)} /> : <Disc3 {...stylex.props(styles.discIcon)} />}
 								</div>
 							</div>
 						</div>
-						<div className='mt-7 text-center'>
-							<h1 className='text-primary truncate text-2xl font-semibold'>{track?.name || (loading ? '正在加载歌单…' : '音乐播放器')}</h1>
-							<p className='text-secondary mt-1 truncate text-sm'>{track?.artist || '稍等一下，音乐马上就来'}</p>
+						<div {...stylex.props(styles.meta)}>
+							<h1 {...stylex.props(styles.title)}>{track?.name || (loading ? '正在加载歌单…' : '音乐播放器')}</h1>
+							<p {...stylex.props(styles.artist)}>{track?.artist || '稍等一下，音乐马上就来'}</p>
 						</div>
-						<div className='mt-7'>
+						<div {...stylex.props(styles.controls)}>
 							<MusicProgress />
 							<MusicControls />
 						</div>
-						{usingFallback && <p className='text-secondary mt-4 text-center text-xs'>在线歌单暂不可用，已切换到本地音乐</p>}
-						{error && <p className='mt-2 text-center text-xs text-red-500'>{error}</p>}
+						{usingFallback && <p {...stylex.props(styles.fallbackNote)}>在线歌单暂不可用，已切换到本地音乐</p>}
+						{error && <p {...stylex.props(styles.errorNote)}>{error}</p>}
 					</div>
-					<div className='relative mt-8 border-t border-white/40 md:mt-0 md:border-t-0 md:border-l'>
+					<div {...stylex.props(styles.lyricsCol)}>
 						<button
 							type='button'
 							onClick={() => setVisualizerOpen(true)}
 							disabled={!hasLyrics}
 							title={hasLyrics ? '全屏沉浸歌词' : '这首歌没有歌词'}
-							className='text-secondary hover:text-brand absolute top-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1.5 text-xs backdrop-blur transition disabled:cursor-not-allowed disabled:opacity-40 md:top-3 md:right-3'>
-							<Maximize2 className='h-3.5 w-3.5' />
+							{...stylex.props(styles.immersiveBtn)}>
+							<Maximize2 {...stylex.props(styles.btnIcon)} />
 							沉浸歌词
 						</button>
 						{loading && !track ? (
-							<div className='text-secondary flex h-full items-center justify-center gap-2 text-sm'>
-								<Loader2 className='h-4 w-4 animate-spin' /> 正在加载
+							<div {...stylex.props(styles.loadingBox)}>
+								<Loader2 {...stylex.props(styles.loadIcon, util.spinner)} /> 正在加载
 							</div>
 						) : (
 							<LyricsPanel />
 						)}
 					</div>
 				</section>
-				<aside className='card relative overflow-hidden p-0'>
-					<div className='flex items-center gap-2 border-b border-white/40 px-6 py-5'>
-						<Music2 className='text-brand h-5 w-5' />
-						<h2 className='font-medium'>我的歌单</h2>
+				<aside {...stylex.props(card.base, styles.playlistCard)}>
+					<div {...stylex.props(styles.playlistHeader)}>
+						<Music2 {...stylex.props(styles.playlistIcon)} />
+						<h2 {...stylex.props(styles.playlistTitle)}>我的歌单</h2>
 					</div>
 					<PlaylistPanel />
 				</aside>

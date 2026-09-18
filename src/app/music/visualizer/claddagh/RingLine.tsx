@@ -2,6 +2,7 @@
 
 import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import type { MotionValue } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Line, Theme } from '../types'
 import { buildLineGraphemeTimeline } from '../lyrics/graphemeTiming'
 import { resolveThemeFontStack, resolveThemeFontWeight } from '../fontStacks'
@@ -36,6 +37,18 @@ export interface RingLineProps {
 /**
  * Component representing a single line of lyrics projected onto a portion of the 3D ring.
  */
+
+/** 单行环容器：铺满、不响应指针（字符定位由帧写入器接管） */
+const sx = stylex.create({
+	container: {
+		position: 'absolute',
+		inset: 0,
+		height: '100%',
+		width: '100%',
+		pointerEvents: 'none'
+	}
+})
+
 const RingLine: React.FC<RingLineProps> = ({
 	line,
 	lineIndex,
@@ -178,7 +191,7 @@ const RingLine: React.FC<RingLineProps> = ({
 	])
 
 	return (
-		<div className='pointer-events-none absolute inset-0 h-full w-full'>
+		<div {...stylex.props(sx.container)}>
 			{spacingInfo.map((item, idx) => (
 				<span
 					key={idx}

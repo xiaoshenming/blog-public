@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { VisualizerBackgroundRenderProps } from '../definition'
 import { colorWithAlpha, mixColors } from '../../colorMix'
 
@@ -13,6 +14,40 @@ import { colorWithAlpha, mixColors } from '../../colorMix'
 
 const DRIFT_DURATION_S = 28
 const COVER_FADE_S = 1.1
+
+/** 背景层样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 根层：铺满、不响应指针、隐藏溢出（透明度保留内联） */
+	root: {
+		position: 'absolute',
+		inset: 0,
+		zIndex: 0,
+		overflow: 'hidden',
+		pointerEvents: 'none'
+	},
+	/** 底色渐变层：铺满、背景过渡 1s */
+	field: {
+		position: 'absolute',
+		inset: 0,
+		transitionProperty: 'background',
+		transitionDuration: '1s',
+		transitionTimingFunction: 'cubic-bezier(.4, 0, .2, 1)'
+	},
+	/** 封面模糊层 */
+	cover: {
+		position: 'absolute'
+	},
+	/** 漂移光斑：圆形 */
+	glow: {
+		position: 'absolute',
+		borderRadius: 9999
+	},
+	/** 暗角层：铺满 */
+	vignette: {
+		position: 'absolute',
+		inset: 0
+	}
+})
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value))
 
@@ -61,14 +96,14 @@ const PlainBackground: React.FC<VisualizerBackgroundRenderProps> = ({ config, th
 	const palette = useMemo(() => buildPalette(theme, isDaylight), [theme, isDaylight])
 
 	return (
-		<div aria-hidden className='pointer-events-none absolute inset-0 z-0 overflow-hidden' style={{ opacity: layerOpacity }}>
-			<div className='absolute inset-0 transition-[background] duration-1000' style={{ background: palette.field }} />
+		<div aria-hidden className={stylex.props(sx.root).className} style={{ opacity: layerOpacity }}>
+			<div className={stylex.props(sx.field).className} style={{ background: palette.field }} />
 
 			<AnimatePresence initial={false}>
 				{showCover && coverUrl && (
 					<motion.div
 						key={coverUrl}
-						className='absolute'
+						className={stylex.props(sx.cover).className}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: palette.coverOpacity }}
 						exit={{ opacity: 0 }}
@@ -90,7 +125,7 @@ const PlainBackground: React.FC<VisualizerBackgroundRenderProps> = ({ config, th
 			{showGlows && (
 				<>
 					<motion.div
-						className='absolute rounded-full'
+						className={stylex.props(sx.glow).className}
 						style={{
 							width: '72%',
 							aspectRatio: '1',
@@ -104,7 +139,7 @@ const PlainBackground: React.FC<VisualizerBackgroundRenderProps> = ({ config, th
 						transition={drifting ? driftTransition(0) : { duration: 0.8 }}
 					/>
 					<motion.div
-						className='absolute rounded-full'
+						className={stylex.props(sx.glow).className}
 						style={{
 							width: '64%',
 							aspectRatio: '1',
@@ -120,7 +155,7 @@ const PlainBackground: React.FC<VisualizerBackgroundRenderProps> = ({ config, th
 				</>
 			)}
 
-			{showVignette && <div className='absolute inset-0' style={{ background: palette.vignette }} />}
+			{showVignette && <div className={stylex.props(sx.vignette).className} style={{ background: palette.vignette }} />}
 		</div>
 	)
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKe
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useMotionValueEvent } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
+import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from '../music-store'
 import { audioBands, audioPower, playbackTime } from '../music-clock'
 import VisualizerRenderer from '../visualizer/VisualizerRenderer'
@@ -11,9 +12,23 @@ import { DEFAULT_VISUALIZER_MODE, hasVisualizerMode } from '../visualizer/regist
 import type { Line, Theme, VisualizerMode } from '../visualizer/types'
 import { buildVisualizerTheme } from './visualizer-theme'
 import VisualizerChrome, { stepVisualizerMode } from './visualizer-chrome'
+import { colors } from '@/styles/tokens.stylex'
 
 const MODE_STORAGE_KEY = 'music-visualizer-mode'
 const CHROME_IDLE_MS = 2600
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 全屏沉浸层：黑底白字，无焦点描边 */
+	root: {
+		position: 'fixed',
+		inset: 0,
+		zIndex: 100,
+		backgroundColor: '#000',
+		color: colors.white,
+		outlineStyle: 'none'
+	}
+})
 
 const FOCUSABLE_SELECTOR =
 	'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -187,7 +202,7 @@ export default function LyricVisualizer() {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.35 }}
-					className='fixed inset-0 z-[100] bg-black text-white outline-none'
+					{...stylex.props(styles.root)}
 					style={{ cursor: chromeVisible ? 'auto' : 'none' }}
 					onPointerMove={onPointerActivity}
 					onPointerDown={onPointerActivity}

@@ -23,6 +23,82 @@ import { useEffect } from 'react'
 import SnowfallBackground from '@/layout/backgrounds/snowfall'
 import MusicCard from '@/components/music-card'
 import MusicMiniBar from '@/components/music-mini-bar'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 编辑栏外层：固定顶栏、水平居中、上边距 24、不响应指针、层级 50 */
+	editBarWrap: {
+		position: 'fixed',
+		top: 0,
+		left: 0,
+		right: 0,
+		zIndex: 50,
+		display: 'flex',
+		justifyContent: 'center',
+		paddingTop: 24,
+		pointerEvents: 'none'
+	},
+	/** 编辑栏主体：横向排列、间距 12、大圆角、半透明白底、内边距、软阴影、背景模糊 */
+	editBar: {
+		pointerEvents: 'auto',
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12,
+		borderRadius: 16,
+		backgroundColor: 'rgb(255 255 255 / 80%)',
+		paddingInline: 16,
+		paddingBlock: 8,
+		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)',
+		backdropFilter: 'blur(8px)'
+	},
+	/** 提示文字：小号、灰色 */
+	editHint: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#4a5565'
+	},
+	/** 按钮组：横向排列、间距 8 */
+	editActions: {
+		display: 'flex',
+		gap: 8
+	},
+	/** 取消按钮：小圆角、描边、白底、小号文字、中等字重、深灰文字 */
+	cancelButton: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: colors.white,
+		paddingInline: 12,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500,
+		color: '#364153'
+	},
+	/** 保存按钮附加：小号内边距与文字（覆盖品牌按钮默认尺寸） */
+	saveButton: {
+		paddingInline: 12,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	/** 卡片区：小屏改为纵向弹性布局、居中、间距 24、上下内边距 */
+	cardArea: {
+		'@media (width < 40rem)': {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			gap: 24,
+			paddingTop: 112,
+			paddingBottom: 80
+		}
+	}
+})
 
 export default function Home() {
 	const { maxSM } = useSize()
@@ -67,14 +143,14 @@ export default function Home() {
 			{enableChristmas && <SnowfallBackground zIndex={0} count={!maxSM ? 125 : 20} />}
 
 			{editing && (
-				<div className='pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center pt-6'>
-					<div className='pointer-events-auto flex items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-lg backdrop-blur'>
-						<span className='text-xs text-gray-600'>正在编辑首页布局，拖拽卡片调整位置</span>
-						<div className='flex gap-2'>
-							<button type='button' onClick={handleCancel} className='card-hover rounded-xl border bg-white px-3 py-1 text-xs font-medium text-gray-700'>
+				<div {...stylex.props(sx.editBarWrap)}>
+					<div {...stylex.props(sx.editBar)}>
+						<span {...stylex.props(sx.editHint)}>正在编辑首页布局，拖拽卡片调整位置</span>
+						<div {...stylex.props(sx.editActions)}>
+							<button type='button' onClick={handleCancel} {...stylex.props(card.hover, sx.cancelButton)}>
 								取消
 							</button>
-							<button type='button' onClick={handleSave} className='brand-btn card-hover px-3 py-1 text-xs'>
+							<button type='button' onClick={handleSave} {...stylex.props(brandBtn.base, card.hover, sx.saveButton)}>
 								保存偏移
 							</button>
 						</div>
@@ -82,7 +158,7 @@ export default function Home() {
 				</div>
 			)}
 
-			<div className='max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-6 max-sm:pt-28 max-sm:pb-20'>
+			<div {...stylex.props(sx.cardArea)}>
 				{cardStyles.artCard?.enabled !== false && <ArtCard />}
 				{cardStyles.hiCard?.enabled !== false && <HiCard />}
 				{!maxSM && cardStyles.clockCard?.enabled !== false && <ClockCard />}

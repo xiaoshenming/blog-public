@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, type MotionValue, useMotionValueEvent } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Line, SubtitleContentMode, Theme } from './types'
 import { resolveThemeFontWeight, resolveThemeTranslationFontStack } from './fontStacks'
 import { colorWithAlpha } from './colorMix'
@@ -28,6 +29,59 @@ interface VisualizerHarmonyOverlayProps {
 
 const EMPTY_HARMONY_SNAPSHOT: HarmonySnapshot = { signature: '', lines: [] }
 const HARMONY_TOP_PX = 76
+
+/** 覆盖层样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 顶部安全区：横向铺满、纵向排布、水平居中 */
+	overlay: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		zIndex: 30,
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: 6,
+		paddingInline: 20,
+		textAlign: 'center',
+		pointerEvents: 'none'
+	},
+	/** 行组：相对定位、独立层叠、纵向排布 */
+	group: {
+		position: 'relative',
+		isolation: 'isolate',
+		display: 'flex',
+		maxWidth: '100%',
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: 6
+	},
+	/** 行组背景开启时的内边距 */
+	groupPadded: {
+		paddingInline: 16,
+		paddingBlock: 8
+	},
+	/** 辉光底：向外扩两圈后大幅模糊 */
+	glow: {
+		position: 'absolute',
+		inset: '-24px -40px',
+		zIndex: 0,
+		filter: 'blur(40px)',
+		pointerEvents: 'none'
+	},
+	/** 单行：相对定位浮在上层、宽上限、保留空白与换行 */
+	line: {
+		position: 'relative',
+		zIndex: 10,
+		maxWidth: 896,
+		overflowWrap: 'break-word',
+		whiteSpace: 'pre-wrap'
+	},
+	/** 译注行上边距 2 */
+	alternate: {
+		marginTop: 2
+	}
+})
 
 const VisualizerHarmonyOverlay: React.FC<VisualizerHarmonyOverlayProps> = ({
 	currentTime,
@@ -84,14 +138,14 @@ const VisualizerHarmonyOverlay: React.FC<VisualizerHarmonyOverlayProps> = ({
 						opacity: { duration: 0.2, ease: 'easeOut' },
 						y: { duration: 0.2, ease: 'easeOut' }
 					}}
-					className='pointer-events-none absolute right-0 left-0 z-30 flex flex-col items-center gap-1.5 px-5 text-center'
+					className={stylex.props(sx.overlay).className}
 					style={{ top: HARMONY_TOP_PX }}>
-					<div className={`relative isolate flex max-w-full flex-col items-center gap-1.5 ${harmonySubtitleBackground ? 'px-4 py-2' : ''}`}>
+					<div className={stylex.props(sx.group, harmonySubtitleBackground && sx.groupPadded).className}>
 						{harmonySubtitleBackground && (
 							// Keep the glow out of the masked text's negative/filter compositing path on iOS Safari.
 							<div
 								aria-hidden='true'
-								className='pointer-events-none absolute -inset-x-10 -inset-y-6 z-0 blur-2xl'
+								className={stylex.props(sx.glow).className}
 								style={{
 									background: `radial-gradient(ellipse at center, ${colorWithAlpha(theme.backgroundColor, 0.7)} 0%, ${colorWithAlpha(theme.backgroundColor, 0.42)} 48%, transparent 78%)`,
 									transform: 'translateZ(0)',
@@ -109,13 +163,13 @@ const VisualizerHarmonyOverlay: React.FC<VisualizerHarmonyOverlayProps> = ({
 									initial={{ opacity: 0, scale: 0.97 }}
 									animate={{ opacity: 1, scale: 1 }}
 									exit={{ opacity: 0, scale: 0.97 }}
-									className='relative z-10 max-w-4xl overflow-visible break-words whitespace-pre-wrap'>
+									{...stylex.props(sx.line)}>
 									<HarmonyGlowText vocal={entry.vocal} currentTime={currentTime} theme={resolvedSubtitleTheme} subtitleFontScale={subtitleFontScale} />
 									{alternateText && (
 										<motion.div
 											initial={{ opacity: 0, y: -4 }}
 											animate={{ opacity: 0.82, y: 0 }}
-											className='mt-0.5'
+											className={stylex.props(sx.alternate).className}
 											style={{
 												color: resolvedSubtitleTheme.secondaryColor,
 												fontFamily: resolveThemeTranslationFontStack(resolvedSubtitleTheme),

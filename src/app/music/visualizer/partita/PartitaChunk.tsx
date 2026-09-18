@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, type MotionValue, type Variants, useMotionValueEvent } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Theme, Word as WordType } from '../types'
 import type { PartitaLineRenderProfile, PartitaWordStatus, WordLayoutConfig } from './partitaTypes'
 import { getActiveColor, getPartitaWordActiveEndTime } from './partitaTimeline'
@@ -29,6 +30,32 @@ interface PartitaChunkProps {
 	showGuideLines: boolean
 	fontSize: string
 }
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 词块容器：行内弹性、居中且不换行（位移旋转仍由动画控制） */
+	chunk: {
+		position: 'relative',
+		display: 'inline-flex',
+		transformOrigin: 'center',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		whiteSpace: 'nowrap'
+	},
+	/** 竖向引导线：1px 宽、不拦截指针 */
+	guideVertical: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		width: 1
+	},
+	/** 横向引导线：1px 高、不拦截指针 */
+	guideHorizontal: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		height: 1
+	}
+})
 
 const PartitaChunk: React.FC<PartitaChunkProps> = ({
 	chunkWords,
@@ -66,7 +93,7 @@ const PartitaChunk: React.FC<PartitaChunkProps> = ({
 
 	return (
 		<motion.div
-			className='relative inline-flex origin-center flex-row items-center justify-center whitespace-nowrap'
+			{...stylex.props(styles.chunk)}
 			style={{
 				marginBottom: config.marginBottom,
 				alignSelf: config.alignSelf,
@@ -98,7 +125,7 @@ const PartitaChunk: React.FC<PartitaChunkProps> = ({
 			{showGuideLines && guidePosition === 'left' && (
 				<>
 					<motion.span
-						className='pointer-events-none absolute w-px'
+						{...stylex.props(styles.guideVertical)}
 						style={{
 							left: '-8px',
 							bottom: '-16px',
@@ -118,7 +145,7 @@ const PartitaChunk: React.FC<PartitaChunkProps> = ({
 						aria-hidden='true'
 					/>
 					<motion.span
-						className='pointer-events-none absolute h-px'
+						{...stylex.props(styles.guideHorizontal)}
 						style={{
 							left: '-16px',
 							bottom: '-8px',
@@ -142,7 +169,7 @@ const PartitaChunk: React.FC<PartitaChunkProps> = ({
 			{showGuideLines && guidePosition === 'right' && (
 				<>
 					<motion.span
-						className='pointer-events-none absolute w-px'
+						{...stylex.props(styles.guideVertical)}
 						style={{
 							right: '-8px',
 							bottom: '-16px',
@@ -162,7 +189,7 @@ const PartitaChunk: React.FC<PartitaChunkProps> = ({
 						aria-hidden='true'
 					/>
 					<motion.span
-						className='pointer-events-none absolute h-px'
+						{...stylex.props(styles.guideHorizontal)}
 						style={{
 							right: '-16px',
 							bottom: '-8px',

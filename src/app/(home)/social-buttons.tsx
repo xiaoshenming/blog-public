@@ -23,6 +23,9 @@ import { toast } from 'sonner'
 import { useSize } from '@/hooks/use-size'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import { createPortal } from 'react-dom'
+import * as stylex from '@stylexjs/stylex'
+import { colors, fonts } from '@/styles/tokens.stylex'
+import { card } from '@/styles/shared/card.stylex'
 
 type SocialButtonType =
 	| 'github'
@@ -48,6 +51,130 @@ interface SocialButtonConfig {
 	label?: string
 	order: number
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 外层定位容器：绝对定位；小屏改静态（坐标保留内联 style） */
+	outer: {
+		position: 'absolute',
+		'@media (width < 40rem)': {
+			position: 'static'
+		}
+	},
+	/** 按钮行：绝对定位在左上、反向排列、垂直居中、间距 12；小屏改静态（宽度保留内联 style） */
+	listRow: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		display: 'flex',
+		flexDirection: 'row-reverse',
+		alignItems: 'center',
+		gap: 12,
+		'@media (width < 40rem)': {
+			position: 'static'
+		}
+	},
+	/** GitHub 按钮底：手写体、横向排列、间距 8、小圆角、描边、纯黑背景、大号白色文字 */
+	githubBase: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: '#070707',
+		fontFamily: fonts.averia,
+		fontSize: 20,
+		lineHeight: '28px',
+		color: colors.white
+	},
+	/** GitHub 按钮（仅图标）：内边距 6 */
+	githubIconOnly: {
+		padding: 6
+	},
+	/** GitHub 按钮（带标签）：横 12 纵 6 */
+	githubWithLabel: {
+		paddingInline: 12,
+		paddingBlock: 6
+	},
+	/** 图标按钮：卡片底、相对定位、小圆角、内边距 6 */
+	iconButton: {
+		position: 'relative',
+		borderRadius: 12,
+		padding: 6
+	},
+	/** 图标包裹层：相对定位 */
+	wrapper: {
+		position: 'relative'
+	},
+	/** 下拉遮罩：固定全屏、层级 40 */
+	backdrop: {
+		position: 'fixed',
+		inset: 0,
+		zIndex: 40
+	},
+	/** 下拉面板：卡片色、固定定位、层级 50、大圆角、描边、内边距 16、背景模糊（位置与投影保留内联 style） */
+	dropdown: {
+		backgroundColor: colors.card,
+		position: 'fixed',
+		zIndex: 50,
+		borderRadius: 16,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		padding: 16,
+		backdropFilter: 'blur(24px)'
+	},
+	/** 二维码图片：192×192、小圆角、裁切填充 */
+	qrImg: {
+		width: 192,
+		height: 192,
+		borderRadius: 8,
+		objectFit: 'cover'
+	},
+	/** 链接按钮：卡片底、横向排列、间距 8、小圆角、内边距、中等字重、不换行 */
+	linkButton: {
+		position: 'relative',
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8,
+		borderRadius: 12,
+		paddingInline: 12,
+		paddingBlock: 10,
+		fontWeight: 500,
+		whiteSpace: 'nowrap'
+	},
+	/** 社交按钮底：卡片底、相对定位、小圆角、中等字重、不换行 */
+	socialBase: {
+		position: 'relative',
+		borderRadius: 12,
+		fontWeight: 500,
+		whiteSpace: 'nowrap'
+	},
+	/** 社交按钮（带标签）：横向排列、间距 8、内边距 12/10 */
+	socialWithLabel: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8,
+		paddingInline: 12,
+		paddingBlock: 10
+	},
+	/** 社交按钮（仅图标）：内边距 6 */
+	socialIconOnly: {
+		padding: 6
+	},
+	/** 图标 24×24 */
+	iconMd: {
+		width: 24,
+		height: 24
+	},
+	/** 图标 32×32 */
+	iconLg: {
+		width: 32,
+		height: 32
+	}
+})
 
 const iconMap: Record<SocialButtonType, React.ComponentType<{ className?: string }>> = {
 	github: GithubSVG,
@@ -138,13 +265,12 @@ export default function SocialButtons() {
 
 		const commonProps = {
 			initial: { opacity: 0, scale: 0.6 } as const,
-			animate: { opacity: 1, scale: 1 } as const,
-			className: 'card-hover' as const
+			animate: { opacity: 1, scale: 1 } as const
 		}
 
 		const Icon = iconMap[button.type]
 		const hasLabel = Boolean(button.label)
-		const iconSize = hasLabel ? 'size-6' : 'size-8'
+		const iconSize = hasLabel ? sx.iconMd : sx.iconLg
 
 		if (button.type === 'github') {
 			return (
@@ -153,9 +279,9 @@ export default function SocialButtons() {
 					href={button.value}
 					target='_blank'
 					{...commonProps}
-					className={`font-averia flex items-center gap-2 rounded-xl border bg-[#070707] text-xl text-white ${!hasLabel ? 'p-1.5' : 'px-3 py-1.5'}`}
+					{...stylex.props(sx.githubBase, !hasLabel ? sx.githubIconOnly : sx.githubWithLabel)}
 					style={{ boxShadow: ' inset 0 0 12px rgba(255, 255, 255, 0.4)' }}>
-					<Icon className={'size-8'} />
+					<Icon {...stylex.props(sx.iconLg)} />
 					{hasLabel && button.label}
 				</motion.a>
 			)
@@ -173,7 +299,7 @@ export default function SocialButtons() {
 
 			if (isImagePath && (button.type === 'wechat' || button.type === 'qq')) {
 				return (
-					<div key={button.id} className='relative'>
+					<div key={button.id} {...stylex.props(sx.wrapper)}>
 						<motion.button
 							ref={el => {
 								buttonRefs.current[button.id] = el
@@ -182,8 +308,8 @@ export default function SocialButtons() {
 								setOpenDropdowns(prev => ({ ...prev, [button.id]: !prev[button.id] }))
 							}}
 							{...commonProps}
-							className='card btn relative rounded-xl p-1.5'>
-							<Icon className='size-8' />
+							{...stylex.props(card.base, sx.iconButton)}>
+							<Icon {...stylex.props(sx.iconLg)} />
 						</motion.button>
 						{typeof window !== 'undefined' &&
 							createPortal(
@@ -195,7 +321,7 @@ export default function SocialButtons() {
 												animate={{ opacity: 1 }}
 												exit={{ opacity: 0 }}
 												onClick={() => setOpenDropdowns(prev => ({ ...prev, [button.id]: false }))}
-												className='fixed inset-0 z-40'
+												{...stylex.props(sx.backdrop)}
 											/>
 											<motion.div
 												ref={el => {
@@ -205,13 +331,13 @@ export default function SocialButtons() {
 												animate={{ opacity: 1, y: 0, scale: 1 }}
 												exit={{ opacity: 0, y: -8, scale: 0.95 }}
 												transition={{ duration: 0.2 }}
-												className='bg-card fixed z-50 rounded-2xl border p-4 backdrop-blur-xl'
+												{...stylex.props(sx.dropdown)}
 												style={{
 													top: buttonRefs.current[button.id] ? `${buttonRefs.current[button.id]!.getBoundingClientRect().bottom + 8}px` : '0px',
 													left: buttonRefs.current[button.id] ? `${buttonRefs.current[button.id]!.getBoundingClientRect().left}px` : '0px',
 													boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
 												}}>
-												<img src={button.value} alt='QR Code' className='h-48 w-48 rounded-lg object-cover' />
+													<img src={button.value} alt='QR Code' {...stylex.props(sx.qrImg)} />
 											</motion.div>
 										</>
 									)}
@@ -231,8 +357,8 @@ export default function SocialButtons() {
 						})
 					}}
 					{...commonProps}
-					className='card btn relative rounded-xl p-1.5'>
-					<Icon className='size-8' />
+					{...stylex.props(card.base, sx.iconButton)}>
+					<Icon {...stylex.props(sx.iconLg)} />
 				</motion.button>
 			)
 		}
@@ -244,7 +370,7 @@ export default function SocialButtons() {
 					href={button.value}
 					target='_blank'
 					{...commonProps}
-					className='card relative flex items-center gap-2 rounded-xl px-3 py-2.5 font-medium whitespace-nowrap'>
+					{...stylex.props(card.base, sx.linkButton)}>
 					{hasLabel ? button.label : button.value}
 				</motion.a>
 			)
@@ -256,8 +382,8 @@ export default function SocialButtons() {
 				href={button.value}
 				target='_blank'
 				{...commonProps}
-				className={`card relative rounded-xl font-medium whitespace-nowrap ${hasLabel ? 'flex items-center gap-2 px-3 py-2.5' : 'p-1.5'}`}>
-				<Icon className={iconSize} />
+				{...stylex.props(card.base, sx.socialBase, hasLabel ? sx.socialWithLabel : sx.socialIconOnly)}>
+				<Icon {...stylex.props(iconSize)} />
 				{hasLabel && button.label}
 			</motion.a>
 		)
@@ -265,8 +391,8 @@ export default function SocialButtons() {
 
 	return (
 		<HomeDraggableLayer cardKey='socialButtons' x={x} y={y} width={styles.width} height={styles.height}>
-			<div className='absolute max-sm:static' style={{ left: x, top: y }}>
-				<div className='absolute top-0 left-0 flex flex-row-reverse items-center gap-3 max-sm:static' style={{ width: styles.width }}>
+			<div {...stylex.props(sx.outer)} style={{ left: x, top: y }}>
+				<div {...stylex.props(sx.listRow)} style={{ width: styles.width }}>
 					{sortedButtons.map(button => renderButton(button))}
 				</div>
 			</div>

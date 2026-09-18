@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { AnimatePresence, motion, type MotionValue, type Variants, useMotionValueEvent } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Theme, Word } from '../types'
 import { buildWordGraphemeTimings } from '../lyrics/graphemeTiming'
 import { resolveThemeFontWeight } from '../fontStacks'
@@ -18,6 +19,46 @@ import type { ClassicWordVariantCustom } from './classicWordVariants'
 // active -> word is currently singing, drive the main glow/body/ripple here.
 // passed -> word already played, keep a bit of afterglow and drift so the line does not die too abruptly.
 type ClassicWordStatus = 'waiting' | 'active' | 'passed'
+
+/** 词块样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 词容器：行内块、以中心为变换原点、禁止换行 */
+	word: {
+		position: 'relative',
+		display: 'inline-block',
+		transformOrigin: 'center',
+		whiteSpace: 'nowrap',
+		willChange: 'transform'
+	},
+	/** 辉光层：绝对铺满、不响应指针、禁选中 */
+	glowLayer: {
+		position: 'absolute',
+		inset: 0,
+		display: 'block',
+		pointerEvents: 'none',
+		userSelect: 'none'
+	},
+	/** 文字主体层：相对定位浮在辉光之上 */
+	body: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'block'
+	},
+	/** 合唱涟漪：居中圆环，放大扩散后淡出 */
+	ripple: {
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		zIndex: 0,
+		aspectRatio: '1',
+		height: '150%',
+		translate: '-50% -50%',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		pointerEvents: 'none'
+	}
+})
 
 interface ClassicWordProps {
 	word: Word
@@ -87,8 +128,8 @@ const ClassicWord: React.FC<ClassicWordProps> = ({
 			variants={layoutVariants}
 			initial='waiting'
 			animate={status}
-			// Add `whitespace-nowrap` to prevent unexpected line breaks
-			className='relative inline-block origin-center whitespace-nowrap will-change-transform'
+			// 禁止词内换行，避免意外断行
+			className={stylex.props(sx.word).className}
 			style={{
 				fontSize,
 				fontWeight: resolveThemeFontWeight(theme, 700),
@@ -97,7 +138,7 @@ const ClassicWord: React.FC<ClassicWordProps> = ({
 				lineHeight: 1.22
 			}}>
 			{/* Glow Layer - Handles Text Shadow - Absolute Position */}
-			<span className='pointer-events-none absolute inset-0 block select-none' aria-hidden='true'>
+			<span {...stylex.props(sx.glowLayer)} aria-hidden='true'>
 				{graphemeTimings.length > 1 ? (
 					graphemeTimings.map((timing, index) => {
 						const graphemeCustom: ClassicWordVariantCustom = {
@@ -122,7 +163,7 @@ const ClassicWord: React.FC<ClassicWordProps> = ({
 			</span>
 
 			{/* Body Layer - Handles Color and Blur - Relative Position */}
-			<motion.span variants={bodyVariants} custom={wordCustom} className='relative z-10 block'>
+			<motion.span variants={bodyVariants} custom={wordCustom} {...stylex.props(sx.body)}>
 				{word.text}
 			</motion.span>
 
@@ -131,7 +172,7 @@ const ClassicWord: React.FC<ClassicWordProps> = ({
 				{isChorus && status === 'active' && (
 					<motion.span
 						key='ripple'
-						className='pointer-events-none absolute top-1/2 left-1/2 z-0 aspect-square h-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full border-1'
+						className={stylex.props(sx.ripple).className}
 						style={{ borderColor: activeColor, filter: 'blur(1px)' }}
 						initial={{ scale: 0.2, opacity: 0.8 }}
 						animate={{ scale: rippleScale, opacity: 0 }}

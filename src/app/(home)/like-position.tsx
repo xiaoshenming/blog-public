@@ -4,6 +4,23 @@ import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { HomeDraggableLayer } from './home-draggable-layer'
+import * as stylex from '@stylexjs/stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 定位容器：绝对定位；小屏改静态（坐标保留内联 style） */
+	layer: {
+		position: 'absolute',
+		'@media (width < 40rem)': {
+			position: 'static'
+		}
+	},
+	/** 雪花装饰：绝对定位、不响应指针事件（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	}
+})
 
 export default function LikePosition() {
 	const center = useCenterStore()
@@ -26,13 +43,13 @@ export default function LikePosition() {
 
 	return (
 		<HomeDraggableLayer cardKey='likePosition' x={x} y={y} width={styles.width} height={styles.height}>
-			<div className='absolute max-sm:static' style={{ left: x, top: y }}>
+			<div {...stylex.props(sx.layer)} style={{ left: x, top: y }}>
 				{enableChristmas && (
 					<>
 						<img
 							src='/images/christmas/snow-13.webp'
 							alt='Christmas decoration'
-							className='pointer-events-none absolute'
+							{...stylex.props(sx.snow)}
 							style={{ width: 40, left: -4, top: -4, opacity: 0.9 }}
 						/>
 					</>

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { AnimatePresence, motion, type MotionValue, useSpring, useTransform } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { Line, SubtitleContentMode, Theme } from './types'
 import { resolveThemeFontWeight, resolveThemeTranslationFontStack } from './fontStacks'
 import { resolveLyricAlternateText, resolveSubtitleContentMode } from './lyrics/alternateText'
@@ -18,8 +19,6 @@ import { colorWithAlpha } from './colorMix'
 // reach the shared bottom subtitle in any visualizer mode.
 const hasReadableText = (text?: string | null): boolean => !!text && /[\p{L}\p{N}]/u.test(text)
 
-export const getUpcomingLyricsClassName = (blur = true): string => `truncate max-w-2xl mx-auto transition-all duration-500${blur ? ' blur-[1px]' : ''}`
-
 // Upstream read these from the player's bottom-bar layout (usePlayerSubtitleBottomPx): a shared
 // baseline the user could raise, plus clearance for the control capsule. The blog has no such bar,
 // so the geometry is fixed at upstream's defaults; only the "controls hidden" transition survives.
@@ -28,6 +27,69 @@ export const getUpcomingLyricsClassName = (blur = true): string => `truncate max
 const SUBTITLE_BASE_BOTTOM_PX = 32
 const SUBTITLE_CONTROL_BAR_CLEARANCE_PX = 96
 const SUBTITLE_PRESENCE_SPRING = { stiffness: 280, damping: 28 } as const
+
+/** 字幕层样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 底部容器：横向铺满、居中（bottom 由 MotionValue 内联驱动） */
+	overlay: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		zIndex: 20,
+		paddingInline: 16,
+		textAlign: 'center',
+		pointerEvents: 'none'
+	},
+	/** 内容块：行内块 */
+	content: {
+		display: 'inline-block'
+	},
+	/** 背景开启时：内边距 + 独立层叠 */
+	contentPadded: {
+		position: 'relative',
+		isolation: 'isolate',
+		paddingInline: 6,
+		paddingBlock: 2
+	},
+	/** 辉光底：向外扩两圈后大幅模糊 */
+	glow: {
+		position: 'absolute',
+		inset: '-24px -40px',
+		zIndex: 0,
+		filter: 'blur(40px)',
+		pointerEvents: 'none'
+	},
+	/** 译文行：相对定位、宽上限、水平居中 */
+	translation: {
+		position: 'relative',
+		zIndex: 10,
+		maxWidth: 896,
+		marginInline: 'auto'
+	},
+	/** 待唱行列表：纵向排布、行距 8（动态条数用 gap 等效原相邻子块外边距） */
+	upcomingList: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8
+	},
+	/** 待唱行：单行省略、宽上限、居中；过渡时长按实测默认 150ms */
+	upcoming: {
+		maxWidth: 672,
+		marginInline: 'auto',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		transitionProperty: 'all',
+		transitionDuration: '.15s',
+		transitionTimingFunction: 'cubic-bezier(.4, 0, .2, 1)'
+	},
+	/** 待唱行模糊 */
+	upcomingBlur: {
+		filter: 'blur(1px)'
+	}
+})
 
 const useSubtitleBottomPx = (isPlayerChromeHidden: boolean): MotionValue<number> => {
 	const controlBarPresence = useSpring(isPlayerChromeHidden ? 0 : 1, SUBTITLE_PRESENCE_SPRING)
@@ -123,7 +185,6 @@ const VisualizerSubtitleOverlay: React.FC<VisualizerSubtitleOverlayProps> = ({
 	const resolvedOpacity = subtitleOverlayOpacity ?? opacity
 	const scaleFontSize = (fontSize: string) =>
 		fontSize.replace(/(-?\d*\.?\d+)(rem|vw|px)/g, (_match, value, unit) => `${(Number(value) * subtitleFontScale).toFixed(3)}${unit}`)
-	const contentClassName = subtitleOverlayBackground ? 'relative isolate inline-block px-1.5 py-0.5' : 'inline-block'
 	// iOS Safari may drop a filtered negative layer when a nearby WebKit mask is recomposited.
 	const subtitleGlowStyle = subtitleOverlayBackground
 		? {
@@ -149,11 +210,11 @@ const VisualizerSubtitleOverlay: React.FC<VisualizerSubtitleOverlayProps> = ({
 					// bottom 由 MotionValue 直接驱动，跟着底部基线走。
 					// 不要改回 transform：这一层下面压着 blur 辉光，多一个合成层就会变色。
 					style={{ bottom: subtitleBottomPx }}
-					className='pointer-events-none absolute right-0 left-0 z-20 space-y-2 px-4 text-center'>
+					className={stylex.props(sx.overlay).className}>
 					{subtitleText ? (
-						<div className={contentClassName}>
+						<div className={stylex.props(sx.content, subtitleOverlayBackground && sx.contentPadded).className}>
 							{subtitleOverlayBackground && (
-								<div aria-hidden='true' className='pointer-events-none absolute -inset-x-10 -inset-y-6 z-0 blur-2xl' style={subtitleGlowStyle} />
+								<div aria-hidden='true' className={stylex.props(sx.glow).className} style={subtitleGlowStyle} />
 							)}
 							<motion.div
 								key={`trans-${activeLine?.startTime || recentCompletedLine?.startTime}`}
@@ -161,7 +222,7 @@ const VisualizerSubtitleOverlay: React.FC<VisualizerSubtitleOverlayProps> = ({
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0 }}
 								data-font-debug-target='visualizer-translation'
-								className='relative z-10 mx-auto max-w-4xl'
+								className={stylex.props(sx.translation).className}
 								style={{
 									color: theme.secondaryColor,
 									fontSize: scaleFontSize(translationFontSize),
@@ -173,15 +234,15 @@ const VisualizerSubtitleOverlay: React.FC<VisualizerSubtitleOverlayProps> = ({
 							</motion.div>
 						</div>
 					) : activeLine && upcomingLines.length > 0 ? (
-						<div className={`${contentClassName} space-y-2`}>
+						<div className={stylex.props(sx.content, subtitleOverlayBackground && sx.contentPadded).className}>
 							{subtitleOverlayBackground && (
-								<div aria-hidden='true' className='pointer-events-none absolute -inset-x-10 -inset-y-6 z-0 blur-2xl' style={subtitleGlowStyle} />
+								<div aria-hidden='true' className={stylex.props(sx.glow).className} style={subtitleGlowStyle} />
 							)}
-							<div className='relative z-10 space-y-2'>
+							<div className={stylex.props(sx.upcomingList).className}>
 								{upcomingLines.map((line, index) => (
 									<p
 										key={index}
-										className={getUpcomingLyricsClassName(subtitleUpcomingLyricsBlur)}
+										className={stylex.props(sx.upcoming, subtitleUpcomingLyricsBlur && sx.upcomingBlur).className}
 										style={{
 											color: theme.secondaryColor,
 											fontSize: scaleFontSize(upcomingFontSize),

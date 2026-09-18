@@ -2,7 +2,9 @@
 
 import React, { useMemo, useRef } from 'react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { Hourglass } from 'lucide-react'
+import { colors } from '@/styles/tokens.stylex'
 import { buildFumeBackgroundScene } from '../FumeBackground'
 import { getRecentCompletedLine, getUpcomingLines } from '../runtime'
 import VisualizerShell from '../VisualizerShell'
@@ -24,6 +26,86 @@ import { useFumeViewport } from './useFumeViewport'
 // pipeline together: it derives the tuning/layout inputs, builds the article layout, hands the
 // canvas + camera + painting to useFumeFrame, and renders the shell, the layout-pending card and
 // the shared subtitle overlay around it.
+
+/** 脉冲关键帧：2s 无限循环、中点淡出 */
+const pulse = stylex.keyframes({
+	'50%': { opacity: 0.5 }
+})
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 视口容器：铺满舞台、不拦截指针 */
+	viewport: {
+		pointerEvents: 'none',
+		position: 'relative',
+		zIndex: 10,
+		height: '100%',
+		width: '100%'
+	},
+	/** 文章画布包裹层：顶部居中（尺寸保留内联） */
+	articleWrap: {
+		position: 'absolute',
+		top: 0,
+		left: '50%',
+		translate: '-50%'
+	},
+	/** 文章画布：铺满包裹层 */
+	canvas: {
+		position: 'absolute',
+		inset: 0,
+		height: '100%',
+		width: '100%'
+	},
+	/** 排版等待遮罩：居中铺满 */
+	pendingOverlay: {
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	/** 等待卡片：纵向居中、圆角描边（配色保留内联） */
+	pendingCard: {
+		display: 'flex',
+		minWidth: 160,
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: 16,
+		borderRadius: 24,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 24,
+		paddingBlock: 20
+	},
+	/** 脉冲动画：2s 无限循环、中点淡出 */
+	pulse: {
+		animationName: pulse,
+		animationDuration: '2s',
+		animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)',
+		animationIterationCount: 'infinite'
+	},
+	/** 骨架条容器：固定宽度纵向排列 */
+	barColumn: {
+		display: 'flex',
+		width: 112,
+		flexDirection: 'column',
+		gap: 10
+	},
+	/** 骨架条：短圆条 */
+	bar: {
+		height: 8,
+		borderRadius: 9999
+	},
+	/** 骨架条宽度变体 */
+	barWide: {
+		width: '78%'
+	},
+	barNarrow: {
+		width: '56%'
+	}
+})
+
 const VisualizerFume: React.FC<VisualizerProps> = props => {
 	const {
 		currentTime,
@@ -180,7 +262,7 @@ const VisualizerFume: React.FC<VisualizerProps> = props => {
 					}
 				}
 			}}>
-			<div ref={viewportRef} className='pointer-events-none relative z-10 h-full w-full'>
+			<div ref={viewportRef} {...stylex.props(styles.viewport)}>
 				{(article || lines.length === 0) && (
 					<motion.div
 						initial={false}
@@ -189,29 +271,29 @@ const VisualizerFume: React.FC<VisualizerProps> = props => {
 							scale: article && showText ? (hasPrintedContent ? 1 : 0.985) : 1
 						}}
 						transition={{ duration: 0.45, ease: 'easeOut' }}
-						className='absolute top-0 left-1/2 -translate-x-1/2'
+						{...stylex.props(styles.articleWrap)}
 						style={{
 							width: viewport.width,
 							height: viewport.height
 						}}>
-						<canvas ref={canvasRef} className='absolute inset-0 h-full w-full' />
+						<canvas ref={canvasRef} {...stylex.props(styles.canvas)} />
 					</motion.div>
 				)}
 
 				{isLayoutPending && (
-					<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='absolute inset-0 flex items-center justify-center'>
+					<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} {...stylex.props(styles.pendingOverlay)}>
 						<div
-							className='flex min-w-40 flex-col items-center gap-4 rounded-3xl border px-6 py-5'
+							{...stylex.props(styles.pendingCard)}
 							style={{
 								backgroundColor: theme.backgroundColor,
 								borderColor: colorWithAlpha(theme.secondaryColor, 0.24),
 								boxShadow: `0 18px 60px ${colorWithAlpha(theme.backgroundColor, 0.52)}`
 							}}>
-							<Hourglass size={24} className='animate-pulse' style={{ color: colorWithAlpha(theme.primaryColor, 0.78) }} />
-							<div className='flex w-28 flex-col gap-2.5'>
-								<div className='h-2 animate-pulse rounded-full' style={{ backgroundColor: colorWithAlpha(theme.primaryColor, 0.32) }} />
-								<div className='h-2 w-[78%] animate-pulse rounded-full' style={{ backgroundColor: colorWithAlpha(theme.primaryColor, 0.22) }} />
-								<div className='h-2 w-[56%] animate-pulse rounded-full' style={{ backgroundColor: colorWithAlpha(theme.secondaryColor, 0.2) }} />
+							<Hourglass size={24} {...stylex.props(styles.pulse)} style={{ color: colorWithAlpha(theme.primaryColor, 0.78) }} />
+							<div {...stylex.props(styles.barColumn)}>
+								<div {...stylex.props(styles.bar, styles.pulse)} style={{ backgroundColor: colorWithAlpha(theme.primaryColor, 0.32) }} />
+								<div {...stylex.props(styles.bar, styles.pulse, styles.barWide)} style={{ backgroundColor: colorWithAlpha(theme.primaryColor, 0.22) }} />
+								<div {...stylex.props(styles.bar, styles.pulse, styles.barNarrow)} style={{ backgroundColor: colorWithAlpha(theme.secondaryColor, 0.2) }} />
 							</div>
 						</div>
 					</motion.div>

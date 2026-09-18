@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import type { VisualizerSharedProps } from '../definition'
 import { useVisualizerRuntime } from '../runtime'
 import { getLineRenderEndTime } from '../lyrics/renderHints'
@@ -24,6 +25,61 @@ type VisualizerProps = VisualizerSharedProps
 // Upstream rendered t('ui.waitingForMusic') here, and every upstream locale (en / zh-CN / in) defines
 // that key as an empty string: the empty-state block still mounts and fades, it just carries no text.
 const WAITING_FOR_MUSIC_LABEL = ''
+
+/** 模式样式（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 主歌词区：占 70vh、四向居中，供浮动动画驱动 */
+	stage: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		height: '70vh',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 32,
+		willChange: 'transform',
+		pointerEvents: 'none'
+	},
+	/** 行容器：可换行、内容整体居中（主轴/交叉轴由行配置决定） */
+	lineBox: {
+		display: 'flex',
+		width: '100%',
+		maxWidth: 1152,
+		flexWrap: 'wrap',
+		alignContent: 'center'
+	},
+	justifyStart: { justifyContent: 'flex-start' },
+	justifyCenter: { justifyContent: 'center' },
+	justifyEnd: { justifyContent: 'flex-end' },
+	justifyAround: { justifyContent: 'space-around' },
+	justifyBetween: { justifyContent: 'space-between' },
+	alignItemsStart: { alignItems: 'flex-start' },
+	alignItemsCenter: { alignItems: 'center' },
+	alignItemsEnd: { alignItems: 'flex-end' },
+	/** 空态提示：绝对定位、半透明（字号类值兜底，实际由内联样式覆盖） */
+	empty: {
+		position: 'absolute',
+		fontSize: '1.5rem',
+		lineHeight: 1.3333,
+		opacity: 0.5
+	}
+})
+
+type LayoutStyle = (typeof sx)[keyof typeof sx]
+/** 行布局类名 → 样式（classicWordLayout 仍返回原类名；未知值不产出样式） */
+const justifyByClass: Record<string, LayoutStyle> = {
+	'justify-start': sx.justifyStart,
+	'justify-center': sx.justifyCenter,
+	'justify-end': sx.justifyEnd,
+	'justify-around': sx.justifyAround,
+	'justify-between': sx.justifyBetween
+}
+const alignItemsByClass: Record<string, LayoutStyle> = {
+	'items-start': sx.alignItemsStart,
+	'items-center': sx.alignItemsCenter,
+	'items-end': sx.alignItemsEnd
+}
 
 const Visualizer: React.FC<VisualizerProps> = props => {
 	const {
@@ -122,7 +178,7 @@ const Visualizer: React.FC<VisualizerProps> = props => {
 		<VisualizerShell theme={theme} audioPower={audioPower} audioBands={audioBands} sharedProps={props}>
 			{/* Main Container */}
 			<motion.div
-				className='pointer-events-none relative z-10 flex h-[70vh] w-full items-center justify-center p-8 will-change-transform'
+				{...stylex.props(sx.stage)}
 				animate={lyricContainerFloat?.animate}
 				transition={lyricContainerFloat?.transition}>
 				<AnimatePresence mode='popLayout'>
@@ -132,7 +188,7 @@ const Visualizer: React.FC<VisualizerProps> = props => {
 							initial={activeLineContainerMotion.initial}
 							animate={activeLineContainerMotion.animate}
 							exit={activeLineContainerMotion.exit}
-							className={`flex w-full max-w-6xl flex-wrap content-center ${lineConfig.justifyContent} ${lineConfig.alignItems}`}
+							className={stylex.props(sx.lineBox, justifyByClass[lineConfig.justifyContent], alignItemsByClass[lineConfig.alignItems]).className}
 							style={{ perspective: `${lineConfig.perspective}px`, minHeight: '300px' }}>
 							{displayWords.map((word, idx) => {
 								const config: WordLayoutConfig = wordConfigs[idx] || {
@@ -176,7 +232,7 @@ const Visualizer: React.FC<VisualizerProps> = props => {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className='absolute text-2xl opacity-50'
+							className={stylex.props(sx.empty).className}
 							style={{
 								color: theme.secondaryColor,
 								fontSize: emptyFontSize

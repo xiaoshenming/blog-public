@@ -5,8 +5,52 @@ import { useCenterStore } from '@/hooks/use-center'
 import { useLayoutEditStore } from './stores/layout-edit-store'
 import type { CardStyles } from './stores/config-store'
 import DraggerSVG from '@/svgs/dragger.svg'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 type CardKey = keyof CardStyles
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const sx = stylex.create({
+	/** 编辑遮罩：绝对定位、层级 40、虚线描边、品牌色淡染、可响应指针、拖拽光标、大圆角（坐标尺寸保留内联 style） */
+	editOverlay: {
+		position: 'absolute',
+		zIndex: 40,
+		pointerEvents: 'auto',
+		cursor: 'move',
+		borderRadius: 40,
+		borderWidth: 1,
+		borderStyle: 'dashed',
+		borderColor: 'color-mix(in oklab, var(--color-brand) 70%, transparent)',
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 5%, transparent)'
+	},
+	/** 遮罩内层：不响应指针、撑满容器 */
+	overlayInner: {
+		pointerEvents: 'none',
+		width: '100%',
+		height: '100%'
+	},
+	/** 缩放手柄：绝对定位右下、层级 50、右下各移 4、斜向缩放光标、悬停放大 */
+	resizeHandle: {
+		position: 'absolute',
+		right: 0,
+		bottom: 0,
+		zIndex: 50,
+		translate: '4px 4px',
+		cursor: 'nwse-resize',
+		'@media (hover: hover)': {
+			':hover': {
+				scale: '1.1'
+			}
+		}
+	},
+	/** 拖拽图标：品牌色、20×20 */
+	draggerIcon: {
+		width: 20,
+		height: 20,
+		color: colors.brand
+	}
+})
 
 interface HomeDraggableLayerProps {
 	cardKey: CardKey
@@ -217,17 +261,17 @@ export function HomeDraggableLayer({ cardKey, x, y, width, height, children }: H
 		<>
 			{editing && (
 				<div
-					className='border-brand/70 bg-brand/5 pointer-events-auto absolute z-40 cursor-move rounded-[40px] border border-dashed'
+					{...stylex.props(sx.editOverlay)}
 					style={{ left: x, top: y, width, height }}
 					onMouseDown={handleMouseDown}
 					onTouchStart={handleTouchStart}>
-					<div className='pointer-events-none h-full w-full' />
+					<div {...stylex.props(sx.overlayInner)} />
 					{canResize && (
 						<div
-							className='absolute right-0 bottom-0 z-50 translate-x-1 translate-y-1 cursor-nwse-resize hover:scale-110'
+							{...stylex.props(sx.resizeHandle)}
 							onMouseDown={handleResizeMouseDown}
 							onTouchStart={handleResizeTouchStart}>
-							<DraggerSVG className='text-brand size-5' />
+							<DraggerSVG {...stylex.props(sx.draggerIcon)} />
 						</div>
 					)}
 				</div>

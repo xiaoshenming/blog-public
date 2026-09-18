@@ -6,6 +6,199 @@ import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '../music-store'
 import { VISUALIZER_REGISTRY } from '../visualizer/registry'
 import type { VisualizerMode } from '../visualizer/types'
+import { cn } from '@/lib/utils'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 操作层：铺满全屏、上下分布；默认整体不挡指针，可见时由 interactive 打开 */
+	root: {
+		position: 'absolute',
+		inset: 0,
+		zIndex: 40,
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		padding: 20,
+		pointerEvents: 'none',
+		'@media (width >= 40rem)': {
+			padding: 28
+		}
+	},
+	/** 可见时恢复可交互 */
+	interactive: {
+		pointerEvents: 'auto'
+	},
+	/** 顶行：关闭与模式选择分居两端 */
+	topRow: {
+		display: 'flex',
+		alignItems: 'flex-start',
+		justifyContent: 'space-between',
+		gap: 16
+	},
+	/** 圆形毛玻璃钮（关闭） */
+	closeBtn: {
+		display: 'flex',
+		height: 40,
+		width: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		backgroundColor: 'rgb(255 255 255 / 10%)',
+		color: 'rgb(255 255 255 / 80%)',
+		backdropFilter: 'blur(12px)',
+		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 20%)'
+			}
+		}
+	},
+	/** 中号图标 */
+	iconMd: {
+		height: 20,
+		width: 20
+	},
+	/** 模式选择胶囊 */
+	modeBar: {
+		display: 'flex',
+		maxWidth: '70vw',
+		alignItems: 'center',
+		gap: 4,
+		borderRadius: 9999,
+		backgroundColor: 'rgb(255 255 255 / 10%)',
+		padding: 4,
+		backdropFilter: 'blur(12px)'
+	},
+	/** 左右箭头钮 */
+	arrowBtn: {
+		padding: 6,
+		borderRadius: 9999,
+		color: 'rgb(255 255 255 / 70%)',
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.white
+			}
+		}
+	},
+	/** 小号图标 */
+	iconSm: {
+		height: 16,
+		width: 16
+	},
+	/** 模式列表：横向滚动（scrollbar-none 保留全局类） */
+	modeScroll: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 4,
+		overflowX: 'auto'
+	},
+	/** 模式钮：小胶囊，全属性过渡 */
+	modeBtn: {
+		flexShrink: 0,
+		borderRadius: 9999,
+		paddingInline: 12,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 当前模式：白底黑字 */
+	modeActive: {
+		backgroundColor: colors.white,
+		color: '#000'
+	},
+	/** 其他模式：浅字，悬停提亮 */
+	modeIdle: {
+		color: 'rgb(255 255 255 / 70%)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 10%)',
+				color: colors.white
+			}
+		}
+	},
+	/** 底列 */
+	bottomRow: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: 12
+	},
+	/** 迷你播控胶囊 */
+	playBar: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 16,
+		borderRadius: 9999,
+		backgroundColor: 'rgb(255 255 255 / 10%)',
+		paddingInline: 20,
+		paddingBlock: 10,
+		backdropFilter: 'blur(12px)'
+	},
+	/** 曲目信息（小屏隐藏） */
+	trackInfo: {
+		display: 'none',
+		maxWidth: 200,
+		minWidth: 0,
+		'@media (width >= 40rem)': {
+			display: 'block'
+		}
+	},
+	trackName: {
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		color: colors.white
+	},
+	trackArtist: {
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 12,
+		lineHeight: '16px',
+		color: 'rgb(255 255 255 / 60%)'
+	},
+	/** 切歌钮 */
+	skipBtn: {
+		padding: 6,
+		borderRadius: 9999,
+		color: 'rgb(255 255 255 / 80%)',
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.white
+			}
+		}
+	},
+	/** 播放钮：白色实心圆 */
+	playBtn: {
+		display: 'flex',
+		height: 44,
+		width: 44,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		backgroundColor: colors.white,
+		color: '#000',
+		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)'
+	},
+	/** 播放三角的视觉补偿 */
+	playIcon: {
+		marginLeft: 2
+	},
+	/** 底部提示 */
+	hint: {
+		fontSize: 11,
+		color: 'rgb(255 255 255 / 40%)'
+	}
+})
 
 interface VisualizerChromeProps {
 	visible: boolean
@@ -35,36 +228,38 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 		}))
 	)
 
+	const { className: modeScrollClassName } = stylex.props(styles.modeScroll)
+
 	return (
 		<motion.div
 			initial={false}
 			animate={{ opacity: visible ? 1 : 0 }}
 			transition={{ duration: 0.3 }}
-			className='pointer-events-none absolute inset-0 z-40 flex flex-col justify-between p-5 sm:p-7'>
-			<div className='flex items-start justify-between gap-4'>
+			{...stylex.props(styles.root)}>
+			<div {...stylex.props(styles.topRow)}>
 				<button
 					type='button'
 					aria-label='退出沉浸歌词'
 					onClick={onClose}
-					className={`${visible ? 'pointer-events-auto' : ''} flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/80 backdrop-blur-md transition hover:bg-white/20`}>
-					<X className='h-5 w-5' />
+					{...stylex.props(styles.closeBtn, visible && styles.interactive)}>
+					<X {...stylex.props(styles.iconMd)} />
 				</button>
-				<div className={`${visible ? 'pointer-events-auto' : ''} flex max-w-[70vw] items-center gap-1 rounded-full bg-white/10 p-1 backdrop-blur-md`}>
+				<div {...stylex.props(styles.modeBar, visible && styles.interactive)}>
 					<button
 						type='button'
 						aria-label='上一个动效'
 						onClick={() => onSelectMode(stepVisualizerMode(mode, -1))}
-						className='rounded-full p-1.5 text-white/70 hover:text-white'>
-						<ChevronLeft className='h-4 w-4' />
+						{...stylex.props(styles.arrowBtn)}>
+						<ChevronLeft {...stylex.props(styles.iconSm)} />
 					</button>
-					<div className='scrollbar-none flex items-center gap-1 overflow-x-auto'>
+					<div className={cn(modeScrollClassName, 'scrollbar-none')}>
 						{VISUALIZER_REGISTRY.map(entry => (
 							<button
 								key={entry.mode}
 								type='button'
 								aria-pressed={entry.mode === mode}
 								onClick={() => onSelectMode(entry.mode)}
-								className={`shrink-0 rounded-full px-3 py-1 text-xs transition ${entry.mode === mode ? 'bg-white text-black' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}>
+								{...stylex.props(styles.modeBtn, entry.mode === mode ? styles.modeActive : styles.modeIdle)}>
 								{entry.label}
 							</button>
 						))}
@@ -73,33 +268,33 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 						type='button'
 						aria-label='下一个动效'
 						onClick={() => onSelectMode(stepVisualizerMode(mode, 1))}
-						className='rounded-full p-1.5 text-white/70 hover:text-white'>
-						<ChevronRight className='h-4 w-4' />
+						{...stylex.props(styles.arrowBtn)}>
+						<ChevronRight {...stylex.props(styles.iconSm)} />
 					</button>
 				</div>
 			</div>
 
-			<div className='flex flex-col items-center gap-3'>
-				<div className={`${visible ? 'pointer-events-auto' : ''} flex items-center gap-4 rounded-full bg-white/10 px-5 py-2.5 backdrop-blur-md`}>
-					<div className='hidden max-w-[200px] min-w-0 sm:block'>
-						<div className='truncate text-sm font-medium text-white'>{track?.name || '音乐播放器'}</div>
-						<div className='truncate text-xs text-white/60'>{track?.artist}</div>
+			<div {...stylex.props(styles.bottomRow)}>
+				<div {...stylex.props(styles.playBar, visible && styles.interactive)}>
+					<div {...stylex.props(styles.trackInfo)}>
+						<div {...stylex.props(styles.trackName)}>{track?.name || '音乐播放器'}</div>
+						<div {...stylex.props(styles.trackArtist)}>{track?.artist}</div>
 					</div>
-					<button type='button' aria-label='上一首' onClick={playPrevious} className='rounded-full p-1.5 text-white/80 hover:text-white'>
-						<SkipBack className='h-5 w-5' fill='currentColor' />
+					<button type='button' aria-label='上一首' onClick={playPrevious} {...stylex.props(styles.skipBtn)}>
+						<SkipBack {...stylex.props(styles.iconMd)} fill='currentColor' />
 					</button>
 					<button
 						type='button'
 						aria-label={isPlaying ? '暂停' : '播放'}
 						onClick={togglePlay}
-						className='flex h-11 w-11 items-center justify-center rounded-full bg-white text-black shadow-lg'>
-						{isPlaying ? <Pause className='h-5 w-5' fill='currentColor' /> : <Play className='ml-0.5 h-5 w-5' fill='currentColor' />}
+						{...stylex.props(styles.playBtn)}>
+						{isPlaying ? <Pause {...stylex.props(styles.iconMd)} fill='currentColor' /> : <Play {...stylex.props(styles.iconMd, styles.playIcon)} fill='currentColor' />}
 					</button>
-					<button type='button' aria-label='下一首' onClick={playNext} className='rounded-full p-1.5 text-white/80 hover:text-white'>
-						<SkipForward className='h-5 w-5' fill='currentColor' />
+					<button type='button' aria-label='下一首' onClick={playNext} {...stylex.props(styles.skipBtn)}>
+						<SkipForward {...stylex.props(styles.iconMd)} fill='currentColor' />
 					</button>
 				</div>
-				<p className='text-[11px] text-white/40'>Esc 退出 · ← / → 切换动效 · 歌词动效移植自 Folia</p>
+				<p {...stylex.props(styles.hint)}>Esc 退出 · ← / → 切换动效 · 歌词动效移植自 Folia</p>
 			</div>
 		</motion.div>
 	)

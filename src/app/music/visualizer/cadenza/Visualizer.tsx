@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { type VisualizerSharedProps } from '../definition'
 import { getLineRenderEndTime } from '../lyrics/renderHints'
 import { prepareActiveAndUpcoming, useVisualizerRuntime } from '../runtime'
@@ -21,6 +22,52 @@ type VisualizerProps = VisualizerSharedProps
 // Upstream rendered `t('ui.waitingForMusic')` here; every upstream locale defines that key as an
 // empty string, so the idle state is an invisible placeholder. Kept identical.
 const WAITING_FOR_MUSIC_TEXT = ''
+
+/** 迁移自 Tailwind 的静态样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 单行歌词层：铺满容器、不拦截指针 */
+	lineLayer: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		zIndex: 10
+	},
+	/** 逐字动画层：铺满且禁止选中 */
+	wordOverlay: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		height: '100%',
+		width: '100%',
+		userSelect: 'none'
+	},
+	/** 文字画布：铺满文字层 */
+	textCanvas: {
+		position: 'absolute',
+		inset: 0,
+		height: '100%',
+		width: '100%'
+	},
+	/** 舞台：七成视口高、内容居中 */
+	stage: {
+		pointerEvents: 'none',
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		height: '70vh',
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 32
+	},
+	/** 空场占位：绝对定位、半透明（字号与颜色保留内联） */
+	emptyText: {
+		position: 'absolute',
+		fontSize: 24,
+		lineHeight: '32px',
+		opacity: 0.5
+	}
+})
 
 const VisualizerCadenza: React.FC<VisualizerProps> = props => {
 	const {
@@ -200,7 +247,7 @@ const VisualizerCadenza: React.FC<VisualizerProps> = props => {
 		<VisualizerShell ref={containerRef} theme={theme} audioPower={audioPower} audioBands={audioBands} sharedProps={props}>
 			<div
 				ref={lineLayerRef}
-				className='pointer-events-none absolute inset-0 z-10'
+				{...stylex.props(styles.lineLayer)}
 				style={{
 					opacity: 0,
 					filter: 'none',
@@ -208,11 +255,11 @@ const VisualizerCadenza: React.FC<VisualizerProps> = props => {
 					transformOrigin: '50% 42%',
 					perspective: '1000px'
 				}}>
-				<div ref={overlayRef} className='pointer-events-none absolute inset-0 h-full w-full select-none' />
-				<canvas ref={textCanvasRef} className='absolute inset-0 h-full w-full' />
+				<div ref={overlayRef} {...stylex.props(styles.wordOverlay)} />
+				<canvas ref={textCanvasRef} {...stylex.props(styles.textCanvas)} />
 			</div>
 
-			<div className='pointer-events-none relative z-10 flex h-[70vh] w-full items-center justify-center p-8'>
+			<div {...stylex.props(styles.stage)}>
 				<AnimatePresence mode='wait'>
 					{showText && !activeLine && (
 						<motion.div
@@ -220,7 +267,7 @@ const VisualizerCadenza: React.FC<VisualizerProps> = props => {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className='absolute text-2xl opacity-50'
+							{...stylex.props(styles.emptyText)}
 							style={{
 								color: theme.secondaryColor,
 								fontSize: emptyFontSize
