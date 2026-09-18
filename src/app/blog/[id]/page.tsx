@@ -1,0 +1,139 @@
+'use client'
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
+import { motion } from 'motion/react'
+import { BlogPreview } from '@/components/blog-preview'
+import { loadBlog, type BlogConfig } from '@/lib/load-blog'
+import { useReadArticles } from '@/hooks/use-read-articles'
+import LiquidGrass from '@/components/liquid-grass'
+import PretextDemo, { type PretextDemoHandle } from '@/components/pretext-demo'
+import DragonEscape from '@/components/pretext-demo/dragon-escape'
+import type { Creature } from '@/components/pretext-demo/creature'
+import '@/styles/dragon-burn.css'
+
+export default function Page() {
+	const params = useParams() as { id?: string | string[] }
+	const slug = Array.isArray(params?.id) ? params.id[0] : params?.id || ''
+	const router = useRouter()
+	const { markAsRead } = useReadArticles()
+	const pretextRef = useRef<PretextDemoHandle>(null)
+	const proseRef = useRef<HTMLDivElement>(null)
+	const [escapedDragon, setEscapedDragon] = useState<{ dragon: Creature; rect: DOMRect } | null>(null)
+	const [dragonCaptured, setDragonCaptured] = useState(false)
+
+	const isPretext = slug === 'pretext-text-layout-magic'
+
+	// 5 minute timer to trigger dragon escape (change to 5000 for dev testing)
+	const ESCAPE_DELAY = 5000
+	useEffect(() => {
+		if (!isPretext) return
+		const timer = setTimeout(() => {
+			pretextRef.current?.triggerEscape()
+		}, ESCAPE_DELAY)
+		return () => clearTimeout(timer)
+	}, [isPretext])
+
+	const handleEscape = useCallback((dragon: Creature, canvasRect: DOMRect) => {
+		setEscapedDragon({ dragon, rect: canvasRect })
+	}, [])
+
+	const handleCaptured = useCallback(() => {
+		setEscapedDragon(null)
+		setDragonCaptured(true)
+	}, [])
+
+	const [blog, setBlog] = useState<{ config: BlogConfig; markdown: string; cover?: string } | null>(null)
+	const [error, setError] = useState<string | null>(null)
+	const [loading, setLoading] = useState<boolean>(true)
+
+	useEffect(() => {
+		let cancelled = false
+		async function run() {
+			if (!slug) return
+			try {
+				setLoading(true)
+				const blogData = await loadBlog(slug)
+
+				if (!cancelled) {
+					setBlog(blogData)
+					setError(null)
+					markAsRead(slug)
+				}
+			} catch (e: any) {
+				if (!cancelled) setError(e?.message || '加载失败')
+			} finally {
+				if (!cancelled) setLoading(false)
+			}
+		}
+		run()
+		return () => {
+			cancelled = true
+		}
+	}, [slug, markAsRead])
+
+	const title = useMemo(() => (blog?.config.title ? blog.config.title : slug), [blog?.config.title, slug])
+	const date = useMemo(() => dayjs(blog?.config.date).format('YYYY年 M月 D日'), [blog?.config.date])
+	const tags = blog?.config.tags || []
+
+	const handleEdit = () => {
+		router.push(`/write/${slug}`)
+	}
+
+	if (!slug) {
+		return <div className='text-secondary flex h-full items-center justify-center text-sm'>无效的链接</div>
+	}
+
+	if (loading) {
+		return <div className='text-secondary flex h-full items-center justify-center text-sm'>加载中...</div>
+	}
+
+	if (error) {
+		return <div className='flex h-full items-center justify-center text-sm text-red-500'>{error}</div>
+	}
+
+	if (!blog) {
+		return <div className='text-secondary flex h-full items-center justify-center text-sm'>文章不存在</div>
+	}
+
+	return (
+		<>
+			{isPretext && (
+				<div className='mx-auto max-w-[1140px] px-6 pt-28 pb-0 max-sm:px-2'>
+					<PretextDemo ref={pretextRef} onEscape={handleEscape} captured={dragonCaptured} />
+				</div>
+			)}
+
+			<BlogPreview
+				markdown={blog.markdown}
+				title={title}
+				tags={tags}
+				date={date}
+				summary={blog.config.summary}
+				cover={blog.cover ? (blog.cover.startsWith('http') ? blog.cover : `${origin}${blog.cover}`) : undefined}
+				slug={slug}
+				proseRef={isPretext ? proseRef : undefined}
+			/>
+
+			<motion.button
+				initial={{ opacity: 0, scale: 0.6 }}
+				animate={{ opacity: 1, scale: 1 }}
+				onClick={handleEdit}
+				className='card-hover absolute top-4 right-6 rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80 max-sm:hidden'>
+				编辑
+			</motion.button>
+
+			{slug === 'liquid-grass' && <LiquidGrass />}
+
+			{escapedDragon && (
+				<DragonEscape
+					dragon={escapedDragon.dragon}
+					startPos={escapedDragon.rect}
+					proseRef={proseRef}
+					onCaptured={handleCaptured}
+				/>
+			)}
+		</>
+	)
+}

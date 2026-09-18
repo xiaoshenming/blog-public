@@ -1,0 +1,78 @@
+{
+	"meta": {
+		"title": "Xiaoming",
+		"description": "Xiaoming的个人博客，记录前端开发、探索、笔记。前端 UI 更新代码仓库。",
+		"username": "Xiaoming"
+	},
+	"theme": {
+		"colorBrand": "#de4331",
+		"colorPrimary": "#4E3F42",
+		"colorSecondary": "#7b888e",
+		"colorBrandSecondary": "#FCC841",
+		"colorBg": "#eeeeee",
+		"colorBorder": "#ffffff",
+		"colorCard": "#ffffff66",
+		"colorArticle": "#ffffffcc"
+	},
+	"font": "huiwenmincho",
+	"backgroundColors": [
+		"#FCC841",
+		"#DFEFFC",
+		"#DEDE92",
+		"#DE4331",
+		"#FE9750",
+		"#FCC841"
+	],
+	"artImages": [
+		{
+			"id": "cat",
+			"url": "/images/art/cat.png"
+		},
+		{
+			"id": "a46372ff45bc5524",
+			"url": "/images/art/a46372ff45bc5524.jpg"
+		}
+	],
+	"currentArtImageId": "a46372ff45bc5524",
+	"backgroundImages": [
+		{
+			"id": "",
+			"url": ""
+		},
+		{
+			"id": "61f1810af7ef89a8",
+			"url": "/images/background/61f1810af7ef89a8.png"
+		}
+	],
+	"currentBackgroundImageId": "",
+	"socialButtons": [
+		{
+			"id": "github",
+			"type": "github",
+			"value": "https://github.com/xiaoshenming",
+			"label": "Github",
+			"order": 3
+		},
+		{
+			"id": "juejin",
+			"type": "bilibili",
+			"value": "https://space.bilibili.com/424572043",
+			"label": "哔哩哔哩",
+			"order": 2
+		},
+		{
+			"id": "email",
+			"type": "email",
+			"value": "laomozuishuai@gmail.com",
+			"label": "",
+			"order": 1
+		}
+	],
+	"clockShowSeconds": true,
+	"summaryInContent": false,
+	"isCachePem": false,
+	"hideEditButton": false,
+	"enableCategories": true,
+	"currentHatIndex": 3,
+	"hatFlipped": false
+}

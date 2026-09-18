@@ -1,0 +1,84 @@
+[
+	{
+		"name": "OpenArcade · 午夜街机",
+		"year": 2026,
+		"description": "为她而建、也向所有人开放的可插拔微游戏厅。门户、宿主策略和游戏卡带完全分离，新游戏通过 SDK 接入，不接触宿主状态。已上线 30 款卡带，全部确定性生成、可重放、构造性可解。",
+		"image": "/images/project/openarcade.svg",
+		"url": "https://game.zmark.top/",
+		"tags": [
+			"React 19",
+			"TypeScript",
+			"游戏",
+			"SDK"
+		],
+		"github": "https://github.com/xiaoshenming/OpenArcade"
+	},
+	{
+		"name": "pptx-storyboard · 分镜成片",
+		"year": 2026,
+		"description": "把 PowerPoint 原生动画变成带讲解的视频：解析每页动画时间戳，自动切分镜、生成讲解词、神经语音配音，最后渲染出带字幕的 1080p 成片。全程本地运行，19 页课件实测 7 分钟成片。",
+		"image": "/images/project/pptx-storyboard.svg",
+		"url": "https://github.com/xiaoshenming/pptx-storyboard",
+		"tags": [
+			"PowerPoint",
+			"视频",
+			"神经语音",
+			"GPU"
+		],
+		"github": "https://github.com/xiaoshenming/pptx-storyboard"
+	},
+	{
+		"name": "dsh-session-surgeon",
+		"year": 2026,
+		"description": "DeepSeek Harness 会话急救插件：修好打不开的会话文件（seq 断档、zstd 损坏、孤立代理对），还能复制会话 ID 到新对话接着聊。也是我第一个攒到 star 的项目。",
+		"image": "/images/project/dsh-session-surgeon.svg",
+		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
+		"tags": [
+			"DeepSeek",
+			"DSH 插件",
+			"会话修复"
+		],
+		"github": "https://github.com/xiaoshenming/dsh-session-surgeon"
+	},
+	{
+		"name": "CC Switch Auth Converter",
+		"year": 2026,
+		"description": "纯静态单页工具，一个 index.html、零依赖、零构建。在浏览器本地把任意 Codex / ChatGPT 认证 JSON 转成 CC Switch 可导入的 auth.json，令牌不出设备。",
+		"image": "/images/project/ccswitch-auth-converter.svg",
+		"url": "https://ccswitch.zmark.top/",
+		"tags": [
+			"纯静态",
+			"零依赖",
+			"CC Switch",
+			"本地优先"
+		],
+		"github": "https://github.com/xiaoshenming/ccswitch-auth-converter"
+	},
+	{
+		"name": "我的博客",
+		"year": 2025,
+		"description": "你现在看的这个网站。基于开源博客项目 2025-blog 搭建，前端即后台：不写代码也能写作和管理内容。记录前端开发、探索和笔记。",
+		"image": "https://blog.zmark.top/favicon.png",
+		"url": "https://blog.zmark.top",
+		"tags": [
+			"Next.js 16",
+			"React 19",
+			"Tailwind 4"
+		],
+		"github": "https://github.com/xiaoshenming/blog-public"
+	},
+	{
+		"name": "multi-tool",
+		"year": 2026,
+		"description": "基于 niri + noctalia-shell 的 Linux 桌面多功能小工具，QML 编写。",
+		"image": "/images/project/multi-tool.svg",
+		"url": "https://github.com/xiaoshenming/multi-tool",
+		"tags": [
+			"QML",
+			"Wayland",
+			"niri",
+			"Linux"
+		],
+		"github": "https://github.com/xiaoshenming/multi-tool"
+	}
+]

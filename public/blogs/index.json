@@ -1,0 +1,167 @@
+[
+  {
+    "slug": "human-needs-idle",
+    "title": "人需要 Idle：写在离职之前",
+    "tags": [
+      "离职",
+      "AI",
+      "Agent",
+      "工作"
+    ],
+    "date": "2026-09-08",
+    "summary": "从四月到离职前，我一边把 AI 接进真实生产，一边慢慢明白：系统可以一直处理事件，人不应该。",
+    "cover": "/images/pictures/41c9e9b45e09d1fbf8c62050b5638051bccf9e93b3a5a55eefc9d0e862bf3347.webp",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "liuxiandong-night-after-work",
+    "title": "留仙洞的夜，灯火通明",
+    "tags": [
+      "深圳",
+      "留仙洞",
+      "工作",
+      "Agent"
+    ],
+    "date": "2026-07-24",
+    "summary": "聚餐后走进留仙洞的夜色，在灯火通明的写字楼和燥热空气里，看见深圳的班味，也得到一点项目稳步推进后的轻松。",
+    "cover": "/images/pictures/0e1629d39cbfdc893682c7f3e4157fc34bb3d69765c474bca02890ab7af83642.webp",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "birthday-in-shenzhen",
+    "title": "在深圳，补过一个属于自己的生日",
+    "tags": [
+      "生日",
+      "深圳",
+      "电影",
+      "生活记录"
+    ],
+    "date": "2026-07-19",
+    "summary": "在工作压力和陌生城市之间，用一顿晚餐、一段夜间散步和两场电影，补过一个迟来的生日。",
+    "cover": "/images/pictures/b3f987330d67ae38bda6466213bf9c146637235c0bebb3cbf3e6ed1771586111.webp",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "birthday-almost-forgotten",
+    "title": "差一点忘记了自己的生日",
+    "tags": [
+      "生日",
+      "生活记录",
+      "大学回忆"
+    ],
+    "date": "2026-07-17",
+    "summary": "忙到晚上十一点四十分才想起自己的生日，也借着翻找旧照片，重新看见大学里那些不算多却很重要的人。",
+    "cover": "/images/pictures/810c7a01103bde6fd8eccad2b5c5c548131a3acc6d07bed1f7a989322c31d51c.webp",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "pretext-text-layout-magic",
+    "title": "Pretext：让文字像水一样流动的黑魔法",
+    "tags": [
+      "pretext",
+      "文本布局",
+      "性能优化",
+      "开源"
+    ],
+    "date": "2026-04-01T12:00",
+    "summary": "一个 15KB 零依赖的库，让文本测量快了 300-600 倍。拖动飞龙！看文字实时环绕流动。",
+    "cover": "/blogs/pretext-text-layout-magic/cover.png",
+    "hidden": false,
+    "category": "开源"
+  },
+  {
+    "slug": "timezone-confusion-tonight-9pm",
+    "title": "海外客户说「今晚9点」，我差点原地爆炸",
+    "tags": [
+      "时区",
+      "踩坑",
+      "跨境协作"
+    ],
+    "date": "2026-03-17T10:00",
+    "summary": "当美国客户说「今晚9点」，你以为是中国晚上9点？不，那是中国早上9点！我10点上班9:45起床发现客户已经睡了...",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "aigc-rewrite-experience",
+    "title": "AI写作降重全攻略：从66.6%到8.5%的逆袭之路",
+    "tags": [
+      "AI降重",
+      "学术写作",
+      "经验分享",
+      "Claude"
+    ],
+    "date": "2026-03-16T22:00",
+    "summary": "从66.6%AI率到8.5%，我是如何用Claude Opus模型配合精心设计的提示词完成这场逆袭的",
+    "cover": "/blogs/aigc-rewrite-experience/a8f680e856071235.png",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "mirror-sources-guide-complete",
+    "title": "我跟镜像源不得不说的那些事",
+    "tags": [
+      "开发工具",
+      "镜像源",
+      "代理"
+    ],
+    "date": "2026-03-16T21:00",
+    "summary": "2026年最新方案！ArchLinux 用 Clash Verge + alias 别名，一行 px 命令让任意工具秒走代理",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "my-git-disaster-experience",
+    "title": "我的 Git 翻车日记：180 个文件错误提交的尴尬经历",
+    "tags": [
+      "Git",
+      "踩坑"
+    ],
+    "date": "2025-12-12T18:07",
+    "summary": "踩坑了家人们谁懂啊～",
+    "cover": "/blogs/my-git-disaster-experience/5460e741647ff76d.png",
+    "hidden": false,
+    "category": "总结"
+  },
+  {
+    "slug": "vuejs-capacitor-mobile-app-encapsulation",
+    "title": "Vue.js移动端封装只需要6步：装包→配置→编译→初始化→添加平台→同步",
+    "tags": [
+      "前端开发",
+      "Vue"
+    ],
+    "date": "2025-12-11T16:35",
+    "summary": "已有前端项目快速打包app！",
+    "cover": "/blogs/vuejs-capacitor-mobile-app-encapsulation/2e3d72a33d9dc100.webp",
+    "hidden": false,
+    "category": "代码实现"
+  },
+  {
+    "slug": "java-design-patterns-guide",
+    "title": "Java 开发中的设计原则与模式实战指南",
+    "tags": [
+      "后端开发",
+      "JAVA"
+    ],
+    "date": "2025-12-11T14:27",
+    "summary": "厌倦了一改就崩的代码？本文用最简单的方式讲解Java设计原则和模式，让你的代码更好维护。",
+    "hidden": false,
+    "category": "代码实现"
+  },
+  {
+    "slug": "liquid-grass",
+    "title": "好玩的液态玻璃",
+    "tags": [
+      "液态玻璃",
+      "ios"
+    ],
+    "date": "2025-11-21",
+    "summary": "很简单就能实现这个液态玻璃效果，真棒",
+    "cover": "/blogs/liquid-grass/0e7190ecaedc4930.png",
+    "category": "代码实现"
+  }
+]

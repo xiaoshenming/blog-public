@@ -1,0 +1,51 @@
+/* === Dragon Burn Effects === */
+
+/* 焚烧动画：发光 → 变色 → 缩小 → 消失 */
+@keyframes text-burn {
+	0% { color: inherit; text-shadow: none; transform: scale(1); opacity: 1; }
+	20% { color: #ff6600; text-shadow: 0 0 8px #ff6600, 0 0 16px #ff4400; transform: scale(1.15); }
+	50% { color: #cc3300; text-shadow: 0 0 12px #cc3300, 0 0 24px #881100; transform: scale(1.1); }
+	75% { color: #441100; text-shadow: 0 0 4px #441100; transform: scale(0.6); opacity: 0.5; }
+	100% { color: transparent; text-shadow: none; transform: scale(0.3); opacity: 0; }
+}
+
+/* 灰烬飘散 */
+@keyframes ash-float {
+	0% { opacity: 0.7; transform: translate(0, 0) scale(1) rotate(0deg); filter: blur(0px); }
+	40% { opacity: 0.5; filter: blur(1px); }
+	100% { opacity: 0; transform: translate(var(--ash-dx, 20px), var(--ash-dy, -30px)) scale(0.2) rotate(var(--ash-rot, 120deg)); filter: blur(3px); }
+}
+
+/* 恢复动画：蓝光闪现 → 恢复原色 */
+@keyframes text-restore {
+	0% { color: transparent; text-shadow: none; transform: scale(0.3); opacity: 0; }
+	40% { color: #4488ff; text-shadow: 0 0 10px #4488ff, 0 0 20px #2266dd; transform: scale(1.1); opacity: 1; }
+	100% { color: inherit; text-shadow: none; transform: scale(1); opacity: 1; }
+}
+
+/* 逐字 span 基础样式 */
+.dragon-char {
+	display: inline;
+	transition: none;
+}
+
+/* 焚烧状态 */
+.char-burn {
+	animation: text-burn 0.8s ease-out forwards;
+	display: inline-block;
+}
+
+/* 灰烬粒子 */
+.char-ash {
+	position: absolute;
+	pointer-events: none;
+	color: #666;
+	font-size: inherit;
+	animation: ash-float 1.2s ease-out forwards;
+}
+
+/* 恢复状态 */
+.char-restore {
+	animation: text-restore 0.6s ease-in forwards;
+	display: inline-block;
+}
