@@ -1,4 +1,5 @@
-@theme {
+/* 原 Tailwind v4 @theme；拆 Tailwind 后为标准 :root 变量（StyleX 运行时注入会覆盖同名值） */
+:root {
 	--color-primary: #334f52;
 	--color-secondary: #7b888e;
 	--color-brand-secondary: #1fc9e7;

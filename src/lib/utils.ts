@@ -1,8 +1,8 @@
 import clsx, { ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 
+/** 拼接类名（原 twMerge 已随 Tailwind 移除：双体系期样式冲突由 styleq 运行时处理） */
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+	return clsx(...inputs)
 }
 
 export function thousandsSeparator(n: string | number | any, sign: string = ',') {
