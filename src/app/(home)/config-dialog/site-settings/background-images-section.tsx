@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
-import { cn } from '@/lib/utils'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import type { SiteContent } from '../../stores/config-store'
 import type { BackgroundImageUploads, FileItem } from './types'
@@ -16,7 +16,7 @@ interface BackgroundImagesSectionProps {
 	setBackgroundImageUploads: React.Dispatch<React.SetStateAction<BackgroundImageUploads>>
 }
 
-/** 原 Tailwind → StyleX 对照（group 悬停显隐保留字符串类；选中态描边与投影合并为单层阴影） */
+/** 原 Tailwind → StyleX 对照（group 悬停显隐改用 marker 祖先选择器；选中态描边与投影合并为单层阴影） */
 const styles = stylex.create({
 	header: {
 		marginBottom: 8,
@@ -108,7 +108,10 @@ const styles = stylex.create({
 		position: 'absolute',
 		top: 4,
 		right: 4,
-		display: 'none',
+		display: {
+			default: 'none',
+			[stylex.when.ancestor(':hover', hoverGroup)]: 'block'
+		},
 		borderRadius: 9999,
 		backgroundColor: 'rgb(255 255 255 / 90%)',
 		paddingInline: 6,
@@ -295,7 +298,7 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 						const src = uploadItem?.type === 'file' ? uploadItem.previewUrl : item.url
 
 						return (
-							<div key={item.id} className={cn(stylex.props(styles.itemWrap).className, 'group')}>
+							<div key={item.id} {...stylex.props(styles.itemWrap, hoverGroup)}>
 								<button
 									type='button'
 									onClick={() => handleSetCurrentBackgroundImage(item.id)}
@@ -308,7 +311,7 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 								<button
 									type='button'
 									onClick={() => handleRemoveBackgroundImage(item.id)}
-									className={cn(stylex.props(styles.removeButton).className, 'group-hover:block')}>
+									{...stylex.props(styles.removeButton)}>
 									删除
 								</button>
 							</div>

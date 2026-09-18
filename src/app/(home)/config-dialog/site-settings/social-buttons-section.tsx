@@ -43,6 +43,10 @@ interface SocialButtonsSectionProps {
 
 /** 原 Tailwind → StyleX 对照（space-y-2 改为弹性列 + 间距 8） */
 const styles = stylex.create({
+	/** Select 触发器宽度 w-24 = 96px */
+	selectW24: {
+		width: 96
+	},
 	label: {
 		marginBottom: 8,
 		display: 'block',
@@ -298,7 +302,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 						<Select
 							value={button.type}
 							onChange={value => handleUpdateButton(button.id, { type: value as SocialButtonType })}
-							className='w-24'
+							style={styles.selectW24}
 							options={[
 								{ value: 'github', label: 'Github' },
 								{ value: 'juejin', label: '掘金' },

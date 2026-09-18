@@ -5,8 +5,8 @@ import { motion } from 'motion/react'
 import { useWriteStore } from '../../stores/write-store'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
-import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { util } from '@/styles/shared/util.stylex'
 
@@ -81,7 +81,7 @@ const styles = stylex.create({
 		gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
 		gap: 8
 	},
-	/** 上传占位块（group 字符串保留） */
+	/** 上传占位块（原 group 无联动子元素，惰性字符串已删） */
 	plusTile: {
 		backgroundColor: colors.card,
 		position: 'relative',
@@ -104,7 +104,7 @@ const styles = stylex.create({
 		lineHeight: 1,
 		color: '#a1a1a1'
 	},
-	/** 图片卡（group 字符串保留） */
+	/** 图片卡（悬停联动改用 marker 标记） */
 	imageCard: {
 		position: 'relative',
 		aspectRatio: '1',
@@ -137,12 +137,15 @@ const styles = stylex.create({
 		paddingBlock: 2,
 		color: colors.white
 	},
-	/** 删除按钮包裹层（悬停显隐沿用字符串类） */
+	/** 删除按钮包裹层：悬停标记祖先时显现 */
 	deleteWrap: {
 		position: 'absolute',
 		top: 4,
 		right: 4,
-		display: 'none'
+		display: {
+			default: 'none',
+			[stylex.when.ancestor(':hover', hoverGroup)]: 'flex'
+		}
 	},
 	deleteBtn: {
 		borderRadius: 6,
@@ -211,7 +214,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 			<div {...stylex.props(styles.grid)}>
 				{/* plus tile */}
 				<div
-					className={cn(stylex.props(styles.plusTile).className, 'group')}
+					{...stylex.props(styles.plusTile)}
 					onClick={() => fileInputRef.current?.click()}
 					onDragOver={e => {
 						e.preventDefault()
@@ -231,7 +234,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 					const isCover = coverId === item.id
 
 					return (
-						<div key={item.id} className={cn(stylex.props(styles.imageCard, isCover && styles.imageCardCover).className, 'group')}>
+						<div key={item.id} {...stylex.props(styles.imageCard, isCover && styles.imageCardCover, hoverGroup)}>
 							<img
 								src={src}
 								{...stylex.props(styles.thumb)}
@@ -242,7 +245,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 								}}
 							/>
 							{isCover && <div {...stylex.props(styles.coverBadge, util.shadowSoft)}>封面</div>}
-							<div className={cn(stylex.props(styles.deleteWrap).className, 'group-hover:flex')}>
+							<div {...stylex.props(styles.deleteWrap)}>
 								<button type='button' {...stylex.props(styles.deleteBtn, util.shadowSoft)} onClick={() => deleteImage(item.id)}>
 									删除
 								</button>

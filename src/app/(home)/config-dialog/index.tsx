@@ -25,8 +25,15 @@ interface ConfigDialogProps {
 
 type TabType = 'site' | 'color' | 'font' | 'layout'
 
-/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；DialogModal 传参按约定保留字符串类） */
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
+	/** 配置弹窗内容：限高 90vh、最小高 600、宽 640、内部滚动 */
+	dialogBox: {
+		maxHeight: '90vh',
+		minHeight: 600,
+		width: 640,
+		overflowY: 'auto'
+	},
 	/** 隐藏的文件输入 */
 	fileInput: {
 		display: 'none'
@@ -402,7 +409,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				}}
 			/>
 
-			<DialogModal open={open} onClose={handleCancel} className='card scrollbar-none max-h-[90vh] min-h-[600px] w-[640px] overflow-y-auto'>
+			<DialogModal open={open} onClose={handleCancel} className='scrollbar-none' style={[card.base, styles.dialogBox]}>
 				<div {...stylex.props(styles.header)}>
 					<div {...stylex.props(styles.tabs)}>
 						{tabs.map(tab => (

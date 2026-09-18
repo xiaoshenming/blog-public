@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
-import { cn } from '@/lib/utils'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import type { FileItem } from './types'
 
@@ -15,7 +15,7 @@ interface FaviconAvatarUploadProps {
 	setAvatarItem: React.Dispatch<React.SetStateAction<FileItem | null>>
 }
 
-/** 原 Tailwind → StyleX 对照（group 悬停显隐保留字符串类） */
+/** 原 Tailwind → StyleX 对照（group 悬停显隐改用 marker + when.ancestor） */
 const styles = stylex.create({
 	grid: {
 		display: 'grid',
@@ -55,7 +55,7 @@ const styles = stylex.create({
 		width: '100%',
 		objectFit: 'cover'
 	},
-	/** 悬停遮罩（显隐沿用字符串类） */
+	/** 悬停遮罩：标记祖先悬停时显现 */
 	overlay: {
 		pointerEvents: 'none',
 		position: 'absolute',
@@ -64,7 +64,10 @@ const styles = stylex.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: 'rgb(0 0 0 / 40%)',
-		opacity: 0,
+		opacity: {
+			default: 0,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 1
+		},
 		transitionProperty: 'opacity',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -119,13 +122,13 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 			<div>
 				<label {...stylex.props(styles.label)}>Favicon</label>
 				<input ref={faviconInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleFaviconFileSelect} />
-				<div className={cn(stylex.props(styles.frame, styles.radiusSquare).className, 'group')}>
+				<div {...stylex.props(styles.frame, styles.radiusSquare, hoverGroup)}>
 					{faviconItem?.type === 'file' ? (
 						<img src={faviconItem.previewUrl} alt='favicon preview' {...stylex.props(styles.image)} />
 					) : (
 						<img src='/favicon.png' alt='current favicon' {...stylex.props(styles.image)} />
 					)}
-					<div className={cn(stylex.props(styles.overlay, styles.radiusSquare).className, 'group-hover:opacity-100')}>
+					<div {...stylex.props(styles.overlay, styles.radiusSquare)}>
 						<span {...stylex.props(styles.overlayText)}>{faviconItem ? '更换' : '上传'}</span>
 					</div>
 
@@ -136,13 +139,13 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 			<div>
 				<label {...stylex.props(styles.label)}>Avatar</label>
 				<input ref={avatarInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleAvatarFileSelect} />
-				<div className={cn(stylex.props(styles.frame, styles.radiusRound).className, 'group')}>
+				<div {...stylex.props(styles.frame, styles.radiusRound, hoverGroup)}>
 					{avatarItem?.type === 'file' ? (
 						<img src={avatarItem.previewUrl} alt='avatar preview' {...stylex.props(styles.image)} />
 					) : (
 						<img src='/images/avatar.png' alt='current avatar' {...stylex.props(styles.image)} />
 					)}
-					<div className={cn(stylex.props(styles.overlay, styles.radiusRound).className, 'group-hover:opacity-100')}>
+					<div {...stylex.props(styles.overlay, styles.radiusRound)}>
 						<span {...stylex.props(styles.overlayText)}>{avatarItem ? '更换' : '上传'}</span>
 					</div>
 					<div {...stylex.props(styles.clickLayer)} onClick={() => avatarInputRef.current?.click()} />

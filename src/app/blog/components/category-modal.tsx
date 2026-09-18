@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import type { BlogIndexItem } from '@/hooks/use-blog-index'
 import { DialogModal } from '@/components/dialog-modal'
 import { Select } from '@/components/select'
+import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { X } from 'lucide-react'
@@ -25,6 +26,22 @@ interface CategoryModalProps {
 
 /** 分类弹窗样式（数值取自 Tailwind v4 编译产物；space-y-4 分摊到非末项子块，动态列表间距同 blog-toc 先例） */
 const styles = stylex.create({
+	/** 弹窗内容：宽 720、最宽 90vw、圆角 16、内边距 24 */
+	dialogBox: {
+		width: 720,
+		maxWidth: '90vw',
+		borderRadius: 16,
+		padding: 24
+	},
+	/** 分类选择器：满宽小字，宽屏固定 180 */
+	rowSelect: {
+		width: '100%',
+		fontSize: 14,
+		lineHeight: '20px',
+		'@media (width >= 40rem)': {
+			width: 180
+		}
+	},
 	/** 标题行 */
 	header: {
 		marginBottom: 16,
@@ -231,7 +248,7 @@ export function CategoryModal({
 	}, [])
 
 	return (
-		<DialogModal open={open} onClose={onClose} className='card w-[720px] max-w-[90vw] rounded-2xl p-6'>
+		<DialogModal open={open} onClose={onClose} style={[card.base, styles.dialogBox]}>
 			<div {...stylex.props(styles.header)}>
 				<div {...stylex.props(styles.title)}>文章分类</div>
 				<button onClick={onClose} {...stylex.props(styles.closeButton)}>
@@ -286,7 +303,7 @@ export function CategoryModal({
 								value={item.category || ''}
 								onChange={value => onAssignCategory(item.slug, value)}
 								options={categoryOptions}
-								className='w-full text-sm sm:w-[180px]'
+								style={styles.rowSelect}
 							/>
 						</div>
 					))}

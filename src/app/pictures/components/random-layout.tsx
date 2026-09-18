@@ -2,11 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { useCenterInit, useCenterStore } from '@/hooks/use-center'
 import { Picture } from '../page'
 import siteContent from '@/config/site-content.json'
-import { cn } from '@/lib/utils'
 import { useSize } from '@/hooks/use-size'
+import { colors } from '@/styles/tokens.stylex'
+import { util } from '@/styles/shared/util.stylex'
 
 interface RandomLayoutProps {
 	pictures: Picture[]
@@ -48,6 +50,95 @@ type UrlItem = {
 	pictureId: string
 	imageIndex: number | 'single'
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 放大态遮罩 */
+	zoomOverlay: {
+		position: 'fixed',
+		inset: 0,
+		zIndex: 50,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 16,
+		backgroundColor: colors.card,
+		backdropFilter: 'blur(24px)'
+	},
+	/** 浮动图片容器（尺寸/位置由 motion 与内联样式接管） */
+	floating: {
+		pointerEvents: 'auto',
+		position: 'absolute',
+		transformOrigin: 'center',
+		translate: '-50% -50%',
+		cursor: 'pointer',
+		boxShadow: '0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%)',
+		transitionProperty: 'scale',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 非编辑且未放大时的悬停放大 */
+	floatingHover: {
+		'@media (hover: hover)': {
+			':hover': {
+				scale: '1.05'
+			}
+		}
+	},
+	/** 图片本体 */
+	image: {
+		width: '100%',
+		height: '100%',
+		objectFit: 'cover',
+		userSelect: 'none'
+	},
+	/** 单图删除按钮（默认隐藏，悬停图片时显现） */
+	deleteButton: {
+		position: 'absolute',
+		top: -8,
+		right: -8,
+		borderRadius: 9999,
+		backgroundColor: '#fb2c36',
+		padding: 6,
+		/* 显隐由 motion.button 内联 opacity 动画控制（内联优先于类级 opacity，原版即如此） */
+		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)',
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				scale: '1.05',
+				backgroundColor: '#e40014'
+			}
+		}
+	},
+	/** 删除按钮图标 */
+	closeIcon: {
+		width: 12,
+		height: 12,
+		color: colors.white
+	},
+	/** 描述卡（软阴影由共享样式提供） */
+	descriptionCard: {
+		position: 'fixed',
+		minHeight: 150,
+		width: 200,
+		cursor: 'pointer',
+		padding: 24
+	},
+	/** 描述卡时间 */
+	descriptionTime: {
+		marginBottom: 8,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 描述卡正文 */
+	descriptionText: {
+		fontSize: 14,
+		lineHeight: '20px'
+	}
+})
 
 const buildUrlList = (pictures: Picture[]): UrlItem[] => {
 	const result: UrlItem[] = []
@@ -203,7 +294,7 @@ const FloatingImage = ({
 					animate={{ opacity: 1 }}
 					transition={{ duration: 0.3 }}
 					style={{ zIndex: TOP_Z_INDEX }}
-					className='bg-card fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xl'
+					className={stylex.props(styles.zoomOverlay).className}
 				/>
 			)}
 			<motion.div
@@ -286,10 +377,7 @@ const FloatingImage = ({
 							}
 				}
 				transition={{ type: 'tween', ease: 'easeOut' }}
-				className={cn(
-					'pointer-events-auto absolute origin-center -translate-1/2 cursor-pointer shadow-xl transition-[scale]',
-					!isEditMode && !isZoomed && 'hover:scale-105'
-				)}>
+				className={stylex.props(styles.floating, !isEditMode && !isZoomed && styles.floatingHover).className}>
 				<motion.img
 					src={url}
 					onLoad={event => {
@@ -297,7 +385,7 @@ const FloatingImage = ({
 						setOriginalSize({ width: img.naturalWidth, height: img.naturalHeight })
 					}}
 					draggable={false}
-					className={cn('h-full w-full object-cover select-none')}
+					className={stylex.props(styles.image).className}
 				/>
 				{isEditMode && !isZoomed && (
 					<motion.button
@@ -310,9 +398,9 @@ const FloatingImage = ({
 						onMouseUp={e => {
 							e.stopPropagation()
 						}}
-						className='absolute -top-2 -right-2 rounded-full bg-red-500 p-1.5 opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-105 hover:bg-red-600'
+						{...stylex.props(styles.deleteButton)}
 						style={{ zIndex: 1 }}>
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-3 w-3 text-white' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+						<svg xmlns='http://www.w3.org/2000/svg' {...stylex.props(styles.closeIcon)} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
 						</svg>
 					</motion.button>
@@ -324,7 +412,7 @@ const FloatingImage = ({
 					drag
 					dragConstraints={maxSM ? undefined : bodyRef}
 					dragMomentum={false}
-					className='fixed min-h-[150px] w-[200px] cursor-pointer p-6 shadow'
+					className={stylex.props(styles.descriptionCard, util.shadowSoft).className}
 					style={{
 						backgroundColor: siteContent.backgroundColors[groupIndex % siteContent.backgroundColors.length],
 						zIndex: TOP_Z_INDEX + 1,
@@ -333,8 +421,8 @@ const FloatingImage = ({
 					}}
 					initial={{ opacity: 0, scale: 0.4 }}
 					animate={{ opacity: 1, scale: 1 }}>
-					<div className='text-secondary mb-2 text-xs'>{formatUploadedAt(uploadedAt)}</div>
-					<div className='text-sm'>{description}</div>
+					<div {...stylex.props(styles.descriptionTime)}>{formatUploadedAt(uploadedAt)}</div>
+					<div {...stylex.props(styles.descriptionText)}>{description}</div>
 				</motion.div>
 			)}
 		</>

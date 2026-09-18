@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
-import { cn } from '@/lib/utils'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 interface CardRecord {
@@ -192,9 +192,12 @@ const styles = stylex.create({
 		fontSize: 14,
 		lineHeight: '20px'
 	},
-	/** 时间提示：默认隐藏，悬停父项显示（显示切换由保留字符串类承接） */
+	/** 时间提示：默认隐藏，悬停标记父项时显示 */
 	timeHint: {
-		display: 'none',
+		display: {
+			default: 'none',
+			[stylex.when.ancestor(':hover', hoverGroup)]: 'inline'
+		},
 		color: colors.secondary,
 		fontSize: 12,
 		lineHeight: '16px'
@@ -273,7 +276,7 @@ export default function Page() {
 			{segments.length > 0 ? (
 				<ul className={stylex.props(styles.segmentList).className}>
 					{segments.map((seg, i) => (
-						<li key={i} className={cn(stylex.props(styles.segmentItem).className, 'group')}>
+						<li key={i} {...stylex.props(styles.segmentItem, hoverGroup)}>
 							<div
 								className={stylex.props(styles.pullBar).className}
 								style={{ width: seg.pulls * 4 + 16 }}
@@ -283,7 +286,7 @@ export default function Page() {
 							<span className={stylex.props(styles.segmentName).className}>
 								{seg.name ? (
 									<span>
-										{seg.name} <span className={cn(stylex.props(styles.timeHint).className, 'group-hover:inline')}>({seg.time?.slice(0, 10)})</span>
+										{seg.name} <span {...stylex.props(styles.timeHint)}>({seg.time?.slice(0, 10)})</span>
 									</span>
 								) : (
 									<span className={stylex.props(styles.pending).className}>（未到 5 星）</span>

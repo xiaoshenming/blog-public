@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
 import * as stylex from '@stylexjs/stylex'
 import { DialogModal } from '@/components/dialog-modal'
+import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -18,6 +19,10 @@ interface LogoUploadDialogProps {
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；space-y 分摊到三个非末项子块） */
 const styles = stylex.create({
+	/** 弹窗内容宽度 448 */
+	dialogWidth: {
+		width: 448
+	},
 	title: {
 		marginBottom: 16,
 		fontSize: 20,
@@ -220,7 +225,7 @@ export default function LogoUploadDialog({ currentLogo, onClose, onSubmit }: Log
 		onClose()
 	}
 	return (
-		<DialogModal open onClose={handleClose} className='card w-md'>
+		<DialogModal open onClose={handleClose} style={[card.base, styles.dialogWidth]}>
 			<h2 {...stylex.props(styles.title)}>选择图标</h2>
 			<form onSubmit={handleSubmit}>
 				<div {...stylex.props(styles.uploadSection)}>

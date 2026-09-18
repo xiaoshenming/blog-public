@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import type { StyleXProp } from '@/styles/shared/types'
 
 interface SelectOption {
 	value: string
@@ -18,6 +19,8 @@ interface SelectProps {
 	onChange: (value: string) => void
 	options: SelectOption[]
 	className?: string
+	/** 触发器样式（同一次 stylex.props() 合并，后写覆盖）——调用方优先使用 */
+	style?: StyleXProp
 	disabled?: boolean
 }
 
@@ -121,7 +124,7 @@ const styles = stylex.create({
 	}
 })
 
-export function Select({ value, onChange, options, className, disabled }: SelectProps) {
+export function Select({ value, onChange, options, className, disabled, style: styleOverride }: SelectProps) {
 	const [open, setOpen] = useState(false)
 	const [mounted, setMounted] = useState(false)
 	const triggerRef = useRef<HTMLButtonElement>(null)
@@ -198,7 +201,7 @@ export function Select({ value, onChange, options, className, disabled }: Select
 		setOpen(false)
 	}
 
-	const { className: sx, style } = stylex.props(styles.trigger, disabled && styles.triggerDisabled, !disabled && styles.triggerHoverable)
+	const { className: sx, style } = stylex.props(styles.trigger, disabled && styles.triggerDisabled, !disabled && styles.triggerHoverable, styleOverride)
 
 	return (
 		<>

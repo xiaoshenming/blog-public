@@ -1,6 +1,21 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
+
+/** 背景层容器/画布（原 Tailwind 类对照：pointer-events-none fixed inset-0 z-0 overflow-hidden / h-full w-full） */
+const styles = stylex.create({
+	layer: {
+		pointerEvents: 'none',
+		position: 'fixed',
+		inset: 0,
+		overflow: 'hidden'
+	},
+	canvas: {
+		width: '100%',
+		height: '100%'
+	}
+})
 
 const SNOWFLAKE_IMAGES = ['/images/christmas/snowflake/1.webp', '/images/christmas/snowflake/2.webp', '/images/christmas/snowflake/3.webp']
 const DOT_RATIO = 0.8
@@ -150,9 +165,9 @@ export default function SnowfallBackground({ zIndex, count = 125 }: { zIndex: nu
 			animate={{ opacity: 1 }}
 			initial={{ opacity: 0 }}
 			transition={{ duration: 1 }}
-			className='pointer-events-none fixed inset-0 z-0 overflow-hidden'
+			{...stylex.props(styles.layer)}
 			style={{ zIndex }}>
-			<canvas ref={canvasRef} className='h-full w-full' />
+			<canvas ref={canvasRef} {...stylex.props(styles.canvas)} />
 		</motion.div>
 	)
 }

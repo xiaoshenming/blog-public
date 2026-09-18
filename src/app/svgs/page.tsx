@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import { SvgComponent, svgItems } from '@/svgs/index'
 import * as stylex from '@stylexjs/stylex'
-import { cn } from '@/lib/utils'
 import { colors } from '@/styles/tokens.stylex'
 
 /** 本页样式（数值取自 Tailwind v4 编译产物；无令牌色板已固化） */
@@ -178,7 +177,7 @@ export default function Page() {
 						onClick={() => handleCopy(label, key)}
 						title={'Click to copy import command'}
 						type='button'
-						className={cn(stylex.props(styles.card).className, 'group')}>
+								className={stylex.props(styles.card).className}>
 						<div className={stylex.props(styles.iconBox).className}>
 							<Component {...stylex.props(styles.icon)} />
 						</div>

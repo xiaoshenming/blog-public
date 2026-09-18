@@ -2,6 +2,7 @@
 
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import displacement1 from './displacement-1.png'
 import displacement2 from './displacement-2.png'
 import borderImg from './border.png'
@@ -9,6 +10,22 @@ import { useEffect, useRef, useState } from 'react'
 
 const width = 210
 const height = 150
+
+/** 原 Tailwind 类对照：fixed top-16 right-1/2 z-90 select-none / absolute inset-0 rounded-full */
+const styles = stylex.create({
+	host: {
+		position: 'fixed',
+		top: 64,
+		right: '50%',
+		zIndex: 90,
+		userSelect: 'none'
+	},
+	lens: {
+		position: 'absolute',
+		inset: 0,
+		borderRadius: 9999
+	}
+})
 
 export default function LiquidGrass() {
 	const bodyRef = useRef(document.body)
@@ -28,8 +45,8 @@ export default function LiquidGrass() {
 			animate={{ opacity: 1 }}
 			drag
 			dragConstraints={bodyRef}
+			{...stylex.props(styles.host)}
 			style={{ width, height }}
-			className='fixed top-16 right-1/2 z-90 select-none'
 			whileTap={{
 				scale: 1.1
 			}}>
@@ -61,7 +78,7 @@ export default function LiquidGrass() {
 			</svg>
 
 			<div
-				className='absolute inset-0 rounded-full'
+				{...stylex.props(styles.lens)}
 				style={{
 					backdropFilter: 'url(#magnifying-glass-filter)',
 					boxShadow: 'rgba(0, 0, 0, 0.05) 0px 4px 9px, rgba(0, 0, 0, 0.05) 0px 2px 24px inset, rgba(255, 255, 255, 0.2) 0px -2px 24px inset'

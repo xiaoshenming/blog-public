@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
+import * as stylex from '@stylexjs/stylex'
 import initialList from './list.json'
 import { RandomLayout } from './components/random-layout'
 import UploadDialog from './components/upload-dialog'
@@ -11,6 +12,9 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
 import { useRouter } from 'next/navigation'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 export interface Picture {
 	id: string
@@ -19,6 +23,87 @@ export interface Picture {
 	image?: string
 	images?: string[]
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片/品牌按钮复用共享定义） */
+const styles = stylex.create({
+	/** 隐藏的密钥文件输入框 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 空态提示：撑满视口并居中 */
+	emptyState: {
+		display: 'flex',
+		minHeight: '100vh',
+		alignItems: 'center',
+		justifyContent: 'center',
+		textAlign: 'center',
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 右上角操作区（小屏隐藏） */
+	toolbar: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		display: 'flex',
+		gap: 12,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 压缩工具按钮：浅蓝底蓝字（配合共享悬停样式提供缩放反馈） */
+	compressButton: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: '#eff6ff',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: '#1447e6'
+	},
+	/** 白底操作按钮（配合共享悬停样式提供缩放反馈） */
+	ghostButton: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 品牌按钮的横向内边距覆盖 */
+	saveButton: {
+		paddingInline: 24
+	},
+	/** 编辑按钮（毛玻璃 + 悬停变亮；颜色过渡覆盖共享悬停样式的缩放过渡，与原状一致） */
+	editButton: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		backdropFilter: 'blur(8px)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	}
+})
 
 export default function Page() {
 	const [pictures, setPictures] = useState<Picture[]>(initialList as Picture[])
@@ -223,7 +308,7 @@ export default function Page() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await handleChoosePrivateKey(f)
@@ -234,31 +319,31 @@ export default function Page() {
 			<RandomLayout pictures={pictures} isEditMode={isEditMode} onDeleteSingle={handleDeleteSingleImage} onDeleteGroup={handleDeleteGroup} />
 
 			{pictures.length === 0 && (
-				<div className='text-secondary flex min-h-screen items-center justify-center text-center text-sm'>
+				<div className={stylex.props(styles.emptyState).className}>
 					还没有上传图片，点击右上角「编辑」后即可开始上传。
 				</div>
 			)}
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
+			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
 						<button
 							onClick={() => router.push('/image-toolbox')}
-							className='card-hover rounded-xl border bg-blue-50 px-4 py-2 text-sm text-blue-700'>
+							{...stylex.props(card.hover, styles.compressButton)}>
 							压缩工具
 						</button>
 						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							{...stylex.props(card.hover, styles.ghostButton)}>
 							取消
 						</button>
 						<button
 							onClick={() => setIsUploadDialogOpen(true)}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							{...stylex.props(card.hover, styles.ghostButton)}>
 							上传
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</>
@@ -266,7 +351,7 @@ export default function Page() {
 					!hideEditButton && (
 						<button
 							onClick={() => setIsEditMode(true)}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							{...stylex.props(card.hover, styles.editButton)}>
 							编辑
 						</button>
 					)

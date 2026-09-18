@@ -10,7 +10,6 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import { pushSnippets } from './services/push-snippets'
 import * as stylex from '@stylexjs/stylex'
-import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { util } from '@/styles/shared/util.stylex'
@@ -20,6 +19,13 @@ const getRandomSnippet = (list: string[]) => (list.length === 0 ? '' : list[Math
 
 /** 本页样式（数值取自 Tailwind v4 编译产物；品牌按钮复用共享定义） */
 const styles = stylex.create({
+	/** 管理弹窗内容宽度：宽屏 520、小屏满宽 */
+	dialogWidth: {
+		width: 520,
+		'@media (width < 40rem)': {
+			width: '100%'
+		}
+	},
 	/** 隐藏的密钥文件输入框 */
 	fileInput: {
 		display: 'none'
@@ -135,7 +141,7 @@ const styles = stylex.create({
 		fontSize: 14,
 		lineHeight: '20px'
 	},
-	/** 草稿条目（悬停联动由保留字符串类承接） */
+	/** 草稿条目（原 group 无联动子元素，惰性字符串已删） */
 	draftItem: {
 		display: 'flex',
 		alignItems: 'flex-start',
@@ -355,7 +361,7 @@ export default function Page() {
 				)}
 			</motion.div>
 
-			<DialogModal open={isManageOpen} onClose={cancelManageChanges} className='card static w-[520px] max-sm:w-full'>
+			<DialogModal open={isManageOpen} onClose={cancelManageChanges} style={[card.base, styles.dialogWidth]}>
 				<div className={stylex.props(styles.dialogBody).className}>
 					<div className={stylex.props(styles.addRow).className}>
 						<input
@@ -374,7 +380,7 @@ export default function Page() {
 					<div className={stylex.props(styles.draftList).className}>
 						{draftSnippets.length === 0 && <p className={stylex.props(styles.empty).className}>暂无内容</p>}
 						{draftSnippets.map((item, index) => (
-							<div key={`${item}-${index}`} className={cn(stylex.props(styles.draftItem).className, 'group')}>
+							<div key={`${item}-${index}`} {...stylex.props(styles.draftItem)}>
 								<p className={stylex.props(styles.draftText).className}>{item}</p>
 								<button onClick={() => handleRemoveDraft(index)} className={stylex.props(styles.removeBtn).className}>
 									<X {...stylex.props(util.iconSm)} />

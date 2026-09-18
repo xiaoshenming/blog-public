@@ -38,12 +38,11 @@ const styles = stylex.create({
 
 export function MarkdownImage({ src, alt = '', title = '' }: MarkdownImageProps) {
 	const [display, setDisplay] = useState(false)
-	const { className: sxDialog } = stylex.props(styles.dialog)
 
 	return (
 		<>
 			<img src={src} alt={alt} title={title} loading='lazy' onClick={() => setDisplay(true)} {...stylex.props(styles.image)} />
-			<DialogModal open={display} onClose={() => setDisplay(false)} className={sxDialog}>
+			<DialogModal open={display} onClose={() => setDisplay(false)} style={styles.dialog}>
 				<img src={src} alt={alt} {...stylex.props(styles.preview)} />
 			</DialogModal>
 		</>

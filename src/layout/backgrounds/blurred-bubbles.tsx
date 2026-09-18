@@ -1,7 +1,22 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import siteContent from '@/config/site-content.json'
 import { makeNoise2D, rand } from './utils'
+
+/** 背景层容器/画布（原 Tailwind 类对照：fixed inset-0 z-0 overflow-hidden / h-full w-full） */
+const styles = stylex.create({
+	layer: {
+		position: 'fixed',
+		inset: 0,
+		zIndex: 0,
+		overflow: 'hidden'
+	},
+	canvas: {
+		width: '100%',
+		height: '100%'
+	}
+})
 
 /**
  * Blurred Floating Circles Background
@@ -329,8 +344,8 @@ export default function BlurredBubblesBackground({
 			animate={{ opacity: 1 }}
 			initial={{ opacity: 0 }}
 			transition={{ duration: 1 }}
-			className='fixed inset-0 z-0 overflow-hidden'>
-			<canvas ref={ref} className='h-full w-full' style={{ display: 'block' }} />
+			{...stylex.props(styles.layer)}>
+			<canvas ref={ref} {...stylex.props(styles.canvas)} style={{ display: 'block' }} />
 		</motion.div>
 	)
 }

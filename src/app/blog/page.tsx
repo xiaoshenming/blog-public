@@ -18,13 +18,13 @@ import GithubSVG from '@/svgs/github.svg'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { readFileAsText } from '@/lib/file-utils'
-import { cn } from '@/lib/utils'
 import { saveBlogEdits } from './services/save-blog-edits'
 import { Check } from 'lucide-react'
 import { BlogCoverHoverPreview, useBlogCoverHover } from './components/blog-cover-hover'
 import { CategoryModal } from './components/category-modal'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn, btnRounded } from '@/styles/shared/button.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 type DisplayMode = 'day' | 'week' | 'month' | 'year' | 'category'
@@ -236,12 +236,18 @@ const styles = stylex.create({
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
-	/** 时间轴圆点（悬停随分组联动，联动部分保留字符串类） */
+	/** 时间轴圆点（悬停行容器时变大并转品牌色） */
 	dot: {
 		width: 5,
-		height: 5,
+		height: {
+			default: 5,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 16
+		},
 		borderRadius: 9999,
-		backgroundColor: colors.secondary,
+		backgroundColor: {
+			default: colors.secondary,
+			[stylex.when.ancestor(':hover', hoverGroup)]: colors.brand
+		},
 		transitionProperty: 'all',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -251,7 +257,7 @@ const styles = stylex.create({
 		position: 'absolute',
 		bottom: 16
 	},
-	/** 文章标题（浏览态悬停位移沿用字符串类） */
+	/** 文章标题 */
 	itemTitle: {
 		flex: '1',
 		overflow: 'hidden',
@@ -263,6 +269,13 @@ const styles = stylex.create({
 		transitionProperty: 'all',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 文章标题·浏览态悬停联动（悬停行容器时变色并右移） */
+	titleHover: {
+		[stylex.when.ancestor(':hover', hoverGroup)]: {
+			color: colors.brand,
+			transform: 'translateX(8px)'
+		}
 	},
 	/** 已阅读标记 */
 	readTag: {
@@ -773,7 +786,8 @@ export default function BlogPage() {
 									const rowSx = stylex.props(
 										styles.rowBase,
 										editMode && styles.rowEdit,
-										editMode ? (isSelected ? styles.rowSelected : styles.rowUnselected) : styles.rowPointer
+										editMode ? (isSelected ? styles.rowSelected : styles.rowUnselected) : styles.rowPointer,
+										hoverGroup
 									)
 									return (
 										<Link
@@ -782,8 +796,7 @@ export default function BlogPage() {
 											href={`/blog/${it.slug}`}
 											key={it.slug}
 											onClick={event => handleItemClick(event, it.slug)}
-											{...rowSx}
-											className={cn(rowSx.className, 'group')}>
+											{...rowSx}>
 											{editMode && (
 												<span {...stylex.props(styles.checkBox, isSelected ? styles.checkBoxOn : styles.checkBoxOff)}>
 													<Check />
@@ -792,11 +805,10 @@ export default function BlogPage() {
 											<span {...stylex.props(styles.dateLabel)}>{dayjs(it.date).format('MM-DD')}</span>
 
 											<div {...stylex.props(styles.dotColumn)}>
-												<div className={cn(stylex.props(styles.dot).className, 'group-hover:bg-brand group-hover:h-4')}></div>
+												<div {...stylex.props(styles.dot)}></div>
 												<ShortLineSVG {...stylex.props(styles.shortLine)} />
 											</div>
-											<div
-												className={cn(stylex.props(styles.itemTitle).className, editMode ? null : 'group-hover:text-brand group-hover:translate-x-2')}>
+											<div {...stylex.props(styles.itemTitle, !editMode && styles.titleHover)}>
 												{it.title || it.slug}
 												{hasRead && <span {...stylex.props(styles.readTag)}>[已阅读]</span>}
 											</div>

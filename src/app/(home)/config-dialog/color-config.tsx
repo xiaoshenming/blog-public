@@ -5,8 +5,8 @@ import { XIcon } from 'lucide-react'
 import * as stylex from '@stylexjs/stylex'
 import type { SiteContent } from '../stores/config-store'
 import siteContent from '@/config/site-content.json'
-import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 interface ColorConfigProps {
@@ -74,7 +74,7 @@ const COLOR_PRESETS: ColorPreset[] = [
 	}
 ]
 
-/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动保留字符串类） */
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动改用 marker + when.ancestor） */
 const styles = stylex.create({
 	/** 原 space-y-6 分摊到非末块 */
 	sectionGap: {
@@ -153,11 +153,11 @@ const styles = stylex.create({
 		alignItems: 'center',
 		gap: 8
 	},
-	/** 色块包裹（group 悬停联动保留字符串类） */
+	/** 色块包裹（marker 悬停组） */
 	swatchWrap: {
 		position: 'relative'
 	},
-	/** 删除按钮：默认透明，父级 group 悬停时显现（显隐沿用字符串类） */
+	/** 删除按钮：默认透明，标记祖先悬停时显现 */
 	removeButton: {
 		position: 'absolute',
 		top: -4,
@@ -171,7 +171,10 @@ const styles = stylex.create({
 		lineHeight: '16px',
 		whiteSpace: 'nowrap',
 		color: colors.secondary,
-		opacity: 0,
+		opacity: {
+			default: 0,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 1
+		},
 		transitionProperty: 'opacity',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -371,12 +374,12 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 				<div {...stylex.props(styles.swatchList)}>
 					{formData.backgroundColors.map((color, index) => (
 						<div key={index} {...stylex.props(styles.swatchItem)}>
-							<div className={cn(stylex.props(styles.swatchWrap).className, 'group')}>
+							<div {...stylex.props(styles.swatchWrap, hoverGroup)}>
 								<ColorPicker value={color} onChange={value => handleColorChange(index, value)} />
 								{formData.backgroundColors.length > 1 && (
 									<button
 										onClick={() => handleRemoveColor(index)}
-										className={cn(stylex.props(styles.removeButton).className, 'group-hover:opacity-100')}>
+										{...stylex.props(styles.removeButton)}>
 										<XIcon {...stylex.props(styles.removeIcon)} />
 									</button>
 								)}

@@ -7,8 +7,9 @@ import * as stylex from '@stylexjs/stylex'
 import LogoUploadDialog, { type LogoItem } from './logo-upload-dialog'
 import type { Share } from './share-card'
 import { DialogModal } from '@/components/dialog-modal'
-import { cn } from '@/lib/utils'
+import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 interface CreateDialogProps {
@@ -17,8 +18,14 @@ interface CreateDialogProps {
 	onSave: (share: Share, logoItem?: LogoItem) => void
 }
 
-/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动因 StyleX 不支持祖先选择器，保留字符串类） */
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动改用 marker + when.ancestor） */
 const styles = stylex.create({
+	/** 弹窗内容：限高 90vh、宽 384、内部滚动 */
+	dialogWidth: {
+		maxHeight: '90vh',
+		width: 384,
+		overflowY: 'auto'
+	},
 	/** 头像行 */
 	header: {
 		marginBottom: 16,
@@ -26,7 +33,7 @@ const styles = stylex.create({
 		alignItems: 'center',
 		gap: 16
 	},
-	/** 头像容器（group 保留字符串） */
+	/** 头像容器（marker 悬停组） */
 	avatarWrap: {
 		position: 'relative',
 		cursor: 'pointer'
@@ -37,7 +44,7 @@ const styles = stylex.create({
 		borderRadius: 12,
 		objectFit: 'cover'
 	},
-	/** 头像悬停遮罩（显隐沿用字符串类） */
+	/** 头像悬停遮罩：标记祖先悬停时显现 */
 	avatarOverlay: {
 		pointerEvents: 'none',
 		position: 'absolute',
@@ -47,7 +54,10 @@ const styles = stylex.create({
 		justifyContent: 'center',
 		borderRadius: 12,
 		backgroundColor: 'rgb(0 0 0 / 40%)',
-		opacity: 0,
+		opacity: {
+			default: 0,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 1
+		},
 		transitionProperty: 'opacity',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -253,15 +263,15 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 	}
 
 	return (
-		<DialogModal open onClose={onClose} className='card max-h-[90vh] w-sm overflow-y-auto'>
+		<DialogModal open onClose={onClose} style={[card.base, styles.dialogWidth]}>
 			{/* 卡片样式的内容 */}
 			<div>
 				<div {...stylex.props(styles.header)}>
-					<div className={cn(stylex.props(styles.avatarWrap).className, 'group')} onClick={() => setShowLogoDialog(true)}>
+					<div {...stylex.props(styles.avatarWrap, hoverGroup)} onClick={() => setShowLogoDialog(true)}>
 						{formData.logo ? (
 							<>
 								<img src={formData.logo} alt={formData.name} {...stylex.props(styles.avatar)} />
-								<div className={cn(stylex.props(styles.avatarOverlay).className, 'group-hover:opacity-100')}>
+								<div {...stylex.props(styles.avatarOverlay)}>
 									<span {...stylex.props(styles.overlayText)}>更换</span>
 								</div>
 							</>

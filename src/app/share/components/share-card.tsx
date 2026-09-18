@@ -4,11 +4,11 @@ import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import StarRating from '@/components/star-rating'
 import { useSize } from '@/hooks/use-size'
-import { cn } from '@/lib/utils'
 import EditableStarRating from '@/components/editable-star-rating'
 import { useState } from 'react'
 import LogoUploadDialog, { type LogoItem } from './logo-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 export interface Share {
@@ -27,7 +27,7 @@ interface ShareCardProps {
 	onDelete?: () => void
 }
 
-/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动因 StyleX 不支持祖先选择器，保留字符串类） */
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动改用 marker + when.ancestor） */
 const styles = stylex.create({
 	/** 卡片外壳：卡片基底上改为相对定位并裁剪溢出 */
 	cardShell: {
@@ -87,7 +87,7 @@ const styles = stylex.create({
 		alignItems: 'center',
 		gap: 16
 	},
-	/** 头像容器（group 保留字符串） */
+	/** 头像容器（marker 悬停组） */
 	avatarWrap: {
 		position: 'relative'
 	},
@@ -100,7 +100,7 @@ const styles = stylex.create({
 	avatarEditable: {
 		cursor: 'pointer'
 	},
-	/** 头像悬停遮罩（显隐沿用字符串类） */
+	/** 头像悬停遮罩：标记祖先悬停时显现 */
 	avatarOverlay: {
 		pointerEvents: 'none',
 		position: 'absolute',
@@ -110,7 +110,10 @@ const styles = stylex.create({
 		justifyContent: 'center',
 		borderRadius: 12,
 		backgroundColor: 'rgb(0 0 0 / 40%)',
-		opacity: 0,
+		opacity: {
+			default: 0,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 1
+		},
 		transitionProperty: 'opacity',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -123,7 +126,7 @@ const styles = stylex.create({
 	info: {
 		flex: '1'
 	},
-	/** 名称（悬停变色沿用字符串类） */
+	/** 名称（悬停变色原属容器外死代码，未迁移） */
 	name: {
 		fontSize: 18,
 		lineHeight: '28px',
@@ -299,7 +302,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 
 			<div>
 				<div {...stylex.props(styles.header)}>
-					<div className={cn(stylex.props(styles.avatarWrap).className, 'group')}>
+					<div {...stylex.props(styles.avatarWrap, hoverGroup)}>
 						<img
 							src={localShare.logo}
 							alt={localShare.name}
@@ -307,7 +310,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 							onClick={() => canEdit && setShowLogoDialog(true)}
 						/>
 						{canEdit && (
-							<div className={cn(stylex.props(styles.avatarOverlay).className, 'ev group-hover:opacity-100')}>
+							<div {...stylex.props(styles.avatarOverlay)}>
 								<span {...stylex.props(styles.overlayText)}>更换</span>
 							</div>
 						)}
@@ -317,7 +320,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 							contentEditable={canEdit}
 							suppressContentEditableWarning
 							onBlur={e => handleFieldChange('name', e.currentTarget.textContent || '')}
-							className={cn(stylex.props(styles.name, canEdit && styles.nameEditable).className, 'group-hover:text-brand')}>
+							{...stylex.props(styles.name, canEdit && styles.nameEditable)}>
 							{localShare.name}
 						</h3>
 						{canEdit ? (

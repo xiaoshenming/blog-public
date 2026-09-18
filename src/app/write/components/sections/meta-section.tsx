@@ -14,6 +14,12 @@ type MetaSectionProps = {
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片系样式复用共享定义） */
 const styles = stylex.create({
+	/** 分类选择器：满宽小字 */
+	selectFull: {
+		width: '100%',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
 	/** 分区卡：相对定位覆盖卡片基底 */
 	section: {
 		position: 'relative'
@@ -102,7 +108,7 @@ export function MetaSection({ delay = 0 }: MetaSectionProps) {
 
 				<TagInput tags={form.tags} onChange={tags => updateForm({ tags })} />
 				{enableCategories && (
-					<Select className='w-full text-sm' value={form.category || ''} onChange={value => updateForm({ category: value })} options={categoryOptions} />
+					<Select style={styles.selectFull} value={form.category || ''} onChange={value => updateForm({ category: value })} options={categoryOptions} />
 				)}
 				<input
 					type='datetime-local'

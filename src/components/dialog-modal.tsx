@@ -6,12 +6,15 @@ import { AnimatePresence, motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import { cn } from '@/lib/utils'
 import { colors } from '@/styles/tokens.stylex'
+import type { StyleXProp } from '@/styles/shared/types'
 
 interface DialogModalProps {
 	open: boolean
 	onClose: () => void
 	children: ReactNode
 	className?: string
+	/** 内容层样式（同一次 stylex.props() 合并，后写覆盖）——调用方优先使用 */
+	style?: StyleXProp
 	overlayClassName?: string
 	disableCloseOnOverlay?: boolean
 	lockScroll?: boolean
@@ -30,10 +33,14 @@ const styles = stylex.create({
 		backgroundColor: colors.card,
 		padding: 16,
 		backdropFilter: 'blur(24px)'
+	},
+	/** 内容层：position static（压制 card.base 的 absolute） */
+	contentStatic: {
+		position: 'static'
 	}
 })
 
-export function DialogModal({ open, onClose, children, className, disableCloseOnOverlay = false, lockScroll = true, closeOnEsc = true }: DialogModalProps) {
+export function DialogModal({ open, onClose, children, className, style, disableCloseOnOverlay = false, lockScroll = true, closeOnEsc = true }: DialogModalProps) {
 	const [mounted, setMounted] = useState(false)
 
 	useEffect(() => {
@@ -64,6 +71,10 @@ export function DialogModal({ open, onClose, children, className, disableCloseOn
 
 	if (!mounted) return null
 
+	// 注意顺序：contentStatic 恒在最后 → position:static 永远压制调用方 card.base 的 absolute
+	// （还原旧 'static' 字符串的覆盖语义；实测见 pictures/upload-dialog 报告）
+	const { className: contentSx } = stylex.props(style, styles.contentStatic)
+
 	return createPortal(
 		<AnimatePresence>
 			{open && (
@@ -73,12 +84,12 @@ export function DialogModal({ open, onClose, children, className, disableCloseOn
 					exit={{ opacity: 0 }}
 					className={stylex.props(styles.overlay).className}
 					onClick={disableCloseOnOverlay ? undefined : onClose}>
-					{/* 'static' 保留为 className 字符串：需压制调用方传入的 card（absolute）；utilities 层序高于 StyleX 原子层，迁为原子类会反转覆盖方向 */}
+					{/* 内容层：static 基础样式 + 调用方 style 合并（后写覆盖）；className 保留兼容 */}
 					<motion.div
 						initial={{ opacity: 0, scale: 0.8, y: 20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.8, y: 20 }}
-						className={cn('static', className)}
+						className={cn(contentSx, className)}
 						onClick={e => e.stopPropagation()}>
 						{children}
 					</motion.div>

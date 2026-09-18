@@ -5,7 +5,6 @@ import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import { ANIMATION_DELAY, INIT_DELAY } from '@/consts'
 import { DialogModal } from '@/components/dialog-modal'
-import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -79,6 +78,10 @@ async function fileToWebp(file: File, quality: number, maxWidth?: number) {
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片基底复用共享定义） */
 const styles = stylex.create({
+	/** 对比弹窗内容宽度：满宽 */
+	dialogFullWidth: {
+		width: '100%'
+	},
 	/** 页面容器：顶部留白，小屏收窄 */
 	page: {
 		position: 'relative',
@@ -693,10 +696,9 @@ export default function Page() {
 					onDragOver={handleDragOver}
 					onDragLeave={handleDragLeave}
 					onDrop={handleDrop}
-					{...uploadZoneSx}
-					className={cn(uploadZoneSx.className, 'group')}>
+					{...uploadZoneSx}>
 					<input type='file' accept='image/*' multiple {...stylex.props(styles.fileInput)} onChange={event => handleFiles(event.target.files)} />
-					<div className={cn(stylex.props(styles.uploadIcon, styles.transitionAll).className, 'group-hover:bg-brand/10')}>
+					<div {...stylex.props(styles.uploadIcon, styles.transitionAll)}>
 						📷
 					</div>
 					<div>
@@ -831,7 +833,7 @@ export default function Page() {
 			</div>
 
 			{compareIndex !== null && images[compareIndex]?.converted && (
-				<DialogModal open={true} onClose={handleCloseCompare} className='w-full'>
+				<DialogModal open={true} onClose={handleCloseCompare} style={styles.dialogFullWidth}>
 					<div {...stylex.props(styles.compareGrid)} onClick={handleCloseCompare}>
 						<div {...stylex.props(styles.comparePaneEnd)}>
 							<div>

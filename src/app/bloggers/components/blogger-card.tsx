@@ -10,6 +10,7 @@ import { Blogger, type BloggerStatus } from '../grid-view'
 import { useState } from 'react'
 import AvatarUploadDialog, { type AvatarItem } from './avatar-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
+import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 interface BloggerCardProps {
@@ -19,7 +20,7 @@ interface BloggerCardProps {
 	onDelete?: () => void
 }
 
-/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动因 StyleX 不支持祖先选择器，保留字符串类） */
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动改用 marker + when.ancestor） */
 const styles = stylex.create({
 	/** 卡片外壳：卡片基底上改为相对定位并裁剪溢出 */
 	cardShell: {
@@ -79,7 +80,7 @@ const styles = stylex.create({
 		alignItems: 'center',
 		gap: 16
 	},
-	/** 头像容器（group 保留字符串） */
+	/** 头像容器（hoverGroup 标记：供子元素遮罩悬停显现） */
 	avatarWrap: {
 		position: 'relative'
 	},
@@ -92,7 +93,7 @@ const styles = stylex.create({
 	avatarEditable: {
 		cursor: 'pointer'
 	},
-	/** 头像悬停遮罩（显隐沿用字符串类） */
+	/** 头像悬停遮罩：标记祖先悬停时显现（原 group/group-hover 语义） */
 	avatarOverlay: {
 		pointerEvents: 'none',
 		position: 'absolute',
@@ -102,7 +103,10 @@ const styles = stylex.create({
 		justifyContent: 'center',
 		borderRadius: 9999,
 		backgroundColor: 'rgb(0 0 0 / 40%)',
-		opacity: 0,
+		opacity: {
+			default: 0,
+			[stylex.when.ancestor(':hover', hoverGroup)]: 1
+		},
 		transitionProperty: 'opacity',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -115,7 +119,7 @@ const styles = stylex.create({
 	info: {
 		flex: '1'
 	},
-	/** 名称（悬停变色沿用字符串类） */
+	/** 名称（原版 'group' 仅包头像，h3 悬停变色系死代码，未复现） */
 	name: {
 		fontSize: 18,
 		lineHeight: '28px',
@@ -281,7 +285,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 
 			<div>
 				<div {...stylex.props(styles.header)}>
-					<div className={cn(stylex.props(styles.avatarWrap).className, 'group')}>
+					<div {...stylex.props(styles.avatarWrap, hoverGroup)}>
 						<img
 							src={localBlogger.avatar}
 							alt={localBlogger.name}
@@ -289,7 +293,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 							onClick={() => canEdit && setShowAvatarDialog(true)}
 						/>
 						{canEdit && (
-							<div className={cn(stylex.props(styles.avatarOverlay).className, 'ev group-hover:opacity-100')}>
+							<div {...stylex.props(styles.avatarOverlay)}>
 								<span {...stylex.props(styles.overlayText)}>更换</span>
 							</div>
 						)}
@@ -299,7 +303,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 							contentEditable={canEdit}
 							suppressContentEditableWarning
 							onBlur={e => handleFieldChange('name', e.currentTarget.textContent || '')}
-							className={cn(stylex.props(styles.name, canEdit && styles.nameEditable).className, 'group-hover:text-brand')}>
+							className={stylex.props(styles.name, canEdit && styles.nameEditable).className}>
 							{localBlogger.name}
 						</h3>
 						{canEdit ? (
