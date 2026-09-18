@@ -5,6 +5,8 @@ import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useEffect, useRef, useState } from 'react'
 import { useSize } from '@/hooks/use-size'
+import * as stylex from '@stylexjs/stylex'
+import { card } from '@/styles/shared/card.stylex'
 
 interface Props {
 	className?: string
@@ -32,13 +34,15 @@ export default function Card({ children, order, width, height, x, y, className }
 		return () => clearTimeout(timer)
 	}, [x, y, order])
 
+	const { className: sx, style } = stylex.props(card.base, card.squircle, card.hover)
+
 	if (show)
 		return (
 			<motion.div
-				className={cn('card squircle card-hover', className)}
+				className={cn(sx, className)}
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
-				style={{ left: x, top: y, width, height }}>
+				style={{ left: x, top: y, width, height, ...style }}>
 				{children}
 			</motion.div>
 		)

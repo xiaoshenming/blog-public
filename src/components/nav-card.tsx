@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { useCenterStore } from '@/hooks/use-center'
 import { CARD_SPACING } from '@/consts'
 import ScrollOutlineSVG from '@/svgs/scroll-outline.svg'
@@ -19,7 +20,7 @@ import WebsiteFilledSVG from '@/svgs/website-filled.svg'
 import WebsiteOutlineSVG from '@/svgs/website-outline.svg'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
-import { cn } from '@/lib/utils'
+import { colors, fonts } from '@/styles/tokens.stylex'
 import { useSize } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
@@ -59,6 +60,119 @@ const list = [
 ]
 
 const extraSize = 8
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物）；const styles 已被配置 store 占用，故取名 sx */
+const sx = stylex.create({
+	/** absolute pointer-events-none（定位数值保留内联 style） */
+	snow: {
+		position: 'absolute',
+		pointerEvents: 'none'
+	},
+	/** flex items-center gap-3 */
+	logoLink: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12
+	},
+	/** rounded-full */
+	avatar: {
+		borderRadius: 9999
+	},
+	/** flex flex-col */
+	logoText: {
+		display: 'flex',
+		flexDirection: 'column'
+	},
+	/** font-averia mt-1 text-2xl leading-none font-medium */
+	title: {
+		marginTop: 4,
+		fontFamily: fonts.averia,
+		fontSize: 24,
+		lineHeight: 1,
+		fontWeight: 500
+	},
+	/** text-brand mt-1 text-xs font-medium */
+	status: {
+		marginTop: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500,
+		color: colors.brand
+	},
+	/** text-secondary mt-6 text-sm uppercase */
+	groupLabel: {
+		marginTop: 24,
+		fontSize: 14,
+		lineHeight: '20px',
+		textTransform: 'uppercase',
+		color: colors.secondary
+	},
+	/** relative mt-2 */
+	navList: {
+		position: 'relative',
+		marginTop: 8
+	},
+	/** mt-0 flex items-center gap-6（space-y-0 由 navItemGap 条件承接） */
+	navListIcons: {
+		marginTop: 0,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 24
+	},
+	/** absolute max-w-[230px] rounded-full border（渐变背景保留内联 style；border 色同全局 * 规则 = colors.border） */
+	hoverPill: {
+		position: 'absolute',
+		maxWidth: 230,
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border
+	},
+	/** text-secondary relative z-10 flex items-center gap-3 rounded-full px-5 py-3（原 text-md 未产出任何样式，略去） */
+	navLink: {
+		position: 'relative',
+		zIndex: 10,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12,
+		borderRadius: 9999,
+		paddingInline: 20,
+		paddingBlock: 12,
+		color: colors.secondary
+	},
+	/** p-0（icons 形态覆盖 px-5 py-3；同一 props() 内后写覆盖） */
+	navLinkIcons: {
+		paddingInline: 0,
+		paddingBlock: 0
+	},
+	/** 原 space-y-2：v4 = 子项 :not(:last-child) margin-block-end 8px；分摊到非末项列表项（首个子元素为绝对定位胶囊，margin 不参与布局） */
+	navItemGap: {
+		marginBottom: 8
+	},
+	/** flex h-7 w-7 items-center justify-center */
+	iconBox: {
+		display: 'flex',
+		width: 28,
+		height: 28,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	/** absolute h-7 w-7 */
+	icon: {
+		position: 'absolute',
+		width: 28,
+		height: 28
+	},
+	/** text-brand */
+	iconActive: {
+		color: colors.brand
+	},
+	/** text-primary font-medium */
+	labelActive: {
+		color: colors.primary,
+		fontWeight: 500
+	}
+})
 
 export default function NavCard() {
 	const pathname = usePathname()
@@ -142,6 +256,7 @@ export default function NavCard() {
 	if (show)
 		return (
 			<HomeDraggableLayer cardKey='navCard' x={position.x} y={position.y} width={styles.width} height={styles.height}>
+				{/* Card 级 form 覆盖保留 Tailwind 字符串：stylex 类经 Card 的 cn() 跨组件合并时同属性冲突按声明字典序裁决（padding 12px 会输给 card.base 的 24px），沿用共存期 utilities 层序覆盖 */}
 				<Card
 					order={styles.order}
 					width={size.width}
@@ -154,29 +269,29 @@ export default function NavCard() {
 							<img
 								src='/images/christmas/snow-4.webp'
 								alt='Christmas decoration'
-								className='pointer-events-none absolute'
+								className={stylex.props(sx.snow).className}
 								style={{ width: 160, left: -18, top: -20, opacity: 0.9 }}
 							/>
 						</>
 					)}
 
-					<Link className='flex items-center gap-3' href='/'>
-						<Image src='/images/avatar.png' alt='avatar' width={40} height={40} style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }} className='rounded-full' />
+					<Link {...stylex.props(sx.logoLink)} href='/'>
+						<Image src='/images/avatar.png' alt='avatar' width={40} height={40} style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }} className={stylex.props(sx.avatar).className} />
 						{form === 'full' && (
-							<div className='flex flex-col'>
-								<span className='font-averia mt-1 text-2xl leading-none font-medium'>{metaTitle}</span>
-								<span className='text-brand mt-1 text-xs font-medium'>({activityStatus})</span>
+							<div {...stylex.props(sx.logoText)}>
+								<span {...stylex.props(sx.title)}>{metaTitle}</span>
+								<span {...stylex.props(sx.status)}>({activityStatus})</span>
 							</div>
 						)}
 					</Link>
 
 					{(form === 'full' || form === 'icons') && (
 						<>
-							{form !== 'icons' && <div className='text-secondary mt-6 text-sm uppercase'>General</div>}
+							{form !== 'icons' && <div {...stylex.props(sx.groupLabel)}>General</div>}
 
-							<div className={cn('relative mt-2 space-y-2', form === 'icons' && 'mt-0 flex items-center gap-6 space-y-0')}>
+							<div {...stylex.props(sx.navList, form === 'icons' && sx.navListIcons)}>
 								<motion.div
-									className='absolute max-w-[230px] rounded-full border'
+									className={stylex.props(sx.hoverPill).className}
 									layoutId='nav-hover'
 									initial={false}
 									animate={
@@ -201,12 +316,12 @@ export default function NavCard() {
 									<Link
 										key={item.href}
 										href={item.href}
-										className={cn('text-secondary text-md relative z-10 flex items-center gap-3 rounded-full px-5 py-3', form === 'icons' && 'p-0')}
+										{...stylex.props(sx.navLink, form === 'icons' && sx.navLinkIcons, form !== 'icons' && index < list.length - 1 && sx.navItemGap)}
 										onMouseEnter={() => setHoveredIndex(index)}>
-										<div className='flex h-7 w-7 items-center justify-center'>
-											{hoveredIndex == index ? <item.iconActive className='text-brand absolute h-7 w-7' /> : <item.icon className='absolute h-7 w-7' />}
+										<div {...stylex.props(sx.iconBox)}>
+											{hoveredIndex == index ? <item.iconActive {...stylex.props(sx.icon, sx.iconActive)} /> : <item.icon {...stylex.props(sx.icon)} />}
 										</div>
-										{form !== 'icons' && <span className={clsx(index == hoveredIndex && 'text-primary font-medium')}>{item.label}</span>}
+										{form !== 'icons' && <span {...stylex.props(index === hoveredIndex && sx.labelActive)}>{item.label}</span>}
 									</Link>
 								))}
 							</div>
