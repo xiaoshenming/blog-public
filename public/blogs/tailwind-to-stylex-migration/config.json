@@ -1,0 +1,9 @@
+{
+  "title": "拆掉 Tailwind：133 个文件的样式大搬家，CSS 瘦身 38%",
+  "tags": ["StyleX", "Tailwind", "CSS", "重构"],
+  "date": "2026-09-19T02:45",
+  "summary": "把整个博客的样式体系从 Tailwind 换成了 StyleX：21 条路由、133 个文件、19 次提交。主样式表瘦身 38%，踩了五个大坑，还顺手给几处「原版就死掉」的悬停效果收了尸。这是完整复盘。",
+  "cover": "/blogs/tailwind-to-stylex-migration/cover.png",
+  "hidden": false,
+  "category": "代码实现"
+}
