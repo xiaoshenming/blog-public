@@ -1,0 +1,12 @@
+/* StyleX 原子 CSS 独立入口（由 src/app/layout.tsx 引入，触发独立 postcss 处理）
+   ── 为什么必须独立文件？ ──
+   Turbopack 下 postcss 插件对每个 CSS 入口逐个执行；@tailwindcss/postcss 会对
+   含 `@import 'tailwindcss'` 的入口做整表重编译，顺带清除未知 at-rule（如 @stylex），
+   导致 @stylexjs/postcss-plugin 永远找不到注入点（多次实测）。
+   本文件不含 tailwind 依赖，Tailwind 插件仅透传，@stylex; 指令可被 stylex 插件正常收编。
+
+   层序声明与 stylex.css 保持一致：无论两文件哪份先加载，全局层序一致：
+   theme < base < components < priority1..9 < utilities */
+@layer theme, base, components, priority1, priority2, priority3, priority4, priority5, priority6, priority7, priority8, priority9, utilities;
+
+@stylex;

@@ -1,5 +1,5 @@
 {
-	"name": "2025-blog",
+	"name": "blog-public-stylex",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@chenglou/pretext": "^0.0.8",
 		"@opennextjs/cloudflare": "^1.14.4",
+		"@stylexjs/stylex": "^0.19.1",
 		"@types/jsrsasign": "^10.5.15",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.18",
@@ -38,11 +39,14 @@
 		"zustand": "^5.0.8"
 	},
 	"devDependencies": {
+		"@stylexjs/babel-plugin": "^0.19.1",
+		"@stylexjs/postcss-plugin": "^0.19.1",
 		"@svgr/webpack": "^8.1.0",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"autoprefixer": "^10.6.1",
 		"babel-plugin-react-compiler": "1.0.0",
 		"baseline-browser-mapping": "^2.10.13",
 		"code-inspector-plugin": "^1.2.10",

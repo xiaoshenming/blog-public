@@ -1,7 +1,11 @@
+@import './stylex.css';
 @import 'tailwindcss';
 @import 'katex/dist/katex.min.css';
 @import './theme.css';
 @import './article.css';
+
+/* StyleX 原子 CSS 不在本文件注入 —— 见 src/styles/stylex-atoms.css（由根布局导入）：
+   本文件含 @import 'tailwindcss'，Tailwind 插件整表重编译会清除 @stylex 指令 */
 
 @plugin 'tailwindcss-animate';
 
@@ -14,15 +18,19 @@
 
 @layer base {
 	html {
-		@apply text-primary bg-bg h-full leading-tight;
+		color: var(--color-primary);
+		background-color: var(--color-bg);
+		height: 100%;
+		line-height: 1.25;
 		scroll-behavior: smooth;
 	}
 
 	body {
-		@apply h-full bg-none;
+		height: 100%;
+		background-image: none;
 	}
 	* {
-		@apply border-border;
+		border-color: var(--color-border);
 	}
 
 	input:focus,
@@ -34,11 +42,11 @@
 	}
 
 	button {
-		@apply cursor-pointer;
+		cursor: pointer;
 	}
 
 	.range-track {
-		@apply flex-1;
+		flex: 1;
 		appearance: none;
 		height: 6px;
 		border-radius: 9999px;
@@ -78,16 +86,24 @@
 	}
 
 	.windows {
-		@apply scrollbar-none;
-		* {
-			@apply scrollbar-none;
-		}
+		scrollbar-width: none;
+	}
+	.windows::-webkit-scrollbar {
+		display: none;
+	}
+	.windows * {
+		scrollbar-width: none;
+	}
+	.windows *::-webkit-scrollbar {
+		display: none;
 	}
 
 	/* Sonner Toaster styles */
 	html li[data-sonner-toast][data-styled='true'] {
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-		@apply bg-white/40! backdrop-blur;
+		background-color: rgb(255 255 255 / 40%) !important;
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
 	}
 }
 

@@ -1,0 +1,10 @@
+/* StyleX 全局层序声明
+   层序：theme < base < components < priority1..9 < utilities
+
+   共同时期（Tailwind + StyleX 并存）语义：
+   - StyleX 原子类可覆盖 Tailwind base（如 * { border-color } 不再误伤组件）
+   - Tailwind utilities 可覆盖 StyleX 原子类（未迁移父组件传入的 className 保持覆盖能力）
+
+   注意：@stylex; 原子注入指令不在此文件——Turbopack 下插件只处理入口 CSS（见 globals.css）。
+   Phase 4 拆除 Tailwind 后可再简化本文件。 */
+@layer theme, base, components, priority1, priority2, priority3, priority4, priority5, priority6, priority7, priority8, priority9, utilities;

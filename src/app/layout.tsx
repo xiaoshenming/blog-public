@@ -1,4 +1,5 @@
 import '@/styles/globals.css'
+import '@/styles/stylex-atoms.css'
 
 import type { Metadata } from 'next'
 import Layout from '@/layout'
