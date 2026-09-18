@@ -180,6 +180,10 @@ export default function Page() {
 				animate={{ opacity: 1, scale: 1 }}
 				onClick={handleEdit}
 				{...stylex.props(card.hover, styles.editButton)}>
+				编辑
+			</motion.button>
+
+			{slug === 'liquid-grass' && <LiquidGrass />}
 
 			{escapedDragon && (
 				<DragonEscape
