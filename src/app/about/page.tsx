@@ -10,6 +10,168 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import LikeButton from '@/components/like-button'
 import GithubSVG from '@/svgs/github.svg'
 import initialData from './list.json'
+import * as stylex from '@stylexjs/stylex'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 本页样式（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
+const styles = stylex.create({
+	/** 隐藏的密钥文件输入框 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 页面主容器（小屏去内边距） */
+	page: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingInline: 24,
+		paddingTop: 128,
+		paddingBottom: 48,
+		'@media (width < 40rem)': {
+			paddingInline: 0
+		}
+	},
+	/** 内容列 */
+	wrapper: {
+		width: '100%',
+		maxWidth: 800
+	},
+	/** 区块纵向间隔（24） */
+	stackLg: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 24
+	},
+	/** 输入组纵向间隔（16） */
+	stackSm: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 16
+	},
+	/** 文本居中 */
+	center: {
+		textAlign: 'center'
+	},
+	/** 页面大标题 */
+	title: {
+		marginBottom: 16,
+		fontSize: 36,
+		lineHeight: '40px',
+		fontWeight: 700
+	},
+	/** 描述文字 */
+	lead: {
+		color: colors.secondary,
+		fontSize: 18,
+		lineHeight: '28px'
+	},
+	/** 状态提示（居中灰字） */
+	loading: {
+		color: colors.secondary,
+		textAlign: 'center'
+	},
+	/** 卡片相对定位（内边距与卡片基底同为 24，无需覆盖） */
+	cardRel: {
+		position: 'relative'
+	},
+	/** 标题输入框 */
+	titleInput: {
+		width: '100%',
+		paddingInline: 16,
+		paddingBlock: 12,
+		textAlign: 'center',
+		fontSize: 24,
+		lineHeight: '32px',
+		fontWeight: 700
+	},
+	/** 描述输入框 */
+	descInput: {
+		width: '100%',
+		paddingInline: 16,
+		paddingBlock: 12,
+		textAlign: 'center',
+		fontSize: 18,
+		lineHeight: '28px'
+	},
+	/** Markdown 编辑区 */
+	editor: {
+		minHeight: 400,
+		width: '100%',
+		resize: 'none',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 页首标题块 */
+	headerBlock: {
+		marginBottom: 48,
+		textAlign: 'center'
+	},
+	/** 底部链接行 */
+	linkRow: {
+		marginTop: 32,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 24
+	},
+	/** 圆形 GitHub 链接 */
+	githubBtn: {
+		backgroundColor: colors.card,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 53,
+		height: 53,
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border
+	},
+	/** 右上角工具条（小屏隐藏） */
+	toolbar: {
+		position: 'fixed',
+		top: 16,
+		right: 24,
+		zIndex: 10,
+		display: 'flex',
+		gap: 12,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 工具条按钮：白底描边胶囊 */
+	toolbarBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 编辑按钮附加：毛玻璃 + 颜色过渡，悬停提亮 */
+	toolbarEdit: {
+		backdropFilter: 'blur(8px)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	},
+	/** 保存按钮：加宽内边距 */
+	saveBtn: {
+		paddingInline: 24
+	}
+})
 
 export default function Page() {
 	const [data, setData] = useState<AboutData>(initialData as AboutData)
@@ -95,7 +257,7 @@ export default function Page() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				className={stylex.props(styles.fileInput).className}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await handleChoosePrivateKey(f)
@@ -103,47 +265,47 @@ export default function Page() {
 				}}
 			/>
 
-			<div className='flex flex-col items-center justify-center px-6 pt-32 pb-12 max-sm:px-0'>
-				<div className='w-full max-w-[800px]'>
+			<div className={stylex.props(styles.page).className}>
+				<div className={stylex.props(styles.wrapper).className}>
 					{isEditMode ? (
 						isPreviewMode ? (
-							<div className='space-y-6'>
-								<div className='text-center'>
-									<h1 className='mb-4 text-4xl font-bold'>{data.title || '标题预览'}</h1>
-									<p className='text-secondary text-lg'>{data.description || '描述预览'}</p>
+							<div className={stylex.props(styles.stackLg).className}>
+								<div className={stylex.props(styles.center).className}>
+									<h1 className={stylex.props(styles.title).className}>{data.title || '标题预览'}</h1>
+									<p className={stylex.props(styles.lead).className}>{data.description || '描述预览'}</p>
 								</div>
 
 								{loading ? (
-									<div className='text-secondary text-center'>预览渲染中...</div>
+									<div className={stylex.props(styles.loading).className}>预览渲染中...</div>
 								) : (
-									<div className='card relative p-6'>
+									<div className={stylex.props(card.base, styles.cardRel).className}>
 										<div className='prose prose-sm max-w-none'>{content}</div>
 									</div>
 								)}
 							</div>
 						) : (
-							<div className='space-y-6'>
-								<div className='space-y-4'>
+							<div className={stylex.props(styles.stackLg).className}>
+								<div className={stylex.props(styles.stackSm).className}>
 									<input
 										type='text'
 										placeholder='标题'
-										className='w-full px-4 py-3 text-center text-2xl font-bold'
+										className={stylex.props(styles.titleInput).className}
 										value={data.title}
 										onChange={e => setData({ ...data, title: e.target.value })}
 									/>
 									<input
 										type='text'
 										placeholder='描述'
-										className='w-full px-4 py-3 text-center text-lg'
+										className={stylex.props(styles.descInput).className}
 										value={data.description}
 										onChange={e => setData({ ...data, description: e.target.value })}
 									/>
 								</div>
 
-								<div className='card relative'>
+								<div className={stylex.props(card.base, styles.cardRel).className}>
 									<textarea
 										placeholder='Markdown 内容'
-										className='min-h-[400px] w-full resize-none text-sm'
+										className={stylex.props(styles.editor).className}
 										value={data.content}
 										onChange={e => setData({ ...data, content: e.target.value })}
 									/>
@@ -152,22 +314,22 @@ export default function Page() {
 						)
 					) : (
 						<>
-							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mb-12 text-center'>
-								<h1 className='mb-4 text-4xl font-bold'>{data.title}</h1>
-								<p className='text-secondary text-lg'>{data.description}</p>
+							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={stylex.props(styles.headerBlock).className}>
+								<h1 className={stylex.props(styles.title).className}>{data.title}</h1>
+								<p className={stylex.props(styles.lead).className}>{data.description}</p>
 							</motion.div>
 
 							{loading ? (
-								<div className='text-secondary text-center'>加载中...</div>
+								<div className={stylex.props(styles.loading).className}>加载中...</div>
 							) : (
-								<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className='card relative p-6'>
+								<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(card.base, styles.cardRel).className}>
 									<div className='prose prose-sm max-w-none'>{content}</div>
 								</motion.div>
 							)}
 						</>
 					)}
 
-					<div className='mt-8 flex items-center justify-center gap-6'>
+					<div className={stylex.props(styles.linkRow).className}>
 						<motion.a
 							href='https://github.com/YYsuni/2025-blog-public'
 							target='_blank'
@@ -175,7 +337,7 @@ export default function Page() {
 							initial={{ opacity: 0, scale: 0.6 }}
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0 }}
-							className='bg-card flex h-[53px] w-[53px] items-center justify-center rounded-full border'>
+							className={stylex.props(styles.githubBtn).className}>
 							<GithubSVG />
 						</motion.a>
 
@@ -184,22 +346,22 @@ export default function Page() {
 				</div>
 			</div>
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='fixed top-4 right-6 z-10 flex gap-3 max-sm:hidden'>
+			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(styles.toolbar).className}>
 				{isEditMode ? (
 					<>
 						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							取消
 						</button>
 						<button
 							onClick={() => setIsPreviewMode(prev => !prev)}
 							disabled={isSaving}
-							className={`card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm`}>
+							className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							{isPreviewMode ? '继续编辑' : '预览'}
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</>
@@ -207,7 +369,7 @@ export default function Page() {
 					!hideEditButton && (
 						<button
 							onClick={handleEnterEditMode}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
 							编辑
 						</button>
 					)

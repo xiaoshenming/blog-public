@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 /** PIXI Application 实例（CDN 加载，无类型包） */
 interface PixiAppInstance {
@@ -39,6 +41,45 @@ function loadScript(src: string): Promise<void> {
 		document.head.appendChild(script)
 	})
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 舞台：方形比例圆形裁切 */
+	stage: {
+		position: 'relative',
+		aspectRatio: '1',
+		width: '100%',
+		overflow: 'hidden',
+		borderRadius: 9999
+	},
+	/** 画布挂载点：铺满舞台 */
+	canvasHost: {
+		position: 'absolute',
+		inset: 0,
+		height: '100%',
+		width: '100%'
+	},
+	/** 加载浮层：居中 */
+	statusOverlay: {
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		color: colors.secondary
+	},
+	/** 错误浮层：居中、内边距与居中文本 */
+	errorOverlay: {
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 16,
+		textAlign: 'center',
+		color: '#fb2c36'
+	}
+})
 
 export default function Live2DViewer() {
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -114,10 +155,10 @@ export default function Live2DViewer() {
 	}, [])
 
 	return (
-		<div className='relative aspect-square w-full overflow-hidden rounded-full'>
-			<div ref={containerRef} className='absolute inset-0 h-full w-full' />
-			{status === 'loading' && <div className='text-secondary absolute inset-0 flex items-center justify-center'>加载 Live2D 模型中…</div>}
-			{status === 'error' && <div className='absolute inset-0 flex items-center justify-center p-4 text-center text-red-500'>{errorMsg}</div>}
+		<div {...stylex.props(styles.stage)}>
+			<div ref={containerRef} {...stylex.props(styles.canvasHost)} />
+			{status === 'loading' && <div {...stylex.props(styles.statusOverlay)}>加载 Live2D 模型中…</div>}
+			{status === 'error' && <div {...stylex.props(styles.errorOverlay)}>{errorMsg}</div>}
 		</div>
 	)
 }

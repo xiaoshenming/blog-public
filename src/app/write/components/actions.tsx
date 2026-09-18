@@ -5,6 +5,88 @@ import { useRouter } from 'next/navigation'
 import { useWriteStore } from '../stores/write-store'
 import { usePreviewStore } from '../stores/preview-store'
 import { usePublish } from '../hooks/use-publish'
+import * as stylex from '@stylexjs/stylex'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 隐藏的文件输入 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 右上操作条 */
+	bar: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8
+	},
+	/** 编辑模式徽章行 */
+	badgeWrap: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8
+	},
+	/** 编辑模式徽章 */
+	modeBadge: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: '#eff6ff',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: '#1447e6'
+	},
+	/** 删除按钮：红调外观；颜色过渡覆盖卡片默认的位移过渡（保持原计算值） */
+	deleteBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#ffcaca',
+		backgroundColor: '#fef2f2',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: '#e40014',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#ffe2e2'
+			}
+		}
+	},
+	/** 次要按钮：取消 / 导入 MD */
+	ghostBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: colors.card,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 预览按钮：加宽内边距 */
+	previewBtn: {
+		paddingInline: 24
+	},
+	/** 发布按钮：品牌底色上的加宽内边距 */
+	publishBtn: {
+		paddingInline: 24
+	}
+})
 
 export function WriteActions() {
 	const { loading, mode, form, loadBlogForEdit, originalSlug, updateForm } = useWriteStore()
@@ -72,35 +154,32 @@ export function WriteActions() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await onChoosePrivateKey(f)
 					if (e.currentTarget) e.currentTarget.value = ''
 				}}
 			/>
-			<input ref={mdInputRef} type='file' accept='.md' className='hidden' onChange={handleMdFileChange} />
+			<input ref={mdInputRef} type='file' accept='.md' {...stylex.props(styles.fileInput)} onChange={handleMdFileChange} />
 
-			<ul className='absolute top-4 right-6 flex items-center gap-2'>
+			<ul {...stylex.props(styles.bar)}>
 				{mode === 'edit' && (
 					<>
-						<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='flex items-center gap-2'>
-							<div className='rounded-lg border bg-blue-50 px-4 py-2 text-sm text-blue-700'>编辑模式</div>
+						<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.badgeWrap)}>
+							<div {...stylex.props(styles.modeBadge)}>编辑模式</div>
 						</motion.div>
 
 						<motion.button
 							initial={{ opacity: 0, scale: 0.6 }}
 							animate={{ opacity: 1, scale: 1 }}
-							className='card-hover rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-100'
+							{...stylex.props(card.hover, styles.deleteBtn)}
 							disabled={loading}
 							onClick={handleDelete}>
 							删除
 						</motion.button>
 
-						<button
-							onClick={handleCancel}
-							disabled={saving}
-							className='card-hover bg-card rounded-xl border px-4 py-2 text-sm'>
+						<button onClick={handleCancel} disabled={saving} {...stylex.props(card.hover, styles.ghostBtn)}>
 							取消
 						</button>
 					</>
@@ -109,7 +188,7 @@ export function WriteActions() {
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					className='card-hover bg-card rounded-xl border px-4 py-2 text-sm'
+					{...stylex.props(card.hover, styles.ghostBtn)}
 					disabled={loading}
 					onClick={handleImportMd}>
 					导入 MD
@@ -117,7 +196,7 @@ export function WriteActions() {
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					className='card-hover bg-card rounded-xl border px-6 py-2 text-sm'
+					{...stylex.props(card.hover, styles.ghostBtn, styles.previewBtn)}
 					disabled={loading}
 					onClick={openPreview}>
 					预览
@@ -125,7 +204,7 @@ export function WriteActions() {
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
-					className='card-hover brand-btn px-6'
+					{...stylex.props(card.hover, brandBtn.base, styles.publishBtn)}
 					disabled={loading}
 					onClick={handleImportOrPublish}>
 					{buttonText}

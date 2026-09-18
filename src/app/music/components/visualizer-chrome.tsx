@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Pause, Play, SkipBack, SkipForward, X } from 'lucide-react'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '../music-store'
 import { VISUALIZER_REGISTRY } from '../visualizer/registry'

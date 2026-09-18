@@ -2,6 +2,122 @@
 
 import { useMemo, useState } from 'react'
 import { SvgComponent, svgItems } from '@/svgs/index'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 本页样式（数值取自 Tailwind v4 编译产物；无令牌色板已固化） */
+const styles = stylex.create({
+	/** 页面主容器 */
+	page: {
+		marginInline: 'auto',
+		maxWidth: 1024,
+		paddingInline: 24,
+		paddingBlock: 32,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 16
+	},
+	/** 标题行 */
+	header: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: 12
+	},
+	heading: {
+		fontSize: 20,
+		lineHeight: '28px',
+		fontWeight: 500
+	},
+	/** 过滤输入框（原背景类无令牌零产出，故无底色） */
+	filter: {
+		height: 36,
+		width: 224,
+		borderRadius: 6,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		fontSize: 14,
+		lineHeight: '20px',
+		outlineStyle: 'none'
+	},
+	/** 图标网格（逐级增列） */
+	grid: {
+		display: 'grid',
+		gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+		gap: 16,
+		'@media (width >= 40rem)': {
+			gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
+		},
+		'@media (width >= 48rem)': {
+			gridTemplateColumns: 'repeat(4, minmax(0, 1fr))'
+		},
+		'@media (width >= 64rem)': {
+			gridTemplateColumns: 'repeat(6, minmax(0, 1fr))'
+		},
+		'@media (width >= 80rem)': {
+			gridTemplateColumns: 'repeat(8, minmax(0, 1fr))'
+		}
+	},
+	/** 图标卡（悬停浅底，实测值固化 5% 混合） */
+	card: {
+		position: 'relative',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		borderRadius: 6,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		padding: 12,
+		textAlign: 'left',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, #1d293d 5%, transparent)'
+			}
+		}
+	},
+	iconBox: {
+		display: 'flex',
+		height: 48,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	icon: {
+		width: 32,
+		height: 32
+	},
+	/** 名称行：单行省略 */
+	label: {
+		marginTop: 8,
+		width: '100%',
+		overflow: 'hidden',
+		textAlign: 'center',
+		fontSize: 12,
+		lineHeight: '16px',
+		wordBreak: 'break-all',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap'
+	},
+	/** 复制成功徽标（原前景/背景色类无令牌零产出，故无配色） */
+	copied: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		top: 8,
+		right: 8,
+		borderRadius: 4,
+		paddingInline: 6,
+		paddingBlock: 2,
+		fontSize: '10px',
+		fontWeight: 500
+	}
+})
 
 export default function Page() {
 	const [query, setQuery] = useState('')
@@ -44,33 +160,33 @@ export default function Page() {
 	}
 
 	return (
-		<div className='mx-auto max-w-5xl space-y-4 px-6 py-8'>
-			<div className='flex items-center justify-between gap-3'>
-				<h1 className='text-xl font-medium'>SVG Gallery</h1>
+		<div className={stylex.props(styles.page).className}>
+			<div className={stylex.props(styles.header).className}>
+				<h1 className={stylex.props(styles.heading).className}>SVG Gallery</h1>
 				<input
 					type='text'
 					value={query}
 					onChange={e => setQuery(e.target.value)}
 					placeholder='Filter icons...'
-					className='bg-background h-9 w-56 rounded-md border px-3 text-sm outline-none'
+					className={stylex.props(styles.filter).className}
 				/>
 			</div>
-			<div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8'>
+			<div className={stylex.props(styles.grid).className}>
 				{filteredItems.map(({ key, Component, label }: { key: string; Component: SvgComponent; label: string }) => (
 					<button
 						key={key}
 						onClick={() => handleCopy(label, key)}
 						title={'Click to copy import command'}
 						type='button'
-						className='bg-background group relative flex flex-col items-center rounded-md border p-3 text-left transition-colors hover:bg-slate-800/5'>
-						<div className='flex h-12 items-center justify-center'>
-							<Component className='h-8 w-8' />
+						className={cn(stylex.props(styles.card).className, 'group')}>
+						<div className={stylex.props(styles.iconBox).className}>
+							<Component {...stylex.props(styles.icon)} />
 						</div>
-						<div title={label} className='text-muted-foreground mt-2 w-full overflow-hidden text-center text-xs break-all text-ellipsis whitespace-nowrap'>
+						<div title={label} className={stylex.props(styles.label).className}>
 							{label}
 						</div>
 						{copiedKey === key && (
-							<span className='bg-foreground/90 text-background pointer-events-none absolute top-2 right-2 rounded px-1.5 py-0.5 text-[10px] font-medium'>
+							<span className={stylex.props(styles.copied).className}>
 								Copied
 							</span>
 						)}

@@ -3,14 +3,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
-import type { StyleXStyles } from '@stylexjs/stylex'
+import type { StyleXProp } from '@/styles/shared/types'
 import TopSVG from '@/svgs/top.svg'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 type ScrollTopButtonProps = {
 	/** 调用方注入的定位/阴影等样式；在同一次 stylex.props() 中合并（后写覆盖） */
-	style?: StyleXStyles
+	style?: StyleXProp
 	delay?: number
 }
 

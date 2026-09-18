@@ -1,6 +1,9 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
+import { colors } from '@/styles/tokens.stylex'
 
 interface CardRecord {
 	cardPoolType: string
@@ -68,6 +71,139 @@ function buildPitySegments(records: CardRecord[]): PitySegment[] {
 	return segments
 }
 
+/** 本页样式（数值取自 Tailwind v4 编译产物；无令牌文本色按零产出处理） */
+const styles = stylex.create({
+	/** 页面主容器 */
+	page: {
+		marginInline: 'auto',
+		maxWidth: 768,
+		paddingInline: 16,
+		paddingBlock: 96,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 16
+	},
+	heading: {
+		fontSize: 20,
+		lineHeight: '28px',
+		fontWeight: 600,
+		letterSpacing: '-0.025em'
+	},
+	para: {
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 步骤列表 */
+	steps: {
+		color: colors.secondary,
+		listStylePosition: 'inside',
+		listStyleType: 'disc',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	link: {
+		color: colors.brand,
+		'@media (hover: hover)': {
+			':hover': {
+				textDecorationLine: 'underline'
+			}
+		}
+	},
+	accent: {
+		color: colors.brand
+	},
+	muted: {
+		color: colors.secondary
+	},
+	/** JSON 输入区（focus-visible 环用单层阴影等价） */
+	editor: {
+		backgroundColor: colors.card,
+		width: '100%',
+		resize: 'vertical',
+		borderRadius: 6,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+		fontSize: 14,
+		lineHeight: '20px',
+		':focus-visible': {
+			outlineStyle: 'none',
+			boxShadow: '0 0 0 2px currentcolor'
+		}
+	},
+	/** 分析按钮（flex 列容器下保持内容宽度） */
+	analyzeBtn: {
+		alignSelf: 'flex-start',
+		backgroundColor: colors.brand,
+		borderRadius: 6,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		color: colors.white,
+		'@media (hover: hover)': {
+			':hover': {
+				opacity: 0.9
+			}
+		}
+	},
+	/** 错误提示 */
+	error: {
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	segmentList: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8
+	},
+	segmentItem: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12
+	},
+	/** 抽数条：宽度由内联 style 控制 */
+	pullBar: {
+		backgroundColor: colors.brandSecondary,
+		display: 'flex',
+		height: 28,
+		flexShrink: 0,
+		alignItems: 'center',
+		overflow: 'hidden',
+		borderRadius: 4,
+		paddingLeft: 8,
+		fontSize: 12,
+		lineHeight: 1,
+		fontWeight: 700,
+		color: colors.white,
+		fontVariantNumeric: 'tabular-nums'
+	},
+	/** 名称行：单行省略 */
+	segmentName: {
+		minWidth: 0,
+		flex: '1',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 时间提示：默认隐藏，悬停父项显示（显示切换由保留字符串类承接） */
+	timeHint: {
+		display: 'none',
+		color: colors.secondary,
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	pending: {
+		color: colors.secondary
+	}
+})
+
 export default function Page() {
 	const [input, setInput] = useState('')
 	const [error, setError] = useState<string | null>(null)
@@ -90,26 +226,26 @@ export default function Page() {
 	}, [input])
 
 	return (
-		<div className='mx-auto max-w-3xl space-y-4 px-4 py-24'>
-			<h1 className='text-xl font-semibold tracking-tight'>鸣潮 · 抽卡记录分析</h1>
-			<p className='text-sm'>
+		<div className={stylex.props(styles.page).className}>
+			<h1 className={stylex.props(styles.heading).className}>鸣潮 · 抽卡记录分析</h1>
+			<p className={stylex.props(styles.para).className}>
 				<span>使用方法：</span>
 			</p>
-			<ul className='text-secondary list-inside list-disc text-sm'>
+			<ul className={stylex.props(styles.steps).className}>
 				<li>
 					进入{' '}
-					<a href='https://mc.kurogames.com/cloud/#/tools' target='_blank' className='text-brand hover:underline'>
+					<a href='https://mc.kurogames.com/cloud/#/tools' target='_blank' className={stylex.props(styles.link).className}>
 						https://mc.kurogames.com/cloud/#/tools
 					</a>
 					，登录账号。
 				</li>
 				<li>
-					点击 <span className='text-brand'>F12</span>，点击右侧 <span className='text-brand'>Network</span> 面板。左侧选择<span className='text-brand'>换取记录</span>
-					，右侧观察出现最新的 <span className='text-brand'>query</span> 请求。
+					点击 <span className={stylex.props(styles.accent).className}>F12</span>，点击右侧 <span className={stylex.props(styles.accent).className}>Network</span> 面板。左侧选择<span className={stylex.props(styles.accent).className}>换取记录</span>
+					，右侧观察出现最新的 <span className={stylex.props(styles.accent).className}>query</span> 请求。
 				</li>
 				<li>
-					点击 <span className='text-brand'>query</span> 请求，点击 <span className='text-brand'>Preview</span> 面板，右键 <span className='text-brand'>data</span> 值{' '}
-					<span className='text-brand'>Copy Value</span>。
+					点击 <span className={stylex.props(styles.accent).className}>query</span> 请求，点击 <span className={stylex.props(styles.accent).className}>Preview</span> 面板，右键 <span className={stylex.props(styles.accent).className}>data</span> 值{' '}
+					<span className={stylex.props(styles.accent).className}>Copy Value</span>。
 				</li>
 				<li>最后粘贴到下方输入框 - 分析。</li>
 			</ul>
@@ -119,38 +255,38 @@ export default function Page() {
 				onChange={e => setInput(e.target.value)}
 				rows={5}
 				spellCheck={false}
-				className='bg-card text-foreground focus-visible:ring-ring w-full resize-y rounded-md border px-3 py-2 font-mono text-sm focus-visible:ring-2 focus-visible:outline-none'
+				className={stylex.props(styles.editor).className}
 				style={{ maxHeight: '7.5rem' }}
 				placeholder='[{"cardPoolType":"…","qualityLevel":4,"name":"…",...}, ...]'
 			/>
 
-			<button type='button' onClick={analyze} className='bg-brand rounded-md px-4 py-2 text-sm font-medium text-white hover:opacity-90'>
+			<button type='button' onClick={analyze} className={stylex.props(styles.analyzeBtn).className}>
 				分析
 			</button>
 
 			{error ? (
-				<p className='text-destructive text-sm' role='alert'>
+				<p className={stylex.props(styles.error).className} role='alert'>
 					{error}
 				</p>
 			) : null}
 
 			{segments.length > 0 ? (
-				<ul className='space-y-2'>
+				<ul className={stylex.props(styles.segmentList).className}>
 					{segments.map((seg, i) => (
-						<li key={i} className='group flex items-center gap-3'>
+						<li key={i} className={cn(stylex.props(styles.segmentItem).className, 'group')}>
 							<div
-								className='bg-brand-secondary flex h-7 shrink-0 items-center overflow-hidden rounded-sm pl-2 text-xs leading-none font-bold text-white tabular-nums'
+								className={stylex.props(styles.pullBar).className}
 								style={{ width: seg.pulls * 4 + 16 }}
 								title={`${seg.pulls} 抽`}>
 								{seg.pulls}
 							</div>
-							<span className='text-foreground min-w-0 flex-1 truncate text-sm'>
+							<span className={stylex.props(styles.segmentName).className}>
 								{seg.name ? (
 									<span>
-										{seg.name} <span className='text-secondary hidden text-xs group-hover:inline'>({seg.time?.slice(0, 10)})</span>
+										{seg.name} <span className={cn(stylex.props(styles.timeHint).className, 'group-hover:inline')}>({seg.time?.slice(0, 10)})</span>
 									</span>
 								) : (
-									<span className='text-secondary'>（未到 5 星）</span>
+									<span className={stylex.props(styles.pending).className}>（未到 5 星）</span>
 								)}
 							</span>
 						</li>

@@ -2,8 +2,67 @@ import { motion } from 'motion/react'
 import { useWriteStore } from '../stores/write-store'
 import { INIT_DELAY } from '@/consts'
 import { useRef } from 'react'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
+import { util } from '@/styles/shared/util.stylex'
 
 const defaultText = 'text'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 编辑面板容器（投影复用共享软阴影） */
+	panel: {
+		backgroundColor: colors.card,
+		display: 'flex',
+		minHeight: 800,
+		width: 800,
+		flexDirection: 'column',
+		borderRadius: 40,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		padding: 24
+	},
+	/** 标题行 */
+	titleRow: {
+		marginBottom: 12,
+		display: 'flex',
+		gap: 12
+	},
+	/** 输入框通用外观 */
+	field: {
+		backgroundColor: colors.card,
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	titleInput: {
+		flex: '1'
+	},
+	slugInput: {
+		width: 200
+	},
+	/** Markdown 文本域 */
+	mdArea: {
+		backgroundColor: colors.card,
+		height: 650,
+		width: '100%',
+		flex: '1',
+		resize: 'none',
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		padding: 16,
+		fontSize: 14,
+		lineHeight: '20px'
+	}
+})
 
 export function WriteEditor() {
 	const { form, updateForm, images, addFiles } = useWriteStore()
@@ -160,19 +219,19 @@ export function WriteEditor() {
 			initial={{ opacity: 0, scale: 0.8 }}
 			animate={{ opacity: 1, scale: 1 }}
 			transition={{ delay: INIT_DELAY }}
-			className='bg-card flex min-h-[800px] w-[800px] flex-col rounded-[40px] border p-6 shadow'>
-			<div className='mb-3 flex gap-3'>
+			{...stylex.props(styles.panel, util.shadowSoft)}>
+			<div {...stylex.props(styles.titleRow)}>
 				<input
 					type='text'
 					placeholder='标题'
-					className='bg-card flex-1 rounded-lg border px-3 py-2 text-sm'
+					{...stylex.props(styles.field, styles.titleInput)}
 					value={form.title}
 					onChange={e => updateForm({ title: e.target.value })}
 				/>
 				<input
 					type='text'
 					placeholder='slug（xx-xx）'
-					className='bg-card w-[200px] rounded-lg border px-3 py-2 text-sm'
+					{...stylex.props(styles.field, styles.slugInput)}
 					value={form.slug}
 					onChange={e => updateForm({ slug: e.target.value })}
 				/>
@@ -180,7 +239,7 @@ export function WriteEditor() {
 			<textarea
 				ref={textareaRef}
 				placeholder='Markdown 内容'
-				className='bg-card h-[650px] w-full flex-1 resize-none rounded-xl border p-4 text-sm'
+				{...stylex.props(styles.mdArea)}
 				value={form.md}
 				onChange={e => updateForm({ md: e.target.value })}
 				onKeyDown={handleKeyDown}

@@ -6,13 +6,13 @@ import { cn } from '@/lib/utils'
 import { useEffect, useRef, useState } from 'react'
 import { useSize } from '@/hooks/use-size'
 import * as stylex from '@stylexjs/stylex'
-import type { StyleXStyles } from '@stylexjs/stylex'
+import type { StyleXProp } from '@/styles/shared/types'
 import { card } from '@/styles/shared/card.stylex'
 
 interface Props {
 	className?: string
 	/** 覆盖样式（同一次 stylex.props() 内合并，后写覆盖）——消费方迁移后优先使用 */
-	style?: StyleXStyles
+	style?: StyleXProp
 	order: number
 	width: number
 	height?: number

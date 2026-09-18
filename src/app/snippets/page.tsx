@@ -9,8 +9,195 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import { pushSnippets } from './services/push-snippets'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { util } from '@/styles/shared/util.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 const getRandomSnippet = (list: string[]) => (list.length === 0 ? '' : list[Math.floor(Math.random() * list.length)])
+
+/** 本页样式（数值取自 Tailwind v4 编译产物；品牌按钮复用共享定义） */
+const styles = stylex.create({
+	/** 隐藏的密钥文件输入框 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 页面主容器 */
+	page: {
+		display: 'flex',
+		minHeight: '70vh',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingInline: 24,
+		paddingBlock: 96
+	},
+	/** 随机句展示区 */
+	quoteBox: {
+		width: '100%',
+		maxWidth: 768,
+		textAlign: 'center'
+	},
+	quote: {
+		fontSize: 24,
+		lineHeight: 1.625,
+		fontWeight: 600
+	},
+	/** 右上角工具条（小屏隐藏） */
+	toolbar: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		display: 'flex',
+		gap: 12,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 工具条按钮：白底描边胶囊 */
+	toolbarBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 编辑按钮：卡片底色 + 毛玻璃与悬停提亮 */
+	toolbarEdit: {
+		backgroundColor: colors.card,
+		backdropFilter: 'blur(8px)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	},
+	/** 保存按钮：加宽内边距 */
+	saveBtn: {
+		paddingInline: 24
+	},
+	/** 管理弹窗内容：各区块间隔 16 */
+	dialogBody: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 16
+	},
+	/** 新增行 */
+	addRow: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12
+	},
+	/** 新增输入框 */
+	draftInput: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#e5e7eb',
+		backgroundColor: '#f9fafb',
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 新增按钮：收窄图标间隔 */
+	addBtn: {
+		gap: 4
+	},
+	/** 草稿列表：限高滚动 + 条目间隔 8 */
+	draftList: {
+		maxHeight: 320,
+		overflowY: 'auto',
+		paddingRight: 4,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8
+	},
+	/** 空状态提示 */
+	empty: {
+		color: colors.secondary,
+		paddingBlock: 24,
+		textAlign: 'center',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 草稿条目（悬停联动由保留字符串类承接） */
+	draftItem: {
+		display: 'flex',
+		alignItems: 'flex-start',
+		gap: 12,
+		borderRadius: 8,
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	draftText: {
+		flex: '1',
+		lineHeight: 1.625,
+		color: '#1e2939'
+	},
+	/** 删除按钮：悬停转红 */
+	removeBtn: {
+		color: '#99a1af',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				color: '#fb2c36'
+			}
+		}
+	},
+	/** 弹窗底部操作行 */
+	dialogFooter: {
+		marginTop: 16,
+		display: 'flex',
+		gap: 12
+	},
+	/** 取消按钮 */
+	cancelBtn: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: colors.white,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#f9fafb'
+			}
+		}
+	},
+	/** 底部保存：充满剩余宽度并居中 */
+	saveFooterBtn: {
+		flex: '1',
+		justifyContent: 'center'
+	}
+})
 
 export default function Page() {
 	const [snippets, setSnippets] = useState<string[]>(initialList as string[])
@@ -125,7 +312,7 @@ export default function Page() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				className={stylex.props(styles.fileInput).className}
 				onChange={async e => {
 					const file = e.target.files?.[0]
 					if (file) await handleChoosePrivateKey(file)
@@ -133,27 +320,27 @@ export default function Page() {
 				}}
 			/>
 
-			<div className='flex min-h-[70vh] flex-col items-center justify-center px-6 py-24'>
-				<div className='w-full max-w-3xl text-center'>
-					<p className='text-2xl leading-relaxed font-semibold'>{currentSnippet || '无'}</p>
+			<div className={stylex.props(styles.page).className}>
+				<div className={stylex.props(styles.quoteBox).className}>
+					<p className={stylex.props(styles.quote).className}>{currentSnippet || '无'}</p>
 				</div>
 			</div>
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
+			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(styles.toolbar).className}>
 				{isEditMode ? (
 					<>
 						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							取消
 						</button>
 						<button
 							onClick={openManageDialog}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							管理
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</>
@@ -161,7 +348,7 @@ export default function Page() {
 					!hideEditButton && (
 						<button
 							onClick={() => setIsEditMode(true)}
-							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
 							编辑
 						</button>
 					)
@@ -169,40 +356,40 @@ export default function Page() {
 			</motion.div>
 
 			<DialogModal open={isManageOpen} onClose={cancelManageChanges} className='card static w-[520px] max-sm:w-full'>
-				<div className='space-y-4'>
-					<div className='flex items-center gap-3'>
+				<div className={stylex.props(styles.dialogBody).className}>
+					<div className={stylex.props(styles.addRow).className}>
 						<input
 							type='text'
 							value={newSnippet}
 							onChange={e => setNewSnippet(e.target.value)}
 							placeholder='新增'
-							className='flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+							className={stylex.props(styles.draftInput).className}
 						/>
-						<button onClick={handleAddDraft} className='brand-btn flex items-center gap-1 px-4 py-2 text-sm'>
-							<Plus className='h-4 w-4' />
+						<button onClick={handleAddDraft} className={stylex.props(brandBtn.base, styles.addBtn).className}>
+							<Plus {...stylex.props(util.iconSm)} />
 							新增
 						</button>
 					</div>
 
-					<div className='max-h-[320px] space-y-2 overflow-y-auto pr-1'>
-						{draftSnippets.length === 0 && <p className='text-secondary py-6 text-center text-sm'>暂无内容</p>}
+					<div className={stylex.props(styles.draftList).className}>
+						{draftSnippets.length === 0 && <p className={stylex.props(styles.empty).className}>暂无内容</p>}
 						{draftSnippets.map((item, index) => (
-							<div key={`${item}-${index}`} className='group flex items-start gap-3 rounded-lg px-3 py-2 text-sm'>
-								<p className='flex-1 leading-relaxed text-gray-800'>{item}</p>
-								<button onClick={() => handleRemoveDraft(index)} className='text-gray-400 transition-colors hover:text-red-500'>
-									<X className='h-4 w-4' />
+							<div key={`${item}-${index}`} className={cn(stylex.props(styles.draftItem).className, 'group')}>
+								<p className={stylex.props(styles.draftText).className}>{item}</p>
+								<button onClick={() => handleRemoveDraft(index)} className={stylex.props(styles.removeBtn).className}>
+									<X {...stylex.props(util.iconSm)} />
 								</button>
 							</div>
 						))}
 					</div>
 
-					<div className='mt-4 flex gap-3'>
+					<div className={stylex.props(styles.dialogFooter).className}>
 						<button
 							onClick={cancelManageChanges}
-							className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+							className={stylex.props(styles.cancelBtn).className}>
 							取消
 						</button>
-						<button onClick={applyManageChanges} className='brand-btn flex-1 justify-center px-4'>
+						<button onClick={applyManageChanges} className={stylex.props(brandBtn.base, styles.saveFooterBtn).className}>
 							保存
 						</button>
 					</div>

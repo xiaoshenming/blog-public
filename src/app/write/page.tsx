@@ -7,6 +7,21 @@ import { WriteSidebar } from './components/sidebar'
 import { WriteActions } from './components/actions'
 import { WritePreview } from './components/preview'
 import { useEffect } from 'react'
+import * as stylex from '@stylexjs/stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 写作区主容器：横向居中、顶部留白 */
+	shell: {
+		display: 'flex',
+		height: '100%',
+		justifyContent: 'center',
+		gap: 24,
+		paddingInline: 24,
+		paddingTop: 96,
+		paddingBottom: 48
+	}
+})
 
 export default function WritePage() {
 	const { form, cover, reset } = useWriteStore()
@@ -19,7 +34,7 @@ export default function WritePage() {
 		<WritePreview form={form} coverPreviewUrl={coverPreviewUrl} onClose={closePreview} />
 	) : (
 		<>
-			<div className='flex h-full justify-center gap-6 px-6 pt-24 pb-12'>
+			<div {...stylex.props(styles.shell)}>
 				<WriteEditor />
 				<WriteSidebar />
 			</div>

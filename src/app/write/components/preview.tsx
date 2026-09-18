@@ -2,6 +2,28 @@ import { motion } from 'motion/react'
 import { BlogPreview } from '@/components/blog-preview'
 import { useWriteData } from '../hooks/use-write-data'
 import type { PublishForm } from '../types'
+import * as stylex from '@stylexjs/stylex'
+import { card } from '@/styles/shared/card.stylex'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 关闭预览按钮：右上角、半透明白底 */
+	closeBtn: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	}
+})
 
 type WritePreviewProps = {
 	form: PublishForm
@@ -28,7 +50,7 @@ export function WritePreview({ form, coverPreviewUrl, onClose, slug }: WritePrev
 			<motion.button
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
-				className='card-hover absolute top-4 right-6 rounded-xl border bg-white/60 px-6 py-2 text-sm'
+				{...stylex.props(card.hover, styles.closeBtn)}
 				onClick={onClose}>
 				关闭预览
 			</motion.button>

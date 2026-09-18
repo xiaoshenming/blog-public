@@ -3,9 +3,261 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { Play, Pause, RotateCcw } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
 import { cn } from '@/lib/utils'
+import { card } from '@/styles/shared/card.stylex'
+import { util } from '@/styles/shared/util.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 type TimerMode = 'stopwatch' | 'timer'
+
+/** 本页样式（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
+const styles = stylex.create({
+	/** 页面主容器 */
+	page: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		paddingInline: 24,
+		paddingTop: 128,
+		paddingBottom: 48
+	},
+	/** 内容列：垂直间隔 32 */
+	container: {
+		width: '100%',
+		maxWidth: 600,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 32
+	},
+	/** 模式切换条：卡片基底上改相对定位并收窄内边距 */
+	modeBar: {
+		position: 'relative',
+		display: 'flex',
+		gap: 16,
+		borderRadius: 12,
+		padding: 8
+	},
+	/** 模式按钮 */
+	modeBtn: {
+		flex: '1',
+		borderRadius: 12,
+		paddingInline: 16,
+		paddingBlock: 12,
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 模式按钮·选中 */
+	modeActive: {
+		backgroundColor: colors.brand,
+		color: colors.white,
+		boxShadow: '0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%)'
+	},
+	/** 模式按钮·未选中：悬停转品牌色 */
+	modeIdle: {
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.brand
+			}
+		}
+	},
+	/** 数码管卡片 */
+	displayCard: {
+		position: 'relative',
+		padding: 16
+	},
+	/** 表盘底色 */
+	clockFace: {
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 20%, transparent)',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 32,
+		padding: 32
+	},
+	/** 计时器输入卡片（仅一个子元素，无需纵向间隔） */
+	timerCard: {
+		position: 'relative'
+	},
+	/** 输入行 */
+	inputRow: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 16
+	},
+	/** 单个时间字段 */
+	fieldCol: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: 8
+	},
+	fieldLabel: {
+		color: colors.secondary,
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	/** 数字输入框 */
+	timeInput: {
+		width: 80,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 16,
+		paddingBlock: 12,
+		textAlign: 'center',
+		fontSize: 24,
+		lineHeight: '32px',
+		fontWeight: 700,
+		backdropFilter: 'blur(8px)',
+		':focus': {
+			backgroundColor: 'rgb(255 255 255 / 80%)'
+		}
+	},
+	/** 输入行分隔冒号 */
+	inputColon: {
+		color: colors.secondary,
+		marginTop: 32,
+		fontSize: 24,
+		lineHeight: '32px',
+		fontWeight: 700
+	},
+	/** 控制按钮行 */
+	controls: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 16
+	},
+	/** 圆形控制键（64px）：计次 / 复位 */
+	roundBtn: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 64,
+		height: 64,
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backdropFilter: 'blur(8px)',
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		},
+		':disabled': {
+			cursor: 'not-allowed',
+			opacity: 0.5
+		}
+	},
+	/** 计次键文字 */
+	roundBtnText: {
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	/** 主控制键（80px） */
+	startBtn: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 80,
+		height: 80,
+		borderRadius: 9999,
+		color: colors.white,
+		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)',
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		':disabled': {
+			cursor: 'not-allowed',
+			opacity: 0.5
+		}
+	},
+	/** 主控制键·运行中 */
+	startRunning: {
+		backgroundColor: colors.brandSecondary,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, var(--color-brand-secondary) 80%, transparent)'
+			}
+		}
+	},
+	/** 主控制键·待机 */
+	startIdle: {
+		backgroundColor: colors.brand,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, var(--color-brand) 80%, transparent)'
+			}
+		}
+	},
+	iconLg: {
+		width: 32,
+		height: 32
+	},
+	iconMd: {
+		width: 20,
+		height: 20
+	},
+	/** 计次记录网格 */
+	lapGrid: {
+		display: 'grid',
+		gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+		gap: 12
+	},
+	lapItem: {
+		backgroundColor: colors.card,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 16,
+		paddingInline: 24,
+		paddingBlock: 16
+	},
+	/** 计次时间文字（等宽字体，栈值取自编译产物） */
+	lapText: {
+		fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	lapIndex: {
+		color: colors.secondary
+	},
+	/** 数码管行 */
+	digits: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 6
+	},
+	/** 冒号：外部类经 cn 透传合并 */
+	colon: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		gap: 8
+	},
+	colonDot: {
+		width: 6,
+		height: 6,
+		backgroundColor: colors.primary
+	}
+})
 
 export default function ClockPage() {
 	const [mode, setMode] = useState<TimerMode>('stopwatch')
@@ -133,10 +385,10 @@ export default function ClockPage() {
 	const canStart = mode === 'timer' ? timerTime > 0 || timerInput.hours > 0 || timerInput.minutes > 0 || timerInput.seconds > 0 : true
 
 	return (
-		<div className='flex flex-col items-center px-6 pt-32 pb-12'>
-			<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className='w-full max-w-[600px] space-y-8'>
+		<div className={stylex.props(styles.page).className}>
+			<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(styles.container).className}>
 				{/* Mode Selector */}
-				<div className='card relative flex gap-4 rounded-xl p-2'>
+				<div className={stylex.props(card.base, styles.modeBar).className}>
 					<button
 						onClick={() => {
 							setMode('stopwatch')
@@ -147,10 +399,7 @@ export default function ClockPage() {
 							pausedTimeRef.current = 0
 							initialTimerTimeRef.current = 0
 						}}
-						className={cn(
-							`card-hover flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
-							mode === 'stopwatch' ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand'
-						)}>
+						className={stylex.props(card.hover, styles.modeBtn, mode === 'stopwatch' ? styles.modeActive : styles.modeIdle).className}>
 						秒表
 					</button>
 					<button
@@ -163,57 +412,54 @@ export default function ClockPage() {
 							pausedTimeRef.current = 0
 							initialTimerTimeRef.current = 0
 						}}
-						className={cn(
-							`card-hover flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all`,
-							mode === 'timer' ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand'
-						)}>
+						className={stylex.props(card.hover, styles.modeBtn, mode === 'timer' ? styles.modeActive : styles.modeIdle).className}>
 						计时器
 					</button>
 				</div>
 
-				<motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className='card relative p-4'>
-					<div className='bg-secondary/20 flex items-center justify-center rounded-4xl p-8'>
+				<motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(card.base, styles.displayCard).className}>
+					<div className={stylex.props(styles.clockFace).className}>
 						<TimeDisplay time={displayTime} key={mode} />
 					</div>
 				</motion.div>
 
 				{/* Timer Input (only for timer mode when not running) */}
 				{mode === 'timer' && !isRunning && timerTime === 0 && (
-					<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className='card relative space-y-4'>
-						<div className='flex items-center justify-center gap-4'>
-							<div className='flex flex-col items-center gap-2'>
-								<label className='text-secondary text-xs'>时</label>
+					<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(card.base, styles.timerCard).className}>
+						<div className={stylex.props(styles.inputRow).className}>
+							<div className={stylex.props(styles.fieldCol).className}>
+								<label className={stylex.props(styles.fieldLabel).className}>时</label>
 								<input
 									type='number'
 									min='0'
 									max='23'
 									value={timerInput.hours}
 									onChange={e => setTimerInput({ ...timerInput, hours: Math.max(0, Math.min(23, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className={stylex.props(util.noSpinner, styles.timeInput).className}
 								/>
 							</div>
-							<div className='text-secondary mt-8 text-2xl font-bold'>:</div>
-							<div className='flex flex-col items-center gap-2'>
-								<label className='text-secondary text-xs'>分</label>
+							<div className={stylex.props(styles.inputColon).className}>:</div>
+							<div className={stylex.props(styles.fieldCol).className}>
+								<label className={stylex.props(styles.fieldLabel).className}>分</label>
 								<input
 									type='number'
 									min='0'
 									max='59'
 									value={timerInput.minutes}
 									onChange={e => setTimerInput({ ...timerInput, minutes: Math.max(0, Math.min(59, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className={stylex.props(util.noSpinner, styles.timeInput).className}
 								/>
 							</div>
-							<div className='text-secondary mt-8 text-2xl font-bold'>:</div>
-							<div className='flex flex-col items-center gap-2'>
-								<label className='text-secondary text-xs'>秒</label>
+							<div className={stylex.props(styles.inputColon).className}>:</div>
+							<div className={stylex.props(styles.fieldCol).className}>
+								<label className={stylex.props(styles.fieldLabel).className}>秒</label>
 								<input
 									type='number'
 									min='0'
 									max='59'
 									value={timerInput.seconds}
 									onChange={e => setTimerInput({ ...timerInput, seconds: Math.max(0, Math.min(59, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className={stylex.props(util.noSpinner, styles.timeInput).className}
 								/>
 							</div>
 						</div>
@@ -221,42 +467,40 @@ export default function ClockPage() {
 				)}
 
 				{/* Control Buttons */}
-				<div className='flex items-center justify-center gap-4'>
+				<div className={stylex.props(styles.controls).className}>
 					{mode === 'stopwatch' && (
 						<button
 							onClick={handleLap}
 							disabled={!isRunning}
-							className='card-hover flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 text-sm font-medium backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
+							className={stylex.props(card.hover, styles.roundBtn, styles.roundBtnText).className}>
 							计次
 						</button>
 					)}
 					<button
 						onClick={handleStartPause}
 						disabled={!canStart}
-						className={`card-hover flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-							isRunning ? 'bg-brand-secondary hover:bg-brand-secondary/80' : 'bg-brand hover:bg-brand/80'
-						}`}>
-						{isRunning ? <Pause className='h-8 w-8' /> : <Play className='h-8 w-8' />}
+						className={stylex.props(card.hover, styles.startBtn, isRunning ? styles.startRunning : styles.startIdle).className}>
+						{isRunning ? <Pause {...stylex.props(styles.iconLg)} /> : <Play {...stylex.props(styles.iconLg)} />}
 					</button>
 					<button
 						onClick={handleReset}
 						disabled={isRunning && mode === 'stopwatch'}
-						className='card-hover flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
-						<RotateCcw className='h-5 w-5' />
+						className={stylex.props(card.hover, styles.roundBtn).className}>
+						<RotateCcw {...stylex.props(styles.iconMd)} />
 					</button>
 				</div>
 
 				{mode === 'stopwatch' && laps.length > 0 && (
-					<div className='grid grid-cols-3 gap-3'>
+					<div className={stylex.props(styles.lapGrid).className}>
 						{laps.map((lap, index) => (
 							<motion.div
 								layout
 								initial={{ opacity: 0, scale: 0.6 }}
 								animate={{ opacity: 1, scale: 1 }}
 								key={lap}
-								className='bg-card flex items-center justify-center rounded-2xl px-6 py-4'>
-								<span className='font-mono text-sm font-medium'>
-									<span className='text-secondary'>{laps.length - index}.</span> {formatTime(lap)}
+								className={stylex.props(styles.lapItem).className}>
+								<span className={stylex.props(styles.lapText).className}>
+									<span className={stylex.props(styles.lapIndex).className}>{laps.length - index}.</span> {formatTime(lap)}
 								</span>
 							</motion.div>
 						))}
@@ -284,7 +528,7 @@ function TimeDisplay({ time }: TimeDisplayProps) {
 	const millisecondsStr = milliseconds.toString().padStart(2, '0')
 
 	return (
-		<div className='flex items-center justify-center gap-1.5'>
+		<div className={stylex.props(styles.digits).className}>
 			{hours > 0 && (
 				<>
 					<SevenSegmentDigit value={parseInt(hoursStr[0])} />
@@ -363,9 +607,9 @@ function SevenSegmentDigit({ value, className }: SevenSegmentDigitProps) {
 
 function Colon({ className }: { className?: string }) {
 	return (
-		<div className={`flex flex-col justify-center gap-2 ${className}`}>
-			<div className='bg-primary h-1.5 w-1.5' />
-			<div className='bg-primary h-1.5 w-1.5' />
+		<div className={cn(stylex.props(styles.colon).className, className)}>
+			<div className={stylex.props(styles.colonDot).className} />
+			<div className={stylex.props(styles.colonDot).className} />
 		</div>
 	)
 }

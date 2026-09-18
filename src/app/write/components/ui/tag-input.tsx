@@ -1,9 +1,57 @@
 import { useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 type TagInputProps = {
 	tags: string[]
 	onChange: (tags: string[]) => void
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 输入容器 */
+	box: {
+		backgroundColor: colors.card,
+		width: '100%',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		paddingBlock: 8
+	},
+	/** 标签行 */
+	tagRow: {
+		marginBottom: 8,
+		display: 'flex',
+		flexWrap: 'wrap',
+		gap: 8
+	},
+	/** 单个标签 */
+	tag: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 6,
+		borderRadius: 6,
+		backgroundColor: '#dbeafe',
+		paddingInline: 8,
+		paddingBlock: 4,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: '#1447e6'
+	},
+	removeBtn: {
+		color: colors.secondary
+	},
+	/** 文本输入（去默认聚焦描边） */
+	input: {
+		width: '100%',
+		backgroundColor: 'transparent',
+		fontSize: 14,
+		lineHeight: '20px',
+		outlineStyle: 'none'
+	}
+})
 
 export function TagInput({ tags, onChange }: TagInputProps) {
 	const [tagInput, setTagInput] = useState<string>('')
@@ -20,13 +68,13 @@ export function TagInput({ tags, onChange }: TagInputProps) {
 	}
 
 	return (
-		<div className='bg-card w-full rounded-lg border px-3 py-2'>
+		<div {...stylex.props(styles.box)}>
 			{tags.length > 0 && (
-				<div className='mb-2 flex flex-wrap gap-2'>
+				<div {...stylex.props(styles.tagRow)}>
 					{tags.map((tag, index) => (
-						<span key={index} className='flex items-center gap-1.5 rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-700'>
+						<span key={index} {...stylex.props(styles.tag)}>
 							#{tag}
-							<button type='button' onClick={() => handleRemoveTag(index)} className='text-secondary'>
+							<button type='button' onClick={() => handleRemoveTag(index)} {...stylex.props(styles.removeBtn)}>
 								×
 							</button>
 						</span>
@@ -36,7 +84,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
 			<input
 				type='text'
 				placeholder='添加标签（按回车）'
-				className='w-full bg-transparent text-sm outline-none'
+				{...stylex.props(styles.input)}
 				value={tagInput}
 				onChange={e => setTagInput(e.target.value)}
 				onKeyDown={e => {

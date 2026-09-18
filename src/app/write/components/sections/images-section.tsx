@@ -4,10 +4,158 @@ import { useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { useWriteStore } from '../../stores/write-store'
 import Link from 'next/link'
+import * as stylex from '@stylexjs/stylex'
+import { cn } from '@/lib/utils'
+import { card } from '@/styles/shared/card.stylex'
+import { colors } from '@/styles/tokens.stylex'
+import { util } from '@/styles/shared/util.stylex'
 
 type ImagesSectionProps = {
 	delay?: number
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片系样式复用共享定义） */
+const styles = stylex.create({
+	/** 分区卡：相对定位覆盖卡片基底 */
+	section: {
+		position: 'relative'
+	},
+	heading: {
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 标题行 */
+	headerRow: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	},
+	/** 压缩工具链接 */
+	toolLink: {
+		fontSize: 12,
+		lineHeight: '16px',
+		'@media (hover: hover)': {
+			':hover': {
+				textDecoration: 'underline'
+			}
+		}
+	},
+	/** 地址输入行 */
+	urlRow: {
+		marginTop: 12,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8
+	},
+	urlInput: {
+		backgroundColor: colors.card,
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	addBtn: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 70%)',
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 隐藏的文件输入 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 图片网格 */
+	grid: {
+		marginTop: 12,
+		display: 'grid',
+		gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+		gap: 8
+	},
+	/** 上传占位块（group 字符串保留） */
+	plusTile: {
+		backgroundColor: colors.card,
+		position: 'relative',
+		display: 'grid',
+		aspectRatio: '1',
+		cursor: 'pointer',
+		placeItems: 'center',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, var(--color-secondary) 20%, transparent)'
+			}
+		}
+	},
+	plusIcon: {
+		fontSize: 24,
+		lineHeight: 1,
+		color: '#a1a1a1'
+	},
+	/** 图片卡（group 字符串保留） */
+	imageCard: {
+		position: 'relative',
+		aspectRatio: '1',
+		overflow: 'hidden',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 50%)',
+		fontSize: 12,
+		lineHeight: '16px'
+	},
+	/** 已设为封面：外圈描边 */
+	imageCardCover: {
+		boxShadow: '0 0 0 2px #3080ff'
+	},
+	thumb: {
+		height: '100%',
+		width: '100%',
+		objectFit: 'cover'
+	},
+	/** 封面角标 */
+	coverBadge: {
+		position: 'absolute',
+		top: 4,
+		left: 4,
+		borderRadius: 6,
+		backgroundColor: '#3080ff',
+		paddingInline: 6,
+		paddingBlock: 2,
+		color: colors.white
+	},
+	/** 删除按钮包裹层（悬停显隐沿用字符串类） */
+	deleteWrap: {
+		position: 'absolute',
+		top: 4,
+		right: 4,
+		display: 'none'
+	},
+	deleteBtn: {
+		borderRadius: 6,
+		backgroundColor: 'rgb(255 255 255 / 80%)',
+		paddingInline: 6,
+		paddingBlock: 2,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: colors.white
+			}
+		}
+	}
+})
 
 export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 	const { images, cover, addUrlImage, addFiles, deleteImage } = useWriteStore()
@@ -17,24 +165,24 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 	const coverId = cover?.id ?? null
 
 	return (
-		<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} className='card relative'>
-			<div className='flex items-center justify-between'>
-				<h2 className='text-sm'>图片管理</h2>
-				<Link href='/image-toolbox' target='_blank' className='text-xs hover:underline'>
+		<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} {...stylex.props(card.base, styles.section)}>
+			<div {...stylex.props(styles.headerRow)}>
+				<h2 {...stylex.props(styles.heading)}>图片管理</h2>
+				<Link href='/image-toolbox' target='_blank' {...stylex.props(styles.toolLink)}>
 					压缩工具
 				</Link>
 			</div>
 
-			<div className='mt-3 flex items-center gap-2'>
+			<div {...stylex.props(styles.urlRow)}>
 				<input
 					type='text'
 					placeholder='https://...'
-					className='bg-card flex-1 rounded-lg border px-3 py-2 text-sm'
+					{...stylex.props(styles.urlInput)}
 					value={urlInput}
 					onChange={e => setUrlInput(e.target.value)}
 				/>
 				<button
-					className='rounded-lg border bg-white/70 px-3 py-2 text-sm'
+					{...stylex.props(styles.addBtn)}
 					onClick={() => {
 						const v = urlInput.trim()
 						if (!v) return
@@ -50,7 +198,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 				type='file'
 				accept='image/*'
 				multiple
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={e => {
 					const files = e.target.files
 					if (files && files.length > 0) {
@@ -60,10 +208,10 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 				}}
 			/>
 
-			<div className='mt-3 grid grid-cols-4 gap-2'>
+			<div {...stylex.props(styles.grid)}>
 				{/* plus tile */}
 				<div
-					className='group bg-card hover:bg-secondary/20 relative grid aspect-square cursor-pointer place-items-center rounded-lg border'
+					className={cn(stylex.props(styles.plusTile).className, 'group')}
 					onClick={() => fileInputRef.current?.click()}
 					onDragOver={e => {
 						e.preventDefault()
@@ -73,7 +221,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 						const files = e.dataTransfer.files
 						if (files && files.length) addFiles(files)
 					}}>
-					<span className='text-2xl leading-none text-neutral-400'>+</span>
+					<span {...stylex.props(styles.plusIcon)}>+</span>
 				</div>
 
 				{images.map(item => {
@@ -83,21 +231,19 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 					const isCover = coverId === item.id
 
 					return (
-						<div
-							key={item.id}
-							className={`group relative aspect-square overflow-hidden rounded-lg border bg-white/50 text-xs ${isCover ? 'ring-2 ring-blue-500' : ''}`}>
+						<div key={item.id} className={cn(stylex.props(styles.imageCard, isCover && styles.imageCardCover).className, 'group')}>
 							<img
 								src={src}
-								className='h-full w-full object-cover'
+								{...stylex.props(styles.thumb)}
 								draggable
 								onDragStart={e => {
 									e.dataTransfer.setData('text/plain', markdown)
 									e.dataTransfer.setData('text/markdown', markdown)
 								}}
 							/>
-							{isCover && <div className='absolute top-1 left-1 rounded-md bg-blue-500 px-1.5 py-0.5 text-white shadow'>封面</div>}
-							<div className='absolute top-1 right-1 hidden group-hover:flex'>
-								<button type='button' className='rounded-md bg-white/80 px-1.5 py-0.5 shadow hover:bg-white' onClick={() => deleteImage(item.id)}>
+							{isCover && <div {...stylex.props(styles.coverBadge, util.shadowSoft)}>封面</div>}
+							<div className={cn(stylex.props(styles.deleteWrap).className, 'group-hover:flex')}>
+								<button type='button' {...stylex.props(styles.deleteBtn, util.shadowSoft)} onClick={() => deleteImage(item.id)}>
 									删除
 								</button>
 							</div>
