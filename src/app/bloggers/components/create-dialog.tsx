@@ -3,8 +3,12 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
 import AvatarUploadDialog, { type AvatarItem } from './avatar-upload-dialog'
 import { DialogModal } from '@/components/dialog-modal'
+import { cn } from '@/lib/utils'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 interface Blogger {
 	name: string
@@ -19,6 +23,145 @@ interface CreateDialogProps {
 	onClose: () => void
 	onSave: (blogger: Blogger, avatarItem?: AvatarItem) => void
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；group 悬停联动因 StyleX 不支持祖先选择器，保留字符串类） */
+const styles = stylex.create({
+	/** 头像行 */
+	header: {
+		marginBottom: 16,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 16
+	},
+	/** 头像容器（group 保留字符串） */
+	avatarWrap: {
+		position: 'relative',
+		cursor: 'pointer'
+	},
+	avatar: {
+		width: 64,
+		height: 64,
+		borderRadius: 9999,
+		objectFit: 'cover'
+	},
+	/** 头像悬停遮罩（显隐沿用字符串类） */
+	avatarOverlay: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		backgroundColor: 'rgb(0 0 0 / 40%)',
+		opacity: 0,
+		transitionProperty: 'opacity',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	overlayText: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.white
+	},
+	/** 空头像占位 */
+	avatarEmpty: {
+		display: 'flex',
+		width: 64,
+		height: 64,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		backgroundColor: '#e5e7eb'
+	},
+	plusIcon: {
+		width: 24,
+		height: 24,
+		color: '#6a7282'
+	},
+	info: {
+		flex: '1'
+	},
+	nameInput: {
+		width: '100%',
+		fontSize: 18,
+		lineHeight: '28px',
+		fontWeight: 700,
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	urlInput: {
+		marginTop: 4,
+		width: '100%',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary,
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 星级评分 */
+	stars: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 2
+	},
+	starButton: {
+		cursor: 'pointer'
+	},
+	starOn: {
+		fill: '#fac800'
+	},
+	starOff: {
+		fill: '#d1d5dc'
+	},
+	descriptionInput: {
+		marginTop: 12,
+		width: '100%',
+		resize: 'none',
+		fontSize: 14,
+		lineHeight: 1.625,
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 操作按钮行 */
+	actions: {
+		marginTop: 24,
+		display: 'flex',
+		gap: 12
+	},
+	cancelButton: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: colors.white,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#f9fafb'
+			}
+		}
+	},
+	/** 品牌按钮的弹性宽度与居中覆盖（横向内边距同品牌按钮默认值） */
+	submitButton: {
+		flex: '1',
+		justifyContent: 'center'
+	}
+})
 
 export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogProps) {
 	const [formData, setFormData] = useState<Blogger>({
@@ -67,44 +210,44 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 		<DialogModal open onClose={onClose} className='card w-sm'>
 			{/* 卡片样式的内容 */}
 			<div>
-				<div className='mb-4 flex items-center gap-4'>
-					<div className='group relative cursor-pointer' onClick={() => setShowAvatarDialog(true)}>
+				<div {...stylex.props(styles.header)}>
+					<div className={cn(stylex.props(styles.avatarWrap).className, 'group')} onClick={() => setShowAvatarDialog(true)}>
 						{formData.avatar ? (
 							<>
-								<img src={formData.avatar} alt={formData.name} className='h-16 w-16 rounded-full object-cover' />
-								<div className='pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100'>
-									<span className='text-xs text-white'>更换</span>
+								<img src={formData.avatar} alt={formData.name} {...stylex.props(styles.avatar)} />
+								<div className={cn(stylex.props(styles.avatarOverlay).className, 'group-hover:opacity-100')}>
+									<span {...stylex.props(styles.overlayText)}>更换</span>
 								</div>
 							</>
 						) : (
-							<div className='flex h-16 w-16 items-center justify-center rounded-full bg-gray-200'>
-								<Plus className='h-6 w-6 text-gray-500' />
+							<div {...stylex.props(styles.avatarEmpty)}>
+								<Plus {...stylex.props(styles.plusIcon)} />
 							</div>
 						)}
 					</div>
-					<div className='flex-1'>
+					<div {...stylex.props(styles.info)}>
 						<input
 							type='text'
 							value={formData.name}
 							onChange={e => setFormData({ ...formData, name: e.target.value })}
 							placeholder='博主名称'
-							className='w-full text-lg font-bold focus:outline-none'
+							{...stylex.props(styles.nameInput)}
 						/>
 						<input
 							type='url'
 							value={formData.url}
 							onChange={e => setFormData({ ...formData, url: e.target.value })}
 							placeholder='https://example.com'
-							className='text-secondary mt-1 w-full truncate text-xs focus:outline-none'
+							{...stylex.props(styles.urlInput)}
 						/>
 					</div>
 				</div>
 
 				{/* 星级评分 */}
-				<div className='flex items-center gap-0.5'>
+				<div {...stylex.props(styles.stars)}>
 					{[1, 2, 3, 4, 5].map(index => (
-						<div key={index} onClick={() => setFormData({ ...formData, stars: index })} className='cursor-pointer'>
-							<svg width='16' height='16' viewBox='0 0 24 24' className={index <= formData.stars ? 'fill-yellow-400' : 'fill-gray-300'}>
+						<div key={index} onClick={() => setFormData({ ...formData, stars: index })} {...stylex.props(styles.starButton)}>
+							<svg width='16' height='16' viewBox='0 0 24 24' {...stylex.props(index <= formData.stars ? styles.starOn : styles.starOff)}>
 								<path d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' />
 							</svg>
 						</div>
@@ -115,17 +258,17 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 					value={formData.description}
 					onChange={e => setFormData({ ...formData, description: e.target.value })}
 					placeholder='博主介绍...'
-					className='mt-3 w-full resize-none text-sm leading-relaxed focus:outline-none'
+					{...stylex.props(styles.descriptionInput)}
 					rows={4}
 				/>
 			</div>
 
 			{/* 操作按钮 */}
-			<div className='mt-6 flex gap-3'>
-				<button onClick={onClose} className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+			<div {...stylex.props(styles.actions)}>
+				<button onClick={onClose} {...stylex.props(styles.cancelButton)}>
 					取消
 				</button>
-				<button onClick={handleSubmit} className='brand-btn flex-1 justify-center px-4'>
+				<button onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
 					{blogger ? '保存' : '添加'}
 				</button>
 			</div>

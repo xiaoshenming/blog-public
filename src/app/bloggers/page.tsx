@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
+import * as stylex from '@stylexjs/stylex'
 import GridView, { type Blogger } from './grid-view'
 import CreateDialog from './components/create-dialog'
 import { pushBloggers } from './services/push-bloggers'
@@ -10,6 +11,66 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import type { AvatarItem } from './components/avatar-upload-dialog'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 隐藏的文件选择框 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 右上角操作区（小屏隐藏） */
+	toolbar: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		display: 'flex',
+		gap: 12,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 白底操作按钮（配合 card.hover 提供缩放反馈） */
+	ghostButton: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 品牌按钮的横向内边距覆盖 */
+	saveButton: {
+		paddingInline: 24
+	},
+	/** 卡片底操作按钮（毛玻璃 + 悬停变亮；颜色过渡覆盖 card.hover 的 transform 过渡，与原状一致） */
+	editButton: {
+		backgroundColor: colors.card,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		backdropFilter: 'blur(8px)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	}
+})
 
 export default function Page() {
 	const [bloggers, setBloggers] = useState<Blogger[]>(initialList as Blogger[])
@@ -132,7 +193,7 @@ export default function Page() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await handleChoosePrivateKey(f)
@@ -142,21 +203,21 @@ export default function Page() {
 
 			<GridView bloggers={bloggers} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
+			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
 						<button
 							onClick={handleCancel}
 							disabled={isSaving}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							{...stylex.props(card.hover, styles.ghostButton)}>
 							取消
 						</button>
 						<button
 							onClick={handleAdd}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							{...stylex.props(card.hover, styles.ghostButton)}>
 							添加
 						</button>
-						<button onClick={handleSaveClick} disabled={isSaving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
 							{isSaving ? '保存中...' : buttonText}
 						</button>
 					</>
@@ -164,7 +225,7 @@ export default function Page() {
 					!hideEditButton && (
 						<button
 							onClick={() => setIsEditMode(true)}
-							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							{...stylex.props(card.hover, styles.editButton)}>
 							编辑
 						</button>
 					)

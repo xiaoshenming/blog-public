@@ -3,7 +3,10 @@
 import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
 import { DialogModal } from '@/components/dialog-modal'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 export type AvatarItem = { type: 'url'; url: string } | { type: 'file'; file: File; previewUrl: string; hash?: string }
 
@@ -12,6 +15,158 @@ interface AvatarUploadDialogProps {
 	onClose: () => void
 	onSubmit: (avatar: AvatarItem) => void
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；space-y 分摊到三个非末项子块） */
+const styles = stylex.create({
+	title: {
+		marginBottom: 16,
+		fontSize: 20,
+		lineHeight: '28px',
+		fontWeight: 700
+	},
+	/** 上传区（space-y 首项） */
+	uploadSection: {
+		marginBottom: 16
+	},
+	label: {
+		marginBottom: 8,
+		display: 'block',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		color: colors.secondary
+	},
+	fileInput: {
+		display: 'none'
+	},
+	/** 上传框（悬停变灰加深） */
+	uploadBox: {
+		marginInline: 'auto',
+		display: 'flex',
+		height: 128,
+		width: 128,
+		cursor: 'pointer',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#e5e7eb'
+			}
+		}
+	},
+	previewImage: {
+		height: '100%',
+		width: '100%',
+		borderRadius: 8,
+		objectFit: 'cover'
+	},
+	uploadHint: {
+		textAlign: 'center'
+	},
+	plusIcon: {
+		marginInline: 'auto',
+		marginBottom: 4,
+		width: 32,
+		height: 32,
+		color: colors.secondary
+	},
+	hintText: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 分隔线区（space-y 次项） */
+	divider: {
+		position: 'relative',
+		marginBottom: 16
+	},
+	dividerLineWrap: {
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center'
+	},
+	dividerLine: {
+		width: '100%',
+		borderTopWidth: 1,
+		borderTopStyle: 'solid',
+		borderTopColor: '#d1d5dc'
+	},
+	dividerLabelWrap: {
+		position: 'relative',
+		display: 'flex',
+		justifyContent: 'center',
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	dividerLabel: {
+		borderRadius: 8,
+		backgroundColor: colors.white,
+		paddingInline: 16,
+		paddingBlock: 4,
+		color: colors.secondary
+	},
+	/** URL 区（space-y 末项之前） */
+	urlSection: {
+		marginBottom: 16
+	},
+	/** URL 输入框（聚焦时品牌色描边） */
+	urlInput: {
+		width: '100%',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: '#e5e7eb',
+		paddingInline: 16,
+		paddingBlock: 8,
+		':focus': {
+			boxShadow: '0 0 0 2px var(--color-brand)',
+			outlineStyle: 'none'
+		}
+	},
+	actions: {
+		display: 'flex',
+		gap: 12,
+		paddingTop: 8
+	},
+	/** 品牌按钮覆盖：弹性宽度 + 居中 + 独立圆角/内边距（同次合并后写覆盖品牌按钮默认值） */
+	confirmButton: {
+		flex: '1',
+		justifyContent: 'center',
+		borderRadius: 8,
+		paddingInline: 24,
+		paddingBlock: 10
+	},
+	cancelButton: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: colors.white,
+		paddingInline: 24,
+		paddingBlock: 10,
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#f9fafb'
+			}
+		}
+	}
+})
 
 export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }: AvatarUploadDialogProps) {
 	const [urlInput, setUrlInput] = useState(currentAvatar || '')
@@ -67,37 +222,37 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 
 	return (
 		<DialogModal open onClose={handleClose} className='card w-md'>
-			<h2 className='mb-4 text-xl font-bold'>选择头像</h2>
+			<h2 {...stylex.props(styles.title)}>选择头像</h2>
 
-			<form onSubmit={handleSubmit} className='space-y-4'>
-				<div>
-					<label className='text-secondary mb-2 block text-sm font-medium'>上传图片</label>
-					<input ref={fileInputRef} type='file' accept='image/*' className='hidden' onChange={handleFileSelect} />
+			<form onSubmit={handleSubmit}>
+				<div {...stylex.props(styles.uploadSection)}>
+					<label {...stylex.props(styles.label)}>上传图片</label>
+					<input ref={fileInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleFileSelect} />
 					<div
 						onClick={() => fileInputRef.current?.click()}
-						className='mx-auto flex h-32 w-32 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-secondary/10 transition-colors hover:bg-gray-200'>
+						{...stylex.props(styles.uploadBox)}>
 						{previewFile ? (
-							<img src={previewFile.previewUrl} alt='preview' className='h-full w-full rounded-lg object-cover' />
+							<img src={previewFile.previewUrl} alt='preview' {...stylex.props(styles.previewImage)} />
 						) : (
-							<div className='text-center'>
-								<Plus className='text-secondary mx-auto mb-1 h-8 w-8' />
-								<p className='text-secondary text-xs'>点击上传图片</p>
+							<div {...stylex.props(styles.uploadHint)}>
+								<Plus {...stylex.props(styles.plusIcon)} />
+								<p {...stylex.props(styles.hintText)}>点击上传图片</p>
 							</div>
 						)}
 					</div>
 				</div>
 
-				<div className='relative'>
-					<div className='absolute inset-0 flex items-center'>
-						<div className='w-full border-t border-gray-300'></div>
+				<div {...stylex.props(styles.divider)}>
+					<div {...stylex.props(styles.dividerLineWrap)}>
+						<div {...stylex.props(styles.dividerLine)}></div>
 					</div>
-					<div className='relative flex justify-center text-sm'>
-						<span className='text-secondary rounded-lg bg-white px-4 py-1'>或</span>
+					<div {...stylex.props(styles.dividerLabelWrap)}>
+						<span {...stylex.props(styles.dividerLabel)}>或</span>
 					</div>
 				</div>
 
-				<div>
-					<label className='text-secondary mb-2 block text-sm font-medium'>图片 URL</label>
+				<div {...stylex.props(styles.urlSection)}>
+					<label {...stylex.props(styles.label)}>图片 URL</label>
 					<input
 						type='url'
 						value={urlInput}
@@ -109,18 +264,18 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 							}
 						}}
 						placeholder='https://example.com/avatar.png'
-						className='focus:ring-brand w-full rounded-lg border border-gray-300 bg-gray-200 px-4 py-2 focus:ring-2 focus:outline-none'
+						{...stylex.props(styles.urlInput)}
 					/>
 				</div>
 
-				<div className='flex gap-3 pt-2'>
-					<button type='submit' className='brand-btn flex-1 justify-center rounded-lg px-6 py-2.5'>
+				<div {...stylex.props(styles.actions)}>
+					<button type='submit' {...stylex.props(brandBtn.base, styles.confirmButton)}>
 						确认
 					</button>
 					<button
 						type='button'
 						onClick={handleClose}
-						className='flex-1 rounded-lg border border-gray-300 bg-white px-6 py-2.5 transition-colors hover:bg-gray-50'>
+						{...stylex.props(styles.cancelButton)}>
 						取消
 					</button>
 				</div>
