@@ -3,13 +3,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import TopSVG from '@/svgs/top.svg'
-import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
 type ScrollTopButtonProps = {
-	className?: string
+	/** 调用方注入的定位/阴影等样式；在同一次 stylex.props() 中合并（后写覆盖） */
+	style?: StyleXStyles
 	delay?: number
 }
 
@@ -29,7 +30,7 @@ const styles = stylex.create({
 	}
 })
 
-export function ScrollTopButton({ className, delay }: ScrollTopButtonProps) {
+export function ScrollTopButton({ style, delay }: ScrollTopButtonProps) {
 	const [show, setShow] = useState(false)
 	const [active, setActive] = useState(false)
 	useEffect(() => {
@@ -52,7 +53,7 @@ export function ScrollTopButton({ className, delay }: ScrollTopButtonProps) {
 		setTimeout(() => setActive(false), 1000)
 	}, [])
 
-	const { className: sxClassName, style: sxStyle } = stylex.props(card.base, card.hover, styles.button)
+	const { className: sxClassName, style: sxStyle } = stylex.props(card.base, card.hover, styles.button, style)
 
 	return (
 		<motion.button
@@ -60,7 +61,7 @@ export function ScrollTopButton({ className, delay }: ScrollTopButtonProps) {
 			animate={{ opacity: 1, scale: 1 }}
 			onClick={handleClick}
 			aria-label='Scroll to top'
-			className={cn(sxClassName, className)}
+			className={sxClassName}
 			style={sxStyle}>
 			<TopSVG {...stylex.props(styles.icon)} />
 		</motion.button>

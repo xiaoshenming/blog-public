@@ -10,6 +10,36 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { ScrollTopButton } from '@/components/scroll-top-button'
 import { usePathname } from 'next/navigation'
+import * as stylex from '@stylexjs/stylex'
+import { util } from '@/styles/shared/util.stylex'
+
+const styles = stylex.create({
+	background: {
+		position: 'fixed',
+		inset: 0,
+		zIndex: 0,
+		overflow: 'hidden'
+	},
+	main: {
+		position: 'relative',
+		zIndex: 10,
+		height: '100%'
+	},
+	/** 原 Tailwind：bg-brand/20 fixed right-6 z-50 shadow-md bottom-20|bottom-6 */
+	scrollTopBase: {
+		position: 'fixed',
+		right: 24,
+		zIndex: 50,
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 20%, transparent)',
+		boxShadow: '0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%)'
+	},
+	scrollTopHome: {
+		bottom: 80
+	},
+	scrollTopDefault: {
+		bottom: 24
+	}
+})
 
 export default function Layout({ children }: PropsWithChildren) {
 	useCenterInit()
@@ -34,11 +64,11 @@ export default function Layout({ children }: PropsWithChildren) {
 				position='bottom-right'
 				richColors
 				icons={{
-					success: <CircleCheckIcon className='size-4' />,
-					info: <InfoIcon className='size-4' />,
-					warning: <TriangleAlertIcon className='size-4' />,
-					error: <OctagonXIcon className='size-4' />,
-					loading: <Loader2Icon className='size-4 animate-spin' />
+					success: <CircleCheckIcon {...stylex.props(util.iconSm)} />,
+					info: <InfoIcon {...stylex.props(util.iconSm)} />,
+					warning: <TriangleAlertIcon {...stylex.props(util.iconSm)} />,
+					error: <OctagonXIcon {...stylex.props(util.iconSm)} />,
+					loading: <Loader2Icon {...stylex.props(util.iconSm, util.spinner)} />
 				}}
 				style={
 					{
@@ -48,7 +78,7 @@ export default function Layout({ children }: PropsWithChildren) {
 			/>
 			{currentBackgroundImage && (
 				<div
-					className='fixed inset-0 z-0 overflow-hidden'
+					{...stylex.props(styles.background)}
 					style={{
 						backgroundImage: `url(${currentBackgroundImage.url})`,
 						backgroundSize: 'cover',
@@ -59,12 +89,16 @@ export default function Layout({ children }: PropsWithChildren) {
 			)}
 			<BlurredBubblesBackground colors={backgroundColors} regenerateKey={regenerateKey} />
 
-			<main className='relative z-10 h-full'>
+			<main {...stylex.props(styles.main)}>
 				{children}
 				<NavCard />
 			</main>
 
-			{maxSM && init && <ScrollTopButton className={`bg-brand/20 fixed right-6 z-50 shadow-md ${pathname === '/' ? 'bottom-20' : 'bottom-6'}`} />}
+			{maxSM && init && (
+				<ScrollTopButton
+					style={pathname === '/' ? [styles.scrollTopBase, styles.scrollTopHome] : [styles.scrollTopBase, styles.scrollTopDefault]}
+				/>
+			)}
 		</>
 	)
 }
