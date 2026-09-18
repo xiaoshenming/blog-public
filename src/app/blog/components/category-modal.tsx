@@ -2,9 +2,12 @@
 
 import { useCallback, useMemo, useState, type DragEvent } from 'react'
 import dayjs from 'dayjs'
+import * as stylex from '@stylexjs/stylex'
 import type { BlogIndexItem } from '@/hooks/use-blog-index'
 import { DialogModal } from '@/components/dialog-modal'
 import { Select } from '@/components/select'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 import { X } from 'lucide-react'
 
 interface CategoryModalProps {
@@ -19,6 +22,162 @@ interface CategoryModalProps {
 	editableItems: BlogIndexItem[]
 	onAssignCategory: (slug: string, category?: string) => void
 }
+
+/** 分类弹窗样式（数值取自 Tailwind v4 编译产物；space-y-4 分摊到非末项子块，动态列表间距同 blog-toc 先例） */
+const styles = stylex.create({
+	/** 标题行 */
+	header: {
+		marginBottom: 16,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	},
+	title: {
+		fontSize: 18,
+		lineHeight: '28px',
+		fontWeight: 600
+	},
+	closeButton: {
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.brand
+			}
+		}
+	},
+	/** 新分类输入行（space-y-4 首项） */
+	inputRow: {
+		marginBottom: 16,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 12,
+		'@media (width >= 40rem)': {
+			flexDirection: 'row',
+			alignItems: 'center'
+		}
+	},
+	input: {
+		width: '100%',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		outlineStyle: 'none',
+		':focus': {
+			borderColor: colors.brand
+		}
+	},
+	/** 新增分类按钮（仅补充不换行，其余沿用品牌按钮） */
+	addButton: {
+		whiteSpace: 'nowrap'
+	},
+	/** 分类标签区（space-y-4 次项） */
+	chipsBox: {
+		marginBottom: 16,
+		display: 'flex',
+		flexWrap: 'wrap',
+		gap: 8,
+		borderRadius: 8,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		padding: 12,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	emptyText: {
+		color: colors.secondary
+	},
+	/** 可拖拽分类标签（10% 品牌色底） */
+	chip: {
+		display: 'flex',
+		cursor: 'move',
+		alignItems: 'center',
+		gap: 8,
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 10%, transparent)',
+		paddingBlock: 4,
+		paddingRight: 6,
+		paddingLeft: 12
+	},
+	/** 拖拽中的标签：品牌色细描边 + 降透明度（同次 props 合并，后写覆盖） */
+	chipDragging: {
+		opacity: 0.6,
+		boxShadow: '0 0 0 1px color-mix(in oklab, var(--color-brand) 60%, transparent)'
+	},
+	chipLabel: {
+		userSelect: 'none'
+	},
+	removeButton: {
+		display: 'inline-flex',
+		width: 16,
+		height: 16,
+		alignItems: 'center',
+		justifyContent: 'center',
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.brand
+			}
+		}
+	},
+	removeIcon: {
+		width: 12,
+		height: 12
+	},
+	/** 文章列表滚动区（间距为 flex 列 + 间隙） */
+	itemsBox: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8,
+		maxHeight: 360,
+		overflowY: 'auto',
+		borderRadius: 12,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		padding: 12
+	},
+	/** 文章行 */
+	itemRow: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8,
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 80%)',
+		paddingInline: 12,
+		paddingBlock: 8,
+		'@media (width >= 40rem)': {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between'
+		}
+	},
+	itemTitle: {
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500
+	},
+	itemDate: {
+		marginLeft: 8,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	emptyItems: {
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	}
+})
 
 export function CategoryModal({
 	open,
@@ -73,27 +232,27 @@ export function CategoryModal({
 
 	return (
 		<DialogModal open={open} onClose={onClose} className='card w-[720px] max-w-[90vw] rounded-2xl p-6'>
-			<div className='mb-4 flex items-center justify-between'>
-				<div className='text-lg font-semibold'>文章分类</div>
-				<button onClick={onClose} className='text-secondary hover:text-brand text-sm'>
+			<div {...stylex.props(styles.header)}>
+				<div {...stylex.props(styles.title)}>文章分类</div>
+				<button onClick={onClose} {...stylex.props(styles.closeButton)}>
 					关闭
 				</button>
 			</div>
-			<div className='space-y-4'>
-				<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+			<div>
+				<div {...stylex.props(styles.inputRow)}>
 					<input
 						value={newCategory}
 						onChange={e => onNewCategoryChange(e.target.value)}
 						placeholder='输入分类名称'
-						className='focus:border-brand w-full rounded-lg border px-3 py-2 text-sm outline-none'
+						{...stylex.props(styles.input)}
 					/>
-					<button onClick={onAddCategory} className='brand-btn px-4 py-2 text-sm whitespace-nowrap'>
+					<button onClick={onAddCategory} {...stylex.props(brandBtn.base, styles.addButton)}>
 						新增分类
 					</button>
 				</div>
-				<div className='flex flex-wrap gap-2 rounded-lg bg-white/60 p-3 text-sm'>
+				<div {...stylex.props(styles.chipsBox)}>
 					{categoryList.length === 0 ? (
-						<span className='text-secondary'>暂无分类</span>
+						<span {...stylex.props(styles.emptyText)}>暂无分类</span>
 					) : (
 						categoryList.map((cat, index) => (
 							<span
@@ -103,27 +262,25 @@ export function CategoryModal({
 								onDragOver={handleDragOver(index)}
 								onDrop={handleDrop(index)}
 								onDragEnd={handleDragEnd}
-								className={`bg-brand/10 flex cursor-move items-center gap-2 rounded-full border py-1 pr-1.5 pl-3 ${
-									draggingIndex === index ? 'ring-brand/60 opacity-60 ring-1' : ''
-								}`}>
-								<span className='select-none'>{cat}</span>
+								{...stylex.props(styles.chip, draggingIndex === index && styles.chipDragging)}>
+								<span {...stylex.props(styles.chipLabel)}>{cat}</span>
 								<button
 									type='button'
 									onClick={() => onRemoveCategory(cat)}
-									className='text-secondary hover:text-brand inline-flex h-4 w-4 items-center justify-center'
+									{...stylex.props(styles.removeButton)}
 									aria-label='Remove category'>
-									<X className='h-3 w-3' />
+									<X {...stylex.props(styles.removeIcon)} />
 								</button>
 							</span>
 						))
 					)}
 				</div>
-				<div className='max-h-[360px] space-y-2 overflow-y-auto rounded-xl bg-white/60 p-3'>
+				<div {...stylex.props(styles.itemsBox)}>
 					{editableItems.map(item => (
-						<div key={item.slug} className='flex flex-col gap-2 rounded-lg border bg-white/80 px-3 py-2 sm:flex-row sm:items-center sm:justify-between'>
-							<div className='text-sm font-medium'>
+						<div key={item.slug} {...stylex.props(styles.itemRow)}>
+							<div {...stylex.props(styles.itemTitle)}>
 								{item.title || item.slug}
-								<span className='text-secondary ml-2 text-xs'>{dayjs(item.date).format('YYYY-MM-DD')}</span>
+								<span {...stylex.props(styles.itemDate)}>{dayjs(item.date).format('YYYY-MM-DD')}</span>
 							</div>
 							<Select
 								value={item.category || ''}
@@ -133,7 +290,7 @@ export function CategoryModal({
 							/>
 						</div>
 					))}
-					{editableItems.length === 0 && <div className='text-secondary text-sm'>暂无文章</div>}
+					{editableItems.length === 0 && <div {...stylex.props(styles.emptyItems)}>暂无文章</div>}
 				</div>
 			</div>
 		</DialogModal>

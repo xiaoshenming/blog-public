@@ -4,6 +4,7 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 
 dayjs.extend(weekOfYear)
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -22,8 +23,394 @@ import { saveBlogEdits } from './services/save-blog-edits'
 import { Check } from 'lucide-react'
 import { BlogCoverHoverPreview, useBlogCoverHover } from './components/blog-cover-hover'
 import { CategoryModal } from './components/category-modal'
+import { card } from '@/styles/shared/card.stylex'
+import { brandBtn, btnRounded } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 type DisplayMode = 'day' | 'week' | 'month' | 'year' | 'category'
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片系样式复用共享定义） */
+const styles = stylex.create({
+	/** 隐藏的密钥文件输入框 */
+	fileInput: {
+		display: 'none'
+	},
+	/** 页面主容器：纵向居中列 */
+	page: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 24,
+		paddingInline: 24,
+		paddingTop: 96
+	},
+	/** 时间维度切换条：在卡片基底上改相对定位并收窄内边距，小屏隐藏 */
+	filterBar: {
+		position: 'relative',
+		marginInline: 'auto',
+		display: 'flex',
+		alignItems: 'center',
+		gap: 4,
+		padding: 4,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 切换按钮：胶囊形态与统一过渡 */
+	modeBtn: {
+		paddingInline: 12,
+		paddingBlock: 6,
+		fontSize: 12,
+		lineHeight: '16px',
+		fontWeight: 500,
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 切换按钮·选中：品牌色底白字 + 轻投影 */
+	modeActive: {
+		backgroundColor: colors.brand,
+		color: colors.white,
+		boxShadow: '0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%)'
+	},
+	/** 切换按钮·未选中：灰字，悬停转品牌色并浮白 */
+	modeIdle: {
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				color: colors.brand,
+				backgroundColor: 'rgb(255 255 255 / 60%)'
+			}
+		}
+	},
+	/** 分组卡：相对定位覆盖卡片基底，限宽铺满 */
+	groupCard: {
+		position: 'relative',
+		width: '100%',
+		maxWidth: 840
+	},
+	/** 分组头行（纵向间隔由下边距承担） */
+	groupHeader: {
+		marginBottom: 12,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: 12,
+		fontSize: 16,
+		lineHeight: '24px'
+	},
+	groupHeaderLeft: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12
+	},
+	groupTitle: {
+		fontWeight: 500
+	},
+	/** 分组标题后的装饰圆点 */
+	groupDot: {
+		width: 8,
+		height: 8,
+		borderRadius: 9999,
+		backgroundColor: '#D9D9D9'
+	},
+	groupCount: {
+		color: colors.secondary,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 分组全选按钮 */
+	selectGroupBtn: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		paddingInline: 12,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 分组全选按钮·已全选 */
+	selectGroupOn: {
+		borderColor: 'color-mix(in oklab, var(--color-brand) 40%, transparent)',
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 10%, transparent)',
+		color: colors.brand,
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'color-mix(in oklab, var(--color-brand) 20%, transparent)'
+			}
+		}
+	},
+	/** 分组全选按钮·未全选（悬停出品牌描边与浅底） */
+	selectGroupOff: {
+		borderColor: 'transparent',
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		color: colors.secondary,
+		'@media (hover: hover)': {
+			':hover': {
+				borderColor: 'color-mix(in oklab, var(--color-brand) 40%, transparent)',
+				backgroundColor: 'rgb(255 255 255 / 80%)',
+				color: colors.brand
+			}
+		}
+	},
+	/** 文章行基础：横排、最小高度与整体过渡 */
+	rowBase: {
+		display: 'flex',
+		minHeight: 40,
+		alignItems: 'center',
+		gap: 12,
+		paddingBlock: 12,
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 文章行·编辑态外框 */
+	rowEdit: {
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		paddingInline: 12
+	},
+	/** 文章行·已选中 */
+	rowSelected: {
+		borderColor: 'color-mix(in oklab, var(--color-brand) 60%, transparent)',
+		backgroundColor: 'color-mix(in oklab, var(--color-brand) 5%, transparent)'
+	},
+	/** 文章行·未选中（悬停出描边与浮白） */
+	rowUnselected: {
+		borderColor: 'transparent',
+		'@media (hover: hover)': {
+			':hover': {
+				borderColor: 'color-mix(in oklab, var(--color-brand) 40%, transparent)',
+				backgroundColor: 'rgb(255 255 255 / 60%)'
+			}
+		}
+	},
+	/** 文章行·浏览态指针 */
+	rowPointer: {
+		cursor: 'pointer'
+	},
+	/** 行内选择框 */
+	checkBox: {
+		display: 'flex',
+		width: 16,
+		height: 16,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 9999,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		fontSize: 10,
+		fontWeight: 600
+	},
+	checkBoxOn: {
+		borderColor: colors.brand,
+		backgroundColor: colors.brand,
+		color: colors.white
+	},
+	checkBoxOff: {
+		borderColor: '#D9D9D9',
+		color: 'transparent'
+	},
+	/** 日期列 */
+	dateLabel: {
+		width: 44,
+		flexShrink: 0,
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		color: colors.secondary
+	},
+	/** 时间轴列：圆点与连接线 */
+	dotColumn: {
+		position: 'relative',
+		display: 'flex',
+		width: 8,
+		height: 8,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	/** 时间轴圆点（悬停随分组联动，联动部分保留字符串类） */
+	dot: {
+		width: 5,
+		height: 5,
+		borderRadius: 9999,
+		backgroundColor: colors.secondary,
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 时间轴短竖线 */
+	shortLine: {
+		position: 'absolute',
+		bottom: 16
+	},
+	/** 文章标题（浏览态悬停位移沿用字符串类） */
+	itemTitle: {
+		flex: '1',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 14,
+		lineHeight: '20px',
+		fontWeight: 500,
+		transitionProperty: 'all',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	/** 已阅读标记 */
+	readTag: {
+		marginLeft: 8,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 标签行（小屏隐藏） */
+	tagList: {
+		display: 'flex',
+		flexWrap: 'wrap',
+		alignItems: 'center',
+		gap: 8,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	tagItem: {
+		color: colors.secondary,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 底部留白与状态文案 */
+	bottomArea: {
+		paddingTop: 48
+	},
+	statusText: {
+		paddingBlock: 24,
+		textAlign: 'center',
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 「更多」行容器 */
+	moreRow: {
+		textAlign: 'center'
+	},
+	/** 「更多」入口图标尺寸 */
+	githubIcon: {
+		width: 16,
+		height: 16
+	},
+	/** 「更多」入口：在卡片基底上去绝对定位、改行内弹性排布 */
+	moreLink: {
+		position: 'static',
+		display: 'inline-flex',
+		alignItems: 'center',
+		gap: 8,
+		borderRadius: 12,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.secondary
+	},
+	/** 右上角工具栏（小屏隐藏） */
+	toolbar: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 12,
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	},
+	/** 工具栏白底按钮（悬停更白） */
+	toolBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	},
+	/** 工具栏取消按钮（更宽留白、无悬停变化） */
+	cancelBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px'
+	},
+	/** 工具栏删除按钮（红系，禁用时降透明度） */
+	deleteBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#ffcaca',
+		backgroundColor: '#fef2f2',
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		color: '#e40014',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		':disabled': {
+			opacity: 0.6
+		}
+	},
+	/** 工具栏保存按钮的横向留白（覆盖品牌按钮默认值） */
+	saveBtn: {
+		paddingInline: 24
+	},
+	/** 工具栏编辑按钮（毛玻璃白卡，悬停更白） */
+	editBtn: {
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backdropFilter: 'blur(8px)',
+		backgroundColor: colors.card,
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		}
+	}
+})
 
 export default function BlogPage() {
 	const { items, loading } = useBlogIndex()
@@ -318,7 +705,7 @@ export default function BlogPage() {
 				ref={keyInputRef}
 				type='file'
 				accept='.pem'
-				className='hidden'
+				{...stylex.props(styles.fileInput)}
 				onChange={async e => {
 					const f = e.target.files?.[0]
 					if (f) await handlePrivateKeySelection(f)
@@ -326,12 +713,12 @@ export default function BlogPage() {
 				}}
 			/>
 
-			<div className='flex flex-col items-center justify-center gap-6 px-6 pt-24 max-sm:pt-24'>
+			<div {...stylex.props(styles.page)}>
 				{items.length > 0 && (
 					<motion.div
 						initial={{ opacity: 0, scale: 0.6 }}
 						animate={{ opacity: 1, scale: 1 }}
-						className='card btn-rounded relative mx-auto flex items-center gap-1 p-1 max-sm:hidden'>
+						{...stylex.props(card.base, btnRounded.base, styles.filterBar)}>
 						{[
 							{ value: 'day', label: '日' },
 							{ value: 'week', label: '周' },
@@ -342,10 +729,7 @@ export default function BlogPage() {
 							<button
 								key={option.value}
 								onClick={() => setDisplayMode(option.value as DisplayMode)}
-								className={cn(
-									'card-hover btn-rounded px-3 py-1.5 text-xs font-medium transition-all',
-									displayMode === option.value ? 'bg-brand text-white shadow-sm' : 'text-secondary hover:text-brand hover:bg-white/60'
-								)}>
+								{...stylex.props(card.hover, btnRounded.base, styles.modeBtn, displayMode === option.value ? styles.modeActive : styles.modeIdle)}>
 								{option.label}
 							</button>
 						))}
@@ -363,12 +747,12 @@ export default function BlogPage() {
 							initial={{ opacity: 0, scale: 0.95 }}
 							whileInView={{ opacity: 1, scale: 1 }}
 							transition={{ delay: INIT_DELAY / 2 }}
-							className='card relative w-full max-w-[840px] space-y-6'>
-							<div className='mb-3 flex items-center justify-between gap-3 text-base'>
-								<div className='flex items-center gap-3'>
-									<div className='font-medium'>{getGroupLabel(groupKey)}</div>
-									<div className='h-2 w-2 rounded-full bg-[#D9D9D9]'></div>
-									<div className='text-secondary text-sm'>{group.items.length} 篇文章</div>
+							{...stylex.props(card.base, styles.groupCard)}>
+							<div {...stylex.props(styles.groupHeader)}>
+								<div {...stylex.props(styles.groupHeaderLeft)}>
+									<div {...stylex.props(styles.groupTitle)}>{getGroupLabel(groupKey)}</div>
+									<div {...stylex.props(styles.groupDot)}></div>
+									<div {...stylex.props(styles.groupCount)}>{group.items.length} 篇文章</div>
 								</div>
 								{editMode &&
 									(() => {
@@ -376,12 +760,7 @@ export default function BlogPage() {
 										return (
 											<button
 												onClick={() => handleSelectGroup(groupKey)}
-												className={cn(
-													'card-hover rounded-lg border px-3 py-1 text-xs transition-colors',
-													groupAllSelected
-														? 'border-brand/40 bg-brand/10 text-brand hover:bg-brand/20'
-														: 'text-secondary hover:border-brand/40 hover:text-brand border-transparent bg-white/60 hover:bg-white/80'
-												)}>
+												{...stylex.props(card.hover, styles.selectGroupBtn, groupAllSelected ? styles.selectGroupOn : styles.selectGroupOff)}>
 												{groupAllSelected ? '取消全选' : '全选该分组'}
 											</button>
 										)
@@ -391,6 +770,11 @@ export default function BlogPage() {
 								{group.items.map(it => {
 									const hasRead = isRead(it.slug)
 									const isSelected = selectedSlugs.has(it.slug)
+									const rowSx = stylex.props(
+										styles.rowBase,
+										editMode && styles.rowEdit,
+										editMode ? (isSelected ? styles.rowSelected : styles.rowUnselected) : styles.rowPointer
+									)
 									return (
 										<Link
 											onMouseEnter={() => onCoverLinkMouseEnter(it.cover)}
@@ -398,41 +782,27 @@ export default function BlogPage() {
 											href={`/blog/${it.slug}`}
 											key={it.slug}
 											onClick={event => handleItemClick(event, it.slug)}
-											className={cn(
-												'group flex min-h-10 items-center gap-3 py-3 transition-all',
-												editMode
-													? cn(
-															'rounded-lg border px-3',
-															isSelected ? 'border-brand/60 bg-brand/5' : 'hover:border-brand/40 border-transparent hover:bg-white/60'
-														)
-													: 'cursor-pointer'
-											)}>
+											{...rowSx}
+											className={cn(rowSx.className, 'group')}>
 											{editMode && (
-												<span
-													className={cn(
-														'flex h-4 w-4 items-center justify-center rounded-full border text-[10px] font-semibold',
-														isSelected ? 'border-brand bg-brand text-white' : 'border-[#D9D9D9] text-transparent'
-													)}>
+												<span {...stylex.props(styles.checkBox, isSelected ? styles.checkBoxOn : styles.checkBoxOff)}>
 													<Check />
 												</span>
 											)}
-											<span className='text-secondary w-[44px] shrink-0 text-sm font-medium'>{dayjs(it.date).format('MM-DD')}</span>
+											<span {...stylex.props(styles.dateLabel)}>{dayjs(it.date).format('MM-DD')}</span>
 
-											<div className='relative flex h-2 w-2 items-center justify-center'>
-												<div className='bg-secondary group-hover:bg-brand h-[5px] w-[5px] rounded-full transition-all group-hover:h-4'></div>
-												<ShortLineSVG className='absolute bottom-4' />
+											<div {...stylex.props(styles.dotColumn)}>
+												<div className={cn(stylex.props(styles.dot).className, 'group-hover:bg-brand group-hover:h-4')}></div>
+												<ShortLineSVG {...stylex.props(styles.shortLine)} />
 											</div>
 											<div
-												className={cn(
-													'flex-1 truncate text-sm font-medium transition-all',
-													editMode ? null : 'group-hover:text-brand group-hover:translate-x-2'
-												)}>
+												className={cn(stylex.props(styles.itemTitle).className, editMode ? null : 'group-hover:text-brand group-hover:translate-x-2')}>
 												{it.title || it.slug}
-												{hasRead && <span className='text-secondary ml-2 text-xs'>[已阅读]</span>}
+												{hasRead && <span {...stylex.props(styles.readTag)}>[已阅读]</span>}
 											</div>
-											<div className='flex flex-wrap items-center gap-2 max-sm:hidden'>
+											<div {...stylex.props(styles.tagList)}>
 												{(it.tags || []).map(t => (
-													<span key={t} className='text-secondary text-sm'>
+													<span key={t} {...stylex.props(styles.tagItem)}>
 														#{t}
 													</span>
 												))}
@@ -445,57 +815,57 @@ export default function BlogPage() {
 					)
 				})}
 				{items.length > 0 && (
-					<div className='text-center'>
+					<div {...stylex.props(styles.moreRow)}>
 						<motion.a
 							initial={{ opacity: 0, scale: 0.6 }}
 							animate={{ opacity: 1, scale: 1 }}
 							href='https://github.com/xiaoshenming'
 							target='_blank'
-							className='card-hover card text-secondary static inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs'>
-							<GithubSVG className='h-4 w-4' />
+							{...stylex.props(card.hover, card.base, styles.moreLink)}>
+							<GithubSVG {...stylex.props(styles.githubIcon)} />
 							更多
 						</motion.a>
 					</div>
 				)}
 			</div>
 
-			<div className='pt-12'>
-				{!loading && items.length === 0 && <div className='text-secondary py-6 text-center text-sm'>暂无文章</div>}
-				{loading && <div className='text-secondary py-6 text-center text-sm'>加载中...</div>}
+			<div {...stylex.props(styles.bottomArea)}>
+				{!loading && items.length === 0 && <div {...stylex.props(styles.statusText)}>暂无文章</div>}
+				{loading && <div {...stylex.props(styles.statusText)}>加载中...</div>}
 			</div>
 
 			<motion.div
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
-				className='absolute top-4 right-6 flex items-center gap-3 max-sm:hidden'>
+				{...stylex.props(styles.toolbar)}>
 				{editMode ? (
 					<>
 						{enableCategories && (
 							<button
 								onClick={() => setCategoryModalOpen(true)}
 								disabled={saving}
-								className='card-hover rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
+								{...stylex.props(card.hover, styles.toolBtn)}>
 								分类
 							</button>
 						)}
 						<button
 							onClick={handleCancel}
 							disabled={saving}
-							className='card-hover rounded-xl border bg-white/60 px-6 py-2 text-sm'>
+							{...stylex.props(card.hover, styles.cancelBtn)}>
 							取消
 						</button>
 						<button
 							onClick={selectedCount === editableItems.length ? handleDeselectAll : handleSelectAll}
-							className='card-hover rounded-xl border bg-white/60 px-4 py-2 text-sm transition-colors hover:bg-white/80'>
+							{...stylex.props(card.hover, styles.toolBtn)}>
 							{selectedCount === editableItems.length ? '取消全选' : '全选'}
 						</button>
 						<button
 							onClick={handleDeleteSelected}
 							disabled={selectedCount === 0}
-							className='card-hover rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 transition-colors disabled:opacity-60'>
+							{...stylex.props(card.hover, styles.deleteBtn)}>
 							删除(已选:{selectedCount}篇)
 						</button>
-						<button onClick={handleSaveClick} disabled={saving} className='card-hover brand-btn px-6'>
+						<button onClick={handleSaveClick} disabled={saving} {...stylex.props(card.hover, brandBtn.base, styles.saveBtn)}>
 							{saving ? '保存中...' : buttonText}
 						</button>
 					</>
@@ -503,7 +873,7 @@ export default function BlogPage() {
 					!hideEditButton && (
 						<button
 							onClick={toggleEditMode}
-							className='card-hover bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
+							{...stylex.props(card.hover, styles.editBtn)}>
 							编辑
 						</button>
 					)

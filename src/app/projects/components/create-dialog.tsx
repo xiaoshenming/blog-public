@@ -3,15 +3,207 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
 import ImageUploadDialog, { type ImageItem } from './image-upload-dialog'
 import type { Project } from './project-card'
 import { DialogModal } from '@/components/dialog-modal'
+import { cn } from '@/lib/utils'
+import { brandBtn } from '@/styles/shared/button.stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 interface CreateDialogProps {
 	project: Project | null
 	onClose: () => void
 	onSave: (project: Project) => void
 }
+
+/** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；图片遮罩悬停联动因 StyleX 不支持祖先选择器，保留字符串类） */
+const styles = stylex.create({
+	/** 图片行 */
+	header: {
+		marginBottom: 16,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 16
+	},
+	/** 图片容器（group 保留字符串） */
+	imageWrap: {
+		position: 'relative',
+		cursor: 'pointer'
+	},
+	avatar: {
+		height: 64,
+		width: 64,
+		borderRadius: 12,
+		objectFit: 'cover'
+	},
+	/** 图片悬停遮罩（显隐沿用字符串类） */
+	imageOverlay: {
+		pointerEvents: 'none',
+		position: 'absolute',
+		inset: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 12,
+		backgroundColor: 'rgb(0 0 0 / 40%)',
+		opacity: 0,
+		transitionProperty: 'opacity',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+	},
+	overlayText: {
+		fontSize: 12,
+		lineHeight: '16px',
+		color: colors.white
+	},
+	/** 空图片占位 */
+	imageEmpty: {
+		display: 'flex',
+		height: 64,
+		width: 64,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 12,
+		backgroundColor: '#e5e7eb'
+	},
+	plusIcon: {
+		width: 24,
+		height: 24,
+		color: '#6a7282'
+	},
+	info: {
+		flex: '1'
+	},
+	nameInput: {
+		width: '100%',
+		fontSize: 18,
+		lineHeight: '28px',
+		fontWeight: 700,
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 年份与地址行 */
+	metaRow: {
+		marginTop: 4,
+		display: 'flex',
+		alignItems: 'center',
+		gap: 8
+	},
+	yearInput: {
+		color: colors.secondary,
+		width: 80,
+		borderRadius: 4,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		paddingInline: 8,
+		paddingBlock: 4,
+		fontSize: 12,
+		lineHeight: '16px',
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	urlInput: {
+		color: colors.secondary,
+		flex: '1',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		fontSize: 12,
+		lineHeight: '16px',
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 标签区 */
+	tagsSection: {
+		marginTop: 12
+	},
+	/** 表单输入框（标签与可选链接共用） */
+	fieldInput: {
+		width: '100%',
+		borderRadius: 6,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: '#f9fafb',
+		paddingInline: 12,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	tagsRow: {
+		marginTop: 8,
+		display: 'flex',
+		flexWrap: 'wrap',
+		gap: 6
+	},
+	tag: {
+		borderRadius: 9999,
+		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
+		paddingInline: 10,
+		paddingBlock: 2,
+		fontSize: 12,
+		lineHeight: '16px',
+		color: '#4a5565'
+	},
+	/** 项目介绍 */
+	descriptionInput: {
+		marginTop: 12,
+		width: '100%',
+		resize: 'none',
+		fontSize: 14,
+		lineHeight: 1.625,
+		':focus': {
+			outlineStyle: 'none'
+		}
+	},
+	/** 可选链接区（纵向堆叠） */
+	optionalSection: {
+		marginTop: 12,
+		display: 'flex',
+		flexDirection: 'column',
+		gap: 8
+	},
+	/** 操作按钮行 */
+	actions: {
+		marginTop: 24,
+		display: 'flex',
+		gap: 12
+	},
+	cancelButton: {
+		flex: '1',
+		borderRadius: 8,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: '#d1d5dc',
+		backgroundColor: colors.white,
+		paddingInline: 16,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: '#f9fafb'
+			}
+		}
+	},
+	/** 品牌按钮的弹性宽度与居中覆盖 */
+	submitButton: {
+		flex: '1',
+		justifyContent: 'center'
+	}
+})
 
 export default function CreateDialog({ project, onClose, onSave }: CreateDialogProps) {
 	const [formData, setFormData] = useState<Project>({
@@ -79,59 +271,59 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 	return (
 		<DialogModal open onClose={onClose} className='card static w-md max-sm:w-full'>
 			<div>
-				<div className='mb-4 flex items-center gap-4'>
-					<div className='group relative cursor-pointer' onClick={() => setShowImageDialog(true)}>
+				<div {...stylex.props(styles.header)}>
+					<div className={cn(stylex.props(styles.imageWrap).className, 'group')} onClick={() => setShowImageDialog(true)}>
 						{formData.image ? (
 							<>
-								<img src={formData.image} alt={formData.name} className='h-16 w-16 rounded-xl object-cover' />
-								<div className='pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100'>
-									<span className='text-xs text-white'>更换</span>
+								<img src={formData.image} alt={formData.name} {...stylex.props(styles.avatar)} />
+								<div className={cn(stylex.props(styles.imageOverlay).className, 'group-hover:opacity-100')}>
+									<span {...stylex.props(styles.overlayText)}>更换</span>
 								</div>
 							</>
 						) : (
-							<div className='flex h-16 w-16 items-center justify-center rounded-xl bg-gray-200'>
-								<Plus className='h-6 w-6 text-gray-500' />
+							<div {...stylex.props(styles.imageEmpty)}>
+								<Plus {...stylex.props(styles.plusIcon)} />
 							</div>
 						)}
 					</div>
-					<div className='flex-1'>
+					<div {...stylex.props(styles.info)}>
 						<input
 							type='text'
 							value={formData.name}
 							onChange={e => setFormData({ ...formData, name: e.target.value })}
 							placeholder='项目名称'
-							className='w-full text-lg font-bold focus:outline-none'
+							{...stylex.props(styles.nameInput)}
 						/>
-						<div className='mt-1 flex items-center gap-2'>
+						<div {...stylex.props(styles.metaRow)}>
 							<input
 								type='number'
 								value={formData.year}
 								onChange={e => setFormData({ ...formData, year: parseInt(e.target.value) || 0 })}
 								placeholder='年份'
-								className='text-secondary w-20 rounded border border-gray-300 px-2 py-1 text-xs focus:outline-none'
+								{...stylex.props(styles.yearInput)}
 							/>
 							<input
 								type='url'
 								value={formData.url}
 								onChange={e => setFormData({ ...formData, url: e.target.value })}
 								placeholder='https://example.com'
-								className='text-secondary flex-1 truncate text-xs focus:outline-none'
+								{...stylex.props(styles.urlInput)}
 							/>
 						</div>
 					</div>
 				</div>
 
-				<div className='mt-3'>
+				<div {...stylex.props(styles.tagsSection)}>
 					<input
 						type='text'
 						value={tagsInput}
 						onChange={e => handleTagsChange(e.target.value)}
 						placeholder='标签，用逗号分隔（如：React, Vue）'
-						className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+						{...stylex.props(styles.fieldInput)}
 					/>
-					<div className='mt-2 flex flex-wrap gap-1.5'>
+					<div {...stylex.props(styles.tagsRow)}>
 						{formData.tags.map(tag => (
-							<span key={tag} className='rounded-full bg-secondary/10 px-2.5 py-0.5 text-xs text-gray-600'>
+							<span key={tag} {...stylex.props(styles.tag)}>
 								{tag}
 							</span>
 						))}
@@ -142,33 +334,33 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 					value={formData.description}
 					onChange={e => setFormData({ ...formData, description: e.target.value })}
 					placeholder='项目介绍...'
-					className='mt-3 w-full resize-none text-sm leading-relaxed focus:outline-none'
+					{...stylex.props(styles.descriptionInput)}
 					rows={4}
 				/>
 
-				<div className='mt-3 space-y-2'>
+				<div {...stylex.props(styles.optionalSection)}>
 					<input
 						type='url'
 						value={formData.github || ''}
 						onChange={e => setFormData({ ...formData, github: e.target.value || undefined })}
 						placeholder='GitHub URL（可选）'
-						className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+						{...stylex.props(styles.fieldInput)}
 					/>
 					<input
 						type='url'
 						value={formData.npm || ''}
 						onChange={e => setFormData({ ...formData, npm: e.target.value || undefined })}
 						placeholder='NPM URL（可选）'
-						className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+						{...stylex.props(styles.fieldInput)}
 					/>
 				</div>
 			</div>
 
-			<div className='mt-6 flex gap-3'>
-				<button onClick={onClose} className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+			<div {...stylex.props(styles.actions)}>
+				<button onClick={onClose} {...stylex.props(styles.cancelButton)}>
 					取消
 				</button>
-				<button onClick={handleSubmit} className='brand-btn flex-1 justify-center px-4'>
+				<button onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
 					{project ? '保存' : '添加'}
 				</button>
 			</div>

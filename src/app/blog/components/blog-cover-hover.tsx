@@ -2,9 +2,35 @@
 
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 const COVER_HOVER_DELAY_MS = 1500
 const PREVIEW_OFFSET_PX = 16
+
+/** 悬停预览卡样式（数值取自 Tailwind v4 编译产物；left/top 仍由内联 style 动态提供） */
+const styles = stylex.create({
+	/** 预览卡：固定定位、毛玻璃底、软阴影 */
+	preview: {
+		position: 'fixed',
+		zIndex: 100,
+		pointerEvents: 'none',
+		width: 160,
+		minHeight: 80,
+		overflow: 'hidden',
+		borderRadius: 24,
+		padding: 16,
+		backgroundColor: colors.card,
+		boxShadow: '0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%)',
+		backdropFilter: 'blur(8px)'
+	},
+	/** 预览图 */
+	image: {
+		width: '100%',
+		borderRadius: 12,
+		objectFit: 'cover'
+	}
+})
 
 export type BlogCoverPreviewState = { src: string } | null
 
@@ -79,9 +105,9 @@ export function BlogCoverHoverPreview({ preview, position }: BlogCoverHoverPrevi
 					initial={{ opacity: 0, scale: 0.6 }}
 					animate={{ opacity: 1, scale: 1 }}
 					exit={{ opacity: 0, scale: 0.6 }}
-					className='bg-card pointer-events-none fixed z-100 min-h-[80px] w-[160px] overflow-hidden rounded-3xl p-4 shadow-sm backdrop-blur-sm'
+					{...stylex.props(styles.preview)}
 					style={{ left: position.x + PREVIEW_OFFSET_PX, top: position.y + PREVIEW_OFFSET_PX }}>
-					<img src={preview.src} alt='' className='w-full rounded-xl object-cover' draggable={false} />
+					<img src={preview.src} alt='' {...stylex.props(styles.image)} draggable={false} />
 				</motion.div>
 			)}
 		</AnimatePresence>

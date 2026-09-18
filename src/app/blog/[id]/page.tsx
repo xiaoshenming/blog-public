@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { motion } from 'motion/react'
+import * as stylex from '@stylexjs/stylex'
 import { BlogPreview } from '@/components/blog-preview'
 import { loadBlog, type BlogConfig } from '@/lib/load-blog'
 import { useReadArticles } from '@/hooks/use-read-articles'
@@ -11,7 +12,65 @@ import LiquidGrass from '@/components/liquid-grass'
 import PretextDemo, { type PretextDemoHandle } from '@/components/pretext-demo'
 import DragonEscape from '@/components/pretext-demo/dragon-escape'
 import type { Creature } from '@/components/pretext-demo/creature'
+import { card } from '@/styles/shared/card.stylex'
+import { colors } from '@/styles/tokens.stylex'
 import '@/styles/dragon-burn.css'
+
+/** 状态提示 / 游戏化容器 / 编辑按钮样式（数值取自 Tailwind v4 编译产物） */
+const styles = stylex.create({
+	/** 居中状态提示（次要色） */
+	stateBox: {
+		display: 'flex',
+		height: '100%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontSize: 14,
+		lineHeight: '20px',
+		color: colors.secondary
+	},
+	/** 错误提示色（red-500 固化为实测值） */
+	stateError: {
+		color: '#fb2c36'
+	},
+	/** 游戏化组件外层容器（移动端收窄左右内边距） */
+	pretextWrap: {
+		marginInline: 'auto',
+		maxWidth: 1140,
+		paddingInline: 24,
+		paddingTop: 112,
+		'@media (width < 40rem)': {
+			paddingInline: 8
+		}
+	},
+	/** 编辑按钮（半透明白底、悬停加深；原 transition-colors 压过 card-hover 的 transform 过渡，故后写覆盖保持原计算值） */
+	editButton: {
+		position: 'absolute',
+		top: 16,
+		right: 24,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: colors.border,
+		backgroundColor: 'rgb(255 255 255 / 60%)',
+		paddingInline: 24,
+		paddingBlock: 8,
+		fontSize: 14,
+		lineHeight: '20px',
+		backdropFilter: 'blur(8px)',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionDuration: '150ms',
+		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+		'@media (hover: hover)': {
+			':hover': {
+				backgroundColor: 'rgb(255 255 255 / 80%)'
+			}
+		},
+		'@media (width < 40rem)': {
+			display: 'none'
+		}
+	}
+})
 
 export default function Page() {
 	const params = useParams() as { id?: string | string[] }
@@ -82,25 +141,25 @@ export default function Page() {
 	}
 
 	if (!slug) {
-		return <div className='text-secondary flex h-full items-center justify-center text-sm'>无效的链接</div>
+		return <div {...stylex.props(styles.stateBox)}>无效的链接</div>
 	}
 
 	if (loading) {
-		return <div className='text-secondary flex h-full items-center justify-center text-sm'>加载中...</div>
+		return <div {...stylex.props(styles.stateBox)}>加载中...</div>
 	}
 
 	if (error) {
-		return <div className='flex h-full items-center justify-center text-sm text-red-500'>{error}</div>
+		return <div {...stylex.props(styles.stateBox, styles.stateError)}>{error}</div>
 	}
 
 	if (!blog) {
-		return <div className='text-secondary flex h-full items-center justify-center text-sm'>文章不存在</div>
+		return <div {...stylex.props(styles.stateBox)}>文章不存在</div>
 	}
 
 	return (
 		<>
 			{isPretext && (
-				<div className='mx-auto max-w-[1140px] px-6 pt-28 pb-0 max-sm:px-2'>
+				<div {...stylex.props(styles.pretextWrap)}>
 					<PretextDemo ref={pretextRef} onEscape={handleEscape} captured={dragonCaptured} />
 				</div>
 			)}
@@ -120,11 +179,7 @@ export default function Page() {
 				initial={{ opacity: 0, scale: 0.6 }}
 				animate={{ opacity: 1, scale: 1 }}
 				onClick={handleEdit}
-				className='card-hover absolute top-4 right-6 rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80 max-sm:hidden'>
-				编辑
-			</motion.button>
-
-			{slug === 'liquid-grass' && <LiquidGrass />}
+				{...stylex.props(card.hover, styles.editButton)}>
 
 			{escapedDragon && (
 				<DragonEscape
