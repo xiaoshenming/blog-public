@@ -52,7 +52,10 @@ export function useBlogIndex() {
 	}
 
 	return {
+		/** 当前语言的合并视图（访客展示用） */
 		items: result,
+		/** 纯中文源索引（编辑/管理链路必须用它，避免译文写回数据源） */
+		baseItems: data || [],
 		loading: isLoading,
 		error
 	}
@@ -61,7 +64,8 @@ export function useBlogIndex() {
 export function useLatestBlog() {
 	const { items, loading, error } = useBlogIndex()
 
-	const latestBlog = items.length > 0 ? items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] : null
+	// 拷贝后再排序，避免原地 sort 污染 SWR 缓存
+	const latestBlog = items.length > 0 ? [...items].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] : null
 
 	return {
 		blog: latestBlog,

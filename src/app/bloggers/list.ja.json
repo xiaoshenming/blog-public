@@ -1,0 +1,247 @@
+[
+	{
+		"name": "阮一峰的网络日志",
+		"avatar": "/images/blogger/fe25259da8e3609b.png",
+		"url": "https://www.ruanyifeng.com/blog/archives.html",
+		"description": "クラシックな内容が必見で、毎週更新されています。退屈なのはニュースを読むことか、学習することか、それとも視野を広げることか、どれも楽しみを得られるものです。また、多くのネットユーザーの毎週のコメントもあります。これがブログの価値です。",
+		"stars": 5
+	},
+	{
+		"name": "Enji Kusnadi",
+		"url": "https://enji.dev/",
+		"avatar": "https://enji.dev/_next/image?url=%2Fassets%2Fimages%2Fme.png&w=1080&q=100",
+		"description": "最初のデザインが素晴らしい人については、他の人のブログを推薦する時には必ず言及していました。しかし、これは彼女のブログサイトではなく、オンライン履歴書のみであり、継続的なコンテンツがないため少し残念です。",
+		"stars": 3
+	},
+	{
+		"name": "Josh W. Comeau",
+		"url": "https://www.joshwcomeau.com/",
+		"avatar": "https://www.joshwcomeau.com/favicon.png",
+		"description": "ジョンのブログはまるで授業用のウェブサイトのようで、各記事が非常に優れており、読むたびに新しいものを得ることができます。ウェブサイトのデザインも適切で、整然としており、面白いです。",
+		"stars": 5
+	},
+	{
+		"name": "nanda",
+		"url": "https://www.nan.fyi/",
+		"avatar": "https://www.nan.fyi/favicon.ico",
+		"description": "デザインの達人、nanda。ページは灰色と線だけで、感動的です。内容は多くありませんが、各記事が丁寧に作られています。Joshと同様、技術サイトですが、そのチュートリングスはより洗練されており、プログラマーアーティストと言えます。",
+		"stars": 5
+	},
+	{
+		"name": "Emil Kowalski",
+		"url": "https://emilkowal.ski/",
+		"avatar": "https://emilkowal.ski/favicon.ico",
+		"description": "ブログは「設計しない」、装飾もない。技術面は比較的簡単で、アニメーション/インタラクションをより強調している。Vercelの従業員のためのコンポーネントは使いやすく、Vercelらしいものだ。",
+		"stars": 4
+	},
+	{
+		"name": "Risingle",
+		"url": "https://www.imrising.cn/",
+		"avatar": "https://www.imrising.cn/images/logo/logo.webp",
+		"description": "ウェブサイトのデザインが素晴らしい。他人のテンプレを使っているものの、その使い方が非常に優れている。まだプログラマーの初心者だ。",
+		"stars": 3
+	},
+	{
+		"name": "無名小栈",
+		"url": "https://blog.imsyy.top/",
+		"avatar": "https://blog.imsyy.top/images/logo/logo.webp",
+		"description": "Risingleブログのテンプレの作成者は、アイコンやウェブサイトのスタイルが合わないため、Risingleのような快適さがない。GitHubの人気プロジェクトも多いので、何かを作るのが好きな人だが、ブログを書くのが好きではなく、内容もない。01年当時はかなり若い、独立開発者？何を経験したかわからない。",
+		"stars": 2
+	},
+	{
+		"name": "韩小韩博客",
+		"url": "https://www.vvhan.com/",
+		"avatar": "https://q1.qlogo.cn/g?b=qq&nk=1655466387&s=640",
+		"description": "ウェブサイトは素晴らしいです。コンテンツが豊富で、アイコンも美しいです。人が魅力的かどうかはわかりません。このずれたスライド効果がずっと悩みの種です。このダメティック効果についてもブログで詳しく書いています...プラグインの導入に関する問題です。いつかこの効果を解除できるといいですね。内容をもっと見たいですが、この効果がかなり混乱を招いています。",
+		"stars": 3
+	},
+	{
+		"name": "Anthony Fu",
+		"url": "https://antfu.me/",
+		"avatar": "https://avatars.githubusercontent.com/u/11247099?v=4",
+		"description": "とても優れた人物で、まだ若いようだ。よくB站で活動し、ライブ配信も行っている（見たことがある）。卒業後すぐに多くの重要なことを成し遂げたことを覚えている。Vueシリーズの核心メンバーであり、彼にとっては簡単なことのようだ。ブログは主に英語で書かれており、生活の世界も大神たちが集まっている。本当に素晴らしい。ブログを書くのがあまり好きではないが、それでも良い方だ。彼からはVueの「上流社会」の様子を垣間見ることができる",
+		"stars": 4
+	},
+	{
+		"name": "enpitsulin 铅笔",
+		"url": "https://enpitsulin.xyz/",
+		"avatar": "https://enpitsulin.dev/images/avatar.webp",
+		"description": "非常簡潔なブログサイトで、nandaのようなものです。ただ、長い間内容がなくなってしまいました。彼の現在のアイコンを見ていると、一時的に誰なのか思い出せませんが、以前の可愛いアイコンを見て、この人だと思い出しました。",
+		"stars": 2
+	},
+	{
+		"name": "Innei 静かな森",
+		"url": "https://innei.in/",
+		"avatar": "https://cdn.jsdelivr.net/gh/Innei/static@master/avatar.png",
+		"description": "ウェブサイトはまずまずで、ある時代の産物として典型的ですが、私はあまり理解できません。しかし、コンテンツは活発で、彼はかなり人気があるようです。でも、なぜ人気なのかはわかりません。プロジェクトもかなり多いです。",
+		"stars": 3
+	},
+	{
+		"name": "秋夜灯雨",
+		"url": "https://blog.lierhua.top/",
+		"avatar": "https://blog.lierhua.top/images/web/yyqda3.svg",
+		"description": "名前からでも、過去の残党であることがわかる。しかし、彼のデザインがとても好きだ。ページが明確で、書斎の雰囲気がある。年配者ではあるが、遡ることができる過去はそれほど多くない。",
+		"stars": 3
+	},
+	{
+		"name": "BlogFinder",
+		"url": "https://bf.zzxworld.com/",
+		"avatar": "https://bf.zzxworld.com/images/favicon.png",
+		"description": "ブログ収集サイトで、どのようなブログがあるかを確認したり、最近誰が何を更新したかを直接見ることができます",
+		"stars": 3
+	},
+	{
+		"name": "Tonsky",
+		"url": "https://tonsky.me/",
+		"avatar": "https://avatars.githubusercontent.com/u/285292?v=4",
+		"description": "かつて海外に存在した偉大な神ですが、いつ発見されたか忘れました。ブログは今でも時々更新されています。ただ今、ブログがあまりにも目立ちすぎて、意図的なのかどうかわかりません。",
+		"stars": 3
+	},
+	{
+		"name": "Cali",
+		"url": "https://cali.so/",
+		"avatar": "https://cali.so/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FPortrait.8d12f14a.png&w=96&q=75",
+		"description": "デザイナーのウェブサイトは良いが、ブログの内容が少ない。しかし素晴らしいのは、彼が自分で会社を設立し、他の人にウェブサイトをデザインしていることだ。影石Insta360も彼らがデザインしたものである。これは良いブログの参考になる。彼のzolplayウェブサイトはnandaのスタイルと似ているが、誰が参考にしたかはわからない。",
+		"stars": 4
+	},
+	{
+		"name": "Chrome Blog",
+		"url": "https://web.dev/blog?hl=zh-cn",
+		"avatar": "/images/blogger/2fe46db88bd43683.svg",
+		"description": "技術チームのブログ、相談、動向、物語。ページの感じが悪くないと思います。",
+		"stars": 4
+	},
+	{
+		"name": "Huozhi",
+		"url": "https://huozhi.im/",
+		"avatar": "https://avatars.githubusercontent.com/u/4800338?v=4",
+		"description": "極簡主義者、ウェブサイトは本当に極简だが、感じも悪くない。内容が少ないので、ブログのデザインがわからない、またはデザインが悪いと感じた時は、彼を見てください。",
+		"stars": 3
+	},
+	{
+		"name": "Brian Lovin",
+		"url": "https://brianlovin.com/",
+		"avatar": "https://avatars.githubusercontent.com/u/1923260?v=4",
+		"description": "早期の外国大神はGithubやFacebookで働いた経験があり、現在はnotionで働いている。経験が豊富で多くのプロジェクトを手掛けている。ブログはDashboardスタイルに変更され、かなり特異だが、ブログの数は多くない。",
+		"stars": 4
+	},
+	{
+		"name": "Cassie Evans's Blog",
+		"url": "https://www.cassie.codes/",
+		"avatar": "https://www.cassie.codes/images/avatar2.jpg",
+		"description": "カラフルなウェブサイト、本当にクールです。しかも女性の作家で、実に珍しいです。GASP、SVG、アニメーションが素晴らしいですが、内容が少なく、高級なブログの一種の不運です。Twitterでも有名人です。",
+		"stars": 4
+	},
+	{
+		"name": "Niracler 的博物志",
+		"url": "https://niracler.com/",
+		"avatar": "https://niracler.com/favicon.svg",
+		"description": "小透明は時々ブログを更新します。しかし、サイトのスタイルには特徴があり、デザインのブログを作成する際の参考になります。",
+		"stars": 2
+	},
+	{
+		"name": "講評世界",
+		"url": "https://blog.moeyua.com/",
+		"avatar": "https://avatars.githubusercontent.com/u/45156493?v=4",
+		"description": "小透明、失踪人口。しかしブログサイトのスタイルにはある種のフォントの美しさがあり、どう表現すればいいかわからない。どうやら映画・テレビのハリューンのメンバーのようだ。",
+		"stars": 2
+	},
+	{
+		"name": "阿猫的博客",
+		"url": "https://ameow.xyz/",
+		"avatar": "https://ameow.xyz/upload/favicon.png",
+		"description": "可愛いウェブサイトで、彼の猫魚週刊を絶えず更新しています。",
+		"stars": 3
+	},
+	{
+		"name": "pseudoyu",
+		"url": "https://www.pseudoyu.com/",
+		"avatar": "https://www.pseudoyu.com/avatar.webp",
+		"description": "ブロックチェーン開発者として、Monadブロックチェーンで一定期間活動していました。ウェブサイトはAnthonyと全く同じです。口では彼の先輩の妻のことを絶えず言っています。かなり有能な人物だと思われます。",
+		"stars": 3
+	},
+	{
+		"name": "季节记忆",
+		"avatar": "https://www.seamory.com/api/storage/2024112814523200000001349b3aa3c2",
+		"url": "https://www.seamory.com/",
+		"description": "後端/組込み向けのもののようです。2025年の初めに作成されたブログで、UIデザインはありません。しかし、後端の人がブログを作成するケースは少ないため、奨励すべきです。",
+		"stars": 1
+	},
+	{
+		"name": "微尔微",
+		"avatar": "https://www.vio.vin/apple-touch-icon.png",
+		"url": "https://www.vio.vin/",
+		"description": "23年新しく入った散修として、彼の言うように、一日にいくつか奇妙なものをこなす。後端を中心に行うべきで、ハードウェアの作業を好む。静森系のブログで、25年には安定したブログ更新が行われている。",
+		"stars": 2
+	},
+	{
+		"name": "搬砖日记",
+		"avatar": "https://banzhuanriji.com/img/icon.ico",
+		"url": "https://banzhuanriji.com/",
+		"description": "白い背景に黒い文字。しかし整えられており、良い状態だ。おそらくAndroidの開発者で、24年から様々な探求を共有している。出所がはっきりしない。",
+		"stars": 2
+	},
+	{
+		"name": "博客.cn",
+		"avatar": "https://xmind.design/favicon.ico",
+		"url": "https://loud-fear-11e.notion.site/eb29a49346a742989582723f950fcf0f?v=4b4f7b7d24274ba7853426c101a149d7",
+		"description": "XMindの内部ブログNotionのようですが、確認できませんが、中身は確かに専門的で深いです。まずは保存しておきます",
+		"stars": 3
+	},
+	{
+		"name": "KK",
+		"avatar": "https://avatars.githubusercontent.com/u/44634134?v=4",
+		"url": "https://kaiyi.cool/",
+		"description": "kkは非常に優れた人物です。突然、友達圏を振り返って彼のことを思い出しました。彼がブログを持っていることに気づきましたが、もはやメンテナンスは行われていません。しかし、彼のブログにはまだ価値のある内容が残っており、あなたにとって役立つかもしれません。",
+		"stars": 3
+	},
+	{
+		"name": "猫普的精神世界",
+		"avatar": "https://maplezz.com/_astro/picture.DavLO-HP_1hhoaS.webp",
+		"url": "https://maplezz.com/",
+		"description": "issueを通じて発見したもう一つのオープンソース製品も、この数日でオープンソースになりました。偶然ですが、液体ガラスのようなデザインが特徴で、とても良い感じです。ただ、一部の装飾が少し気になります。それでも私はとても気に入っています。内容は25年から始まります。",
+		"stars": 3
+	},
+	{
+		"name": "手里有只毛毛虫",
+		"avatar": "https://www.krjojo.com/wp-content/uploads/2024/05/avatar.avif",
+		"url": "https://www.krjojo.com/",
+		"description": "ウェブサイトがとても快適で、六角形の戦士である独立開発者がいる。記事のカテゴリが一目で見つけられるのが良い点で、見たいものを探すのは少し難しい。",
+		"stars": 4
+	},
+	{
+		"name": "Honesty",
+		"avatar": "https://cdn.jsdelivr.net/gh/listener-He/images@default/202309111525908.jpeg",
+		"url": "https://blog.hehouhui.cn/",
+		"description": "ブログのバックエンドを研究するのは、バックエンド学習の良い手本です。何年もかけて研究してきました。ウェブサイトはかなり良い状態ですが、コンテンツの読み込みが少し遅いです。",
+		"stars": 3
+	},
+	{
+		"name": "ElysiumStack",
+		"avatar": "https://www.elysium-stack.cn/upload/b4136969-e1a1-44b9-833f-36e54392f018.png",
+		"url": "https://www.elysium-stack.cn/",
+		"description": "UIデザイナーでありブロガーでもある、珍しい存在です。ブログのデザインも素晴らしい。ゲーム感のある雰囲気が漂っており、25年からのコンテンツです。",
+		"stars": 3
+	},
+	{
+		"name": "十玖八柒",
+		"avatar": "https://ahzoo.cn/img/avatar.webp",
+		"url": "https://blog.ahzoo.cn/",
+		"description": "Z次元、バックエンド開発において多くのバックエンド研究を記録した。しかし、フロントエンドやブログの作業も多い。ブログを独自の快適な形で管理することは、実に貴重なことである",
+		"stars": 3
+	},
+	{
+		"name": "纸鹿摸鱼处",
+		"avatar": "https://weavatar.com/avatar/47c0f2e82b76d9b10eb3023df9e02e4e3fdbeaf5b74b842063f207971e7fbe7b?s=160",
+		"url": "https://blog.zhilu.site/",
+		"description": "棒棒のオープンソースブログの主、今日彼のグループメンバーに触れました🤣、彼にもう一分加える🤣🤣🤣。",
+		"stars": 4
+	},
+	{
+		"name": "灯火不休时",
+		"avatar": "https://file.dhbxs.top/ylvwvjjs.jpg",
+		"url": "https://blog.dhbxs.top/",
+		"description": "グング、JAVAR、清潔なブログ、数人の影を見せてくれる。",
+		"stars": 3
+	}
+]

@@ -428,7 +428,9 @@ const styles = stylex.create({
 })
 
 export default function BlogPage() {
-	const { items, loading } = useBlogIndex()
+	const { items, baseItems, loading } = useBlogIndex()
+	// 展示端分类用当前语言；编辑链路（categoryList/保存）固定中文源，避免译文写回数据
+	const { categories: localizedCategories } = useCategories({ localeAware: true })
 	const { categories: categoriesFromServer } = useCategories()
 	const { isRead } = useReadArticles()
 	const { isAuth, setPrivateKey } = useAuthStore()
@@ -450,9 +452,9 @@ export default function BlogPage() {
 
 	useEffect(() => {
 		if (!editMode) {
-			setEditableItems(items)
+			setEditableItems(baseItems)
 		}
-	}, [items, editMode])
+	}, [baseItems, editMode])
 
 	useEffect(() => {
 		setCategoryList(categoriesFromServer || [])
@@ -505,7 +507,9 @@ export default function BlogPage() {
 
 		const keys = Object.keys(grouped).sort((a, b) => {
 			if (displayMode === 'category') {
-				const categoryOrder = new Map(categoryList.map((c, index) => [c, index]))
+				// 文章 category 随语言展示，排序对照也用语言版分类，缺失时退回中文源
+				const orderSource = localizedCategories.length > 0 ? localizedCategories : categoryList
+				const categoryOrder = new Map(orderSource.map((c, index) => [c, index]))
 				const aOrder = categoryOrder.has(a) ? categoryOrder.get(a)! : Number.MAX_SAFE_INTEGER
 				const bOrder = categoryOrder.has(b) ? categoryOrder.get(b)! : Number.MAX_SAFE_INTEGER
 				if (aOrder !== bOrder) return aOrder - bOrder
@@ -527,7 +531,7 @@ export default function BlogPage() {
 			groupKeys: keys,
 			getGroupLabel: (key: string) => grouped[key]?.label || key
 		}
-	}, [displayItems, displayMode, categoryList, locale, t])
+	}, [displayItems, displayMode, categoryList, localizedCategories, locale, t])
 
 	const selectedCount = selectedSlugs.size
 	const buttonText = isAuth ? t('admin.save') : t('admin.importKey')
@@ -535,13 +539,13 @@ export default function BlogPage() {
 	const toggleEditMode = useCallback(() => {
 		if (editMode) {
 			setEditMode(false)
-			setEditableItems(items)
+			setEditableItems(baseItems)
 			setSelectedSlugs(new Set())
 		} else {
-			setEditableItems(items)
+			setEditableItems(baseItems)
 			setEditMode(true)
 		}
-	}, [editMode, items])
+	}, [editMode, baseItems])
 
 	const toggleSelect = useCallback((slug: string) => {
 		setSelectedSlugs(prev => {
@@ -643,16 +647,16 @@ export default function BlogPage() {
 	}, [])
 
 	const handleCancel = useCallback(() => {
-		setEditableItems(items)
+		setEditableItems(baseItems)
 		setSelectedSlugs(new Set())
 		setEditMode(false)
-	}, [items])
+	}, [baseItems])
 
 	const handleSave = useCallback(async () => {
-		const removedSlugs = items.filter(item => !editableItems.some(editItem => editItem.slug === item.slug)).map(item => item.slug)
+		const removedSlugs = baseItems.filter(item => !editableItems.some(editItem => editItem.slug === item.slug)).map(item => item.slug)
 		const normalizedCategoryList = categoryList.map(c => c.trim()).filter(Boolean)
 		const categoryListChanged = JSON.stringify(normalizedCategoryList) !== JSON.stringify((categoriesFromServer || []).map(c => c.trim()).filter(Boolean))
-		const categoryAssignmentChanged = items.some(origin => {
+		const categoryAssignmentChanged = baseItems.some(origin => {
 			const next = editableItems.find(editItem => editItem.slug === origin.slug)
 			const originCategory = origin.category || ''
 			const nextCategory = next?.category || ''
@@ -667,7 +671,7 @@ export default function BlogPage() {
 
 		try {
 			setSaving(true)
-			await saveBlogEdits(items, editableItems, normalizedCategoryList)
+			await saveBlogEdits(baseItems, editableItems, normalizedCategoryList)
 			setEditMode(false)
 			setSelectedSlugs(new Set())
 			setCategoryModalOpen(false)
@@ -677,7 +681,7 @@ export default function BlogPage() {
 		} finally {
 			setSaving(false)
 		}
-	}, [items, editableItems, categoryList, categoriesFromServer, t])
+	}, [baseItems, editableItems, categoryList, categoriesFromServer, t])
 
 	const handleSaveClick = useCallback(() => {
 		if (!isAuth) {

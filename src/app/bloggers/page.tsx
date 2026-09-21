@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
@@ -10,6 +10,9 @@ import { pushBloggers } from './services/push-bloggers'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
+import initialListEn from './list.en.json'
+import initialListJa from './list.ja.json'
+import initialListKo from './list.ko.json'
 import type { AvatarItem } from './components/avatar-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
@@ -85,7 +88,15 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
-	const { t } = useI18n()
+	const { t, locale } = useI18n()
+
+	// 浏览态按当前语言展示（语言版缺失回落中文）；编辑态固定中文源，保存不会波及语言版数据
+	const displayBloggers = useMemo(() => {
+		if (isEditMode) return bloggers
+		const byLocale = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Blogger[]>>
+		const localized = byLocale[locale]
+		return localized && localized.length > 0 ? (localized as Blogger[]) : bloggers
+	}, [bloggers, locale, isEditMode])
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	const handleUpdate = (updatedBlogger: Blogger, oldBlogger: Blogger, avatarItem?: AvatarItem) => {
@@ -203,7 +214,7 @@ export default function Page() {
 				}}
 			/>
 
-			<GridView bloggers={bloggers} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
+			<GridView key={locale} bloggers={displayBloggers} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
 
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (

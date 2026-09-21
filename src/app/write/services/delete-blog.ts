@@ -2,7 +2,7 @@ import { toast } from 'sonner'
 import { getAuthToken } from '@/lib/auth'
 import { GITHUB_CONFIG } from '@/consts'
 import { createBlob, createCommit, createTree, getRef, listRepoFilesRecursive, toBase64Utf8, TreeItem, updateRef } from '@/lib/github-client'
-import { removeBlogFromIndex } from '@/lib/blog-index'
+import { removeBlogFromIndex, buildLocalizedIndexRemovals } from '@/lib/blog-index'
 import { t } from '@/i18n/translate'
 
 export async function deleteBlog(slug: string): Promise<void> {
@@ -38,6 +38,9 @@ export async function deleteBlog(slug: string): Promise<void> {
 		type: 'blob',
 		sha: indexBlob.sha
 	})
+
+	// 同步清理语言版索引，避免多语言列表残留孤儿条目
+	treeItems.push(...(await buildLocalizedIndexRemovals(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, GITHUB_CONFIG.BRANCH, [slug])))
 
 	toast.info(t('write.creatingCommit'))
 	const treeData = await createTree(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, treeItems, latestCommitSha)

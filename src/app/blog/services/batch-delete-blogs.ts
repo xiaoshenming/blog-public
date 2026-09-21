@@ -3,7 +3,7 @@ import { t } from '@/i18n/translate'
 import { getAuthToken } from '@/lib/auth'
 import { GITHUB_CONFIG } from '@/consts'
 import { createBlob, createCommit, createTree, getRef, listRepoFilesRecursive, toBase64Utf8, type TreeItem, updateRef } from '@/lib/github-client'
-import { removeBlogsFromIndex } from '@/lib/blog-index'
+import { removeBlogsFromIndex, buildLocalizedIndexRemovals } from '@/lib/blog-index'
 
 export async function batchDeleteBlogs(slugs: string[]): Promise<void> {
 	const uniqueSlugs = Array.from(new Set(slugs.filter(Boolean)))
@@ -43,6 +43,9 @@ export async function batchDeleteBlogs(slugs: string[]): Promise<void> {
 		type: 'blob',
 		sha: indexBlob.sha
 	})
+
+	// 同步清理语言版索引，避免多语言列表残留孤儿条目
+	treeItems.push(...(await buildLocalizedIndexRemovals(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, GITHUB_CONFIG.BRANCH, uniqueSlugs)))
 
 	toast.info(t('admin.creatingCommit'))
 	const treeData = await createTree(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, treeItems, latestCommitSha)

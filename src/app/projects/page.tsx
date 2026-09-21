@@ -224,7 +224,13 @@ export default function Page() {
 			<div {...stylex.props(styles.container)}>
 				<div {...stylex.props(styles.grid)}>
 					{displayProjects.map((project, index) => (
-						<ProjectCard key={project.url} project={project} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={() => handleDelete(project)} />
+						<ProjectCard
+							key={`${locale}-${project.url}`}
+							project={project}
+							isEditMode={isEditMode}
+							onUpdate={handleUpdate}
+							onDelete={() => handleDelete(project)}
+						/>
 					))}
 				</div>
 			</div>

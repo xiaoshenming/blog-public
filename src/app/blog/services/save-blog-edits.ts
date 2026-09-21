@@ -3,6 +3,7 @@ import { t } from '@/i18n/translate'
 import { GITHUB_CONFIG } from '@/consts'
 import { getAuthToken } from '@/lib/auth'
 import { createBlob, createCommit, createTree, getRef, listRepoFilesRecursive, toBase64Utf8, type TreeItem, updateRef } from '@/lib/github-client'
+import { buildLocalizedIndexRemovals } from '@/lib/blog-index'
 import type { BlogIndexItem } from '@/lib/blog-index'
 
 export async function saveBlogEdits(originalItems: BlogIndexItem[], nextItems: BlogIndexItem[], categories: string[]): Promise<void> {
@@ -42,6 +43,9 @@ export async function saveBlogEdits(originalItems: BlogIndexItem[], nextItems: B
 		type: 'blob',
 		sha: indexBlob.sha
 	})
+
+	// 同步清理语言版索引中被删除的文章，避免多语言列表残留孤儿条目
+	treeItems.push(...(await buildLocalizedIndexRemovals(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, GITHUB_CONFIG.BRANCH, uniqueRemoved)))
 
 	toast.info(t('admin.updatingCategories'))
 	const uniqueCategories = Array.from(new Set(categories.map(c => c.trim()).filter(Boolean)))

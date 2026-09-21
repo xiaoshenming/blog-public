@@ -25,6 +25,8 @@ const styles = stylex.create({
 		bottom: 80
 	},
 	toggle: {
+		/** card.base 是给绝对定位卡片用的，按钮必须显式回到文档流，否则被零宽 wrap 压缩换行、溢出屏幕 */
+		position: 'static',
 		display: 'flex',
 		alignItems: 'center',
 		gap: 8,

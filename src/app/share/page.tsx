@@ -209,7 +209,7 @@ export default function Page() {
 				}}
 			/>
 
-			<GridView shares={displayShares} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
+			<GridView key={locale} shares={displayShares} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
 
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (

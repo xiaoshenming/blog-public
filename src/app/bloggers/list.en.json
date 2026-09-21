@@ -1,0 +1,247 @@
+[
+	{
+		"name": "阮一峰的网络日志",
+		"avatar": "/images/blogger/fe25259da8e3609b.png",
+		"url": "https://www.ruanyifeng.com/blog/archives.html",
+		"description": "A must-read classic, updated weekly. Whether you are reading news, learning, or broadening your horizons, you will find joy in it. Plus plenty of weekly comments from readers. This is the true value of a blog.",
+		"stars": 5
+	},
+	{
+		"name": "Enji Kusnadi",
+		"url": "https://enji.dev/",
+		"avatar": "https://enji.dev/_next/image?url=%2Fassets%2Fimages%2Fme.png&w=1080&q=100",
+		"description": "The first person whose design style impressed me, I always mention when recommending other blogs. But this isn't her blog website; it's just her online resume with no continuous content, which is quite a pity.",
+		"stars": 3
+	},
+	{
+		"name": "Josh W. Comeau",
+		"url": "https://www.joshwcomeau.com/",
+		"avatar": "https://www.joshwcomeau.com/favicon.png",
+		"description": "John’s blog resembles a course website, with each article written exceptionally well, allowing readers to gain new insights with every read. The website design is also perfectly balanced—neat and engaging.",
+		"stars": 5
+	},
+	{
+		"name": "nanda",
+		"url": "https://www.nan.fyi/",
+		"avatar": "https://www.nan.fyi/favicon.ico",
+		"description": "Design Master, Nanda. The pages are simply gray with lines, which is truly impressive. There isn't much content, but each piece is meticulously crafted. Like Josh, it belongs to a technical website, but its tutorial guidance is even more exceptional, making it a true programmer artist.",
+		"stars": 5
+	},
+	{
+		"name": "Emil Kowalski",
+		"url": "https://emilkowal.ski/",
+		"avatar": "https://emilkowal.ski/favicon.ico",
+		"description": "The blog simply has \"no design\" and no decorations. The technology side is a bit easier, as it emphasizes animations/interactions. As a Vercel employee, his components are very useful and truly vercel-like.",
+		"stars": 4
+	},
+	{
+		"name": "Risingle",
+		"url": "https://www.imrising.cn/",
+		"avatar": "https://www.imrising.cn/images/logo/logo.webp",
+		"description": "The website design is excellent. Although it uses someone else's template, it is well done. It's a programmer just starting out.",
+		"stars": 3
+	},
+	{
+		"name": "無名小栈",
+		"url": "https://blog.imsyy.top/",
+		"avatar": "https://blog.imsyy.top/images/logo/logo.webp",
+		"description": "The template owner of Risingle blog might not match the avatar and website style, making it feel less comfortable than Risingle. There are many popular projects on Github, clearly indicating someone who enjoys tinkering, but not fond of writing blogs, with little content to offer. In 01, quite young, independent developer? I don’t know what experiences they have gone through.",
+		"stars": 2
+	},
+	{
+		"name": "韩小韩博客",
+		"url": "https://www.vvhan.com/",
+		"avatar": "https://q1.qlogo.cn/g?b=qq&nk=1655466387&s=640",
+		"description": "The website is great, with plenty of content and a cool profile picture. I wonder if the person is attractive. This misaligned sliding effect keeps bothering me, and the damping effect has really improved in the blog... It's just about importing a plugin; hopefully he can remove this effect soon. I'd like to check out his content more, but the effect is too confusing.",
+		"stars": 3
+	},
+	{
+		"name": "Anthony Fu",
+		"url": "https://antfu.me/",
+		"avatar": "https://avatars.githubusercontent.com/u/11247099?v=4",
+		"description": "A really impressive person, still seems quite young. He is often active on b站 and does live streams (I've watched them). I remember he did many remarkable things shortly after graduating, being a core member of the vue series—it seems like something he handles easily. Most of his blog posts are in English, and his social circle is filled with experts, which is great. I don't write blogs much, but still, it's considered good compared to others. We can get a glimpse of the \"upper class\" aspect of vue through him.",
+		"stars": 4
+	},
+	{
+		"name": "enpitsulin 铅笔",
+		"url": "https://enpitsulin.xyz/",
+		"avatar": "https://enpitsulin.dev/images/avatar.webp",
+		"description": "A very simple blog site, like Nanda. It's just been quiet for a while. I can't immediately remember who he is from now, but when I see his past cute profile picture, I remember this person.",
+		"stars": 2
+	},
+	{
+		"name": "Innei 静かな森",
+		"url": "https://innei.in/",
+		"avatar": "https://cdn.jsdelivr.net/gh/Innei/static@master/avatar.png",
+		"description": "The website is okay, a typical product of a certain era, but I don’t quite understand it. However, the content is active, and it seems quite popular? I haven’t found out why it’s popular. There are quite a few projects.",
+		"stars": 3
+	},
+	{
+		"name": "秋夜灯雨",
+		"url": "https://blog.lierhua.top/",
+		"avatar": "https://blog.lierhua.top/images/web/yyqda3.svg",
+		"description": "From the name, it’s clear he’s one of the remnants from the past. But I really like his design; the pages are clear and have a scholarly atmosphere. Although he’s an elder, there isn’t much history he can trace.",
+		"stars": 3
+	},
+	{
+		"name": "BlogFinder",
+		"url": "https://bf.zzxworld.com/",
+		"avatar": "https://bf.zzxworld.com/images/favicon.png",
+		"description": "A blog collection website where you can find all the blogs and also directly view who has updated recently.",
+		"stars": 3
+	},
+	{
+		"name": "Tonsky",
+		"url": "https://tonsky.me/",
+		"avatar": "https://avatars.githubusercontent.com/u/285292?v=4",
+		"description": "A former international expert who forgot when it was discovered, the blog still updates occasionally. It’s just that now the blog is too eye-catching, not sure if it’s intentional.",
+		"stars": 3
+	},
+	{
+		"name": "Cali",
+		"url": "https://cali.so/",
+		"avatar": "https://cali.so/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FPortrait.8d12f14a.png&w=96&q=75",
+		"description": "Designer, the website looks good, but the blog content is limited. What's impressive is that he has started his own company, designing websites for others; Yingshi and Insta360 were also designed by him. It's a great reference for the blog. His zolplay website has a similar style to Nanda's, and it's unclear who copied it from.",
+		"stars": 4
+	},
+	{
+		"name": "Chrome Blog",
+		"url": "https://web.dev/blog?hl=zh-cn",
+		"avatar": "/images/blogger/2fe46db88bd43683.svg",
+		"description": "A technical team blog featuring consultations, updates, and stories. I think the page feels quite good.",
+		"stars": 4
+	},
+	{
+		"name": "Huozhi",
+		"url": "https://huozhi.im/",
+		"avatar": "https://avatars.githubusercontent.com/u/4800338?v=4",
+		"description": "Minimalists, the website is truly minimalist, but it doesn’t feel bad either. There’s not much content, but if you feel unsure about how to design a blog or if it looks poor, check it out.",
+		"stars": 3
+	},
+	{
+		"name": "Brian Lovin",
+		"url": "https://brianlovin.com/",
+		"avatar": "https://avatars.githubusercontent.com/u/1923260?v=4",
+		"description": "Early foreign deities worked at Github and Facebook, now at Notion, with extensive experience and many projects. The blog has been transformed into a Dashboard-style format, which is quite unique, but there aren't many blogs.",
+		"stars": 4
+	},
+	{
+		"name": "Cassie Evans's Blog",
+		"url": "https://www.cassie.codes/",
+		"avatar": "https://www.cassie.codes/images/avatar2.jpg",
+		"description": "Colorful websites are really cool. And it's a woman, which is quite rare. GASP, SVG, and animations are beautifully designed, but there aren't many articles, making it a curse of advanced blogs. She's also a celebrity on Twitter.",
+		"stars": 4
+	},
+	{
+		"name": "Niracler 的博物志",
+		"url": "https://niracler.com/",
+		"avatar": "https://niracler.com/favicon.svg",
+		"description": "Little transparent, occasionally updates a blog. However, the website style has its own characteristics that can serve as a reference for designing blogs.",
+		"stars": 2
+	},
+	{
+		"name": "講評世界",
+		"url": "https://blog.moeyua.com/",
+		"avatar": "https://avatars.githubusercontent.com/u/45156493?v=4",
+		"description": "Little transparent, missing persons. But the blog website style has a kind of typographic beauty, I don't know how to describe it. It seems to be a member of the Film & TV Hurricane group.",
+		"stars": 2
+	},
+	{
+		"name": "阿猫的博客",
+		"url": "https://ameow.xyz/",
+		"avatar": "https://ameow.xyz/upload/favicon.png",
+		"description": "A cute website that continuously updates its Cat Fish Weekly.",
+		"stars": 3
+	},
+	{
+		"name": "pseudoyu",
+		"url": "https://www.pseudoyu.com/",
+		"avatar": "https://www.pseudoyu.com/avatar.webp",
+		"description": "A blockchain developer spent some time working on Monad blockchain. The website looks exactly like Anthony's. He keeps talking about his senior's wife. Should be pretty impressive too.",
+		"stars": 3
+	},
+	{
+		"name": "季节记忆",
+		"avatar": "https://www.seamory.com/api/storage/2024112814523200000001349b3aa3c2",
+		"url": "https://www.seamory.com/",
+		"description": "Looks like it's for backend/embedded? A blog established at the beginning of 2025 with no UI design. However, few backend developers use blogs, which should be encouraged.",
+		"stars": 1
+	},
+	{
+		"name": "微尔微",
+		"avatar": "https://www.vio.vin/apple-touch-icon.png",
+		"url": "https://www.vio.vin/",
+		"description": "A new wandering practitioner in 23 years, as he says, spends a day doing various strange things. It should focus on the backend, and he likes working on hardware. It's a Jingsen-related blog, with stable output since 25.",
+		"stars": 2
+	},
+	{
+		"name": "搬砖日记",
+		"avatar": "https://banzhuanriji.com/img/icon.ico",
+		"url": "https://banzhuanriji.com/",
+		"description": "White background with black text. However, it is well maintained. It should be an Android developer who has been sharing various explorations since 2024. The origin is unclear.",
+		"stars": 2
+	},
+	{
+		"name": "博客.cn",
+		"avatar": "https://xmind.design/favicon.ico",
+		"url": "https://loud-fear-11e.notion.site/eb29a49346a742989582723f950fcf0f?v=4b4f7b7d24274ba7853426c101a149d7",
+		"description": "It seems to be a internal blog on Notion by XMind, not confirmed yet, but the content inside is indeed professional and insightful, so I’ll save it for now",
+		"stars": 3
+	},
+	{
+		"name": "KK",
+		"avatar": "https://avatars.githubusercontent.com/u/44634134?v=4",
+		"url": "https://kaiyi.cool/",
+		"description": "kk is a really impressive person. Suddenly thinking of him from my social media, I found out he has a blog, although it's no longer maintained. But there are still some good elements in his blog that might be useful to you.",
+		"stars": 3
+	},
+	{
+		"name": "猫普的精神世界",
+		"avatar": "https://maplezz.com/_astro/picture.DavLO-HP_1hhoaS.webp",
+		"url": "https://maplezz.com/",
+		"description": "Another open-source project discovered through issue, which was also open-sourced these days – quite coincidental. The liquid glass-like design gives a similar feel, which is quite nice, though there are some flaws. I still really like it. The content starts from 2025.",
+		"stars": 3
+	},
+	{
+		"name": "手里有只毛毛虫",
+		"avatar": "https://www.krjojo.com/wp-content/uploads/2024/05/avatar.avif",
+		"url": "https://www.krjojo.com/",
+		"description": "The website is very comfortable to use, developed independently by a hexagonal warrior. The article categories make it easy to browse at a glance, while finding specific content can be more challenging.",
+		"stars": 4
+	},
+	{
+		"name": "Honesty",
+		"avatar": "https://cdn.jsdelivr.net/gh/listener-He/images@default/202309111525908.jpeg",
+		"url": "https://blog.hehouhui.cn/",
+		"description": "Trouvinging the backend of the blog is an excellent example for learning backend skills—I've been working on it for many years. The website is quite good, but the loading of content is a bit slow.",
+		"stars": 3
+	},
+	{
+		"name": "ElysiumStack",
+		"avatar": "https://www.elysium-stack.cn/upload/b4136969-e1a1-44b9-833f-36e54392f018.png",
+		"url": "https://www.elysium-stack.cn/",
+		"description": "A UI designer blogger, rare, with amazing blog designs. A sense of gaming atmosphere emerges, content starting from 2025.",
+		"stars": 3
+	},
+	{
+		"name": "十玖八柒",
+		"avatar": "https://ahzoo.cn/img/avatar.webp",
+		"url": "https://blog.ahzoo.cn/",
+		"description": "In 4D dimension, backend development, many backend research projects have been documented. However, work on frontend and blogs is also extensive. Maintaining a blog with a unique and comfortable style is truly rare.",
+		"stars": 3
+	},
+	{
+		"name": "纸鹿摸鱼处",
+		"avatar": "https://weavatar.com/avatar/47c0f2e82b76d9b10eb3023df9e02e4e3fdbeaf5b74b842063f207971e7fbe7b?s=160",
+		"url": "https://blog.zhilu.site/",
+		"description": "The popular open-source blog owner, today clung to his group members, 🤣, giving him an extra point 🤣🤣🤣.",
+		"stars": 4
+	},
+	{
+		"name": "灯火不休时",
+		"avatar": "https://file.dhbxs.top/ylvwvjjs.jpg",
+		"url": "https://blog.dhbxs.top/",
+		"description": "Group members, JAVAR, clean blog, let me see the shadows of a few people.",
+		"stars": 3
+	}
+]

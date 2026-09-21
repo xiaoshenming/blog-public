@@ -127,7 +127,7 @@ async function translateAbout() {
 	console.log(`✓ about/list.${t}.json`)
 }
 
-async function translateListFile(page: 'share' | 'projects' | 'pictures' | 'snippets') {
+async function translateListFile(page: 'share' | 'projects' | 'pictures' | 'snippets' | 'bloggers') {
 	const localizedPath = resolve(process.cwd(), `src/app/${page}/list.${t}.json`)
 	if (skipExisting && existsSync(localizedPath)) {
 		console.log(`- 跳过已有: ${page}/list.${t}.json`)
@@ -141,7 +141,7 @@ async function translateListFile(page: 'share' | 'projects' | 'pictures' | 'snip
 		const items = (Array.isArray(data) ? data : []).map(String)
 		output = await mapWithConcurrency(items, translateConfig.concurrency, async item => (hasChinese(item) ? translateText(item) : item))
 	} else {
-		const fields = page === 'pictures' ? { text: ['description'], list: [] } : { text: ['description'], list: ['tags'] }
+		const fields = page === 'pictures' || page === 'bloggers' ? { text: ['description'], list: [] } : { text: ['description'], list: ['tags'] }
 		output = await mapWithConcurrency(data as Array<Record<string, unknown>>, translateConfig.concurrency, item => translateFields(item, fields))
 	}
 	await writeFile(localizedPath, JSON.stringify(output, null, '\t') + '\n', 'utf8')
@@ -155,7 +155,8 @@ async function main() {
 		{ name: 'share', run: () => translateListFile('share') },
 		{ name: 'projects', run: () => translateListFile('projects') },
 		{ name: 'pictures', run: () => translateListFile('pictures') },
-		{ name: 'snippets', run: () => translateListFile('snippets') }
+		{ name: 'snippets', run: () => translateListFile('snippets') },
+		{ name: 'bloggers', run: () => translateListFile('bloggers') }
 	]
 	const indexPath = resolve(BLOGS_DIR, 'index.json')
 	const slugs: string[] = existsSync(indexPath) ? (JSON.parse(await readFile(indexPath, 'utf8')) as Array<{ slug: string }>).map(item => item.slug) : []

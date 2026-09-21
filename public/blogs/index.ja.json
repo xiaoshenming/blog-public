@@ -21,7 +21,7 @@
 			"エージェント",
 			"仕事"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "liuxiandong-night-after-work",
@@ -33,7 +33,7 @@
 			"仕事",
 			"エージェント"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "birthday-in-shenzhen",
@@ -45,7 +45,7 @@
 			"映画",
 			"生活記録"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "birthday-almost-forgotten",
@@ -56,7 +56,7 @@
 			"生活記録",
 			"大学の思い出"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "pretext-text-layout-magic",
@@ -79,7 +79,7 @@
 			"落とし穴",
 			"国境を越えた協力"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "aigc-rewrite-experience",
@@ -91,7 +91,7 @@
 			"経験の共有",
 			"Claude"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "mirror-sources-guide-complete",
@@ -112,7 +112,7 @@
 			"Git",
 			"落とし穴"
 		],
-		"category": "要約"
+		"category": "まとめ"
 	},
 	{
 		"slug": "vuejs-capacitor-mobile-app-encapsulation",
