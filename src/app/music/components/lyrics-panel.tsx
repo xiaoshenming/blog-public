@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from '../music-store'
+import { useI18n } from '@/i18n/context'
 import { cn } from '@/lib/utils'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -49,6 +50,7 @@ const styles = stylex.create({
 
 export default function LyricsPanel() {
 	const containerRef = useRef<HTMLDivElement>(null)
+	const { t } = useI18n()
 	const { lyrics, activeIndex } = useMusicStore(useShallow(s => ({ lyrics: s.lyrics, activeIndex: s.activeLyricIndex })))
 
 	useEffect(() => {
@@ -62,15 +64,12 @@ export default function LyricsPanel() {
 		<div ref={containerRef} className={cn(rootClassName, 'scrollbar-none')}>
 			{lyrics.length ? (
 				lyrics.map((line, index) => (
-					<p
-						key={`${line.time}-${index}`}
-						data-lyric-index={index}
-						{...stylex.props(styles.line, index === activeIndex ? styles.lineActive : styles.lineIdle)}>
+					<p key={`${line.time}-${index}`} data-lyric-index={index} {...stylex.props(styles.line, index === activeIndex ? styles.lineActive : styles.lineIdle)}>
 						{line.text}
 					</p>
 				))
 			) : (
-				<p {...stylex.props(styles.empty)}>这首歌暂时没有歌词</p>
+				<p {...stylex.props(styles.empty)}>{t('music.noLyrics')}</p>
 			)}
 		</div>
 	)

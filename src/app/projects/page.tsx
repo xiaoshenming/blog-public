@@ -10,7 +10,9 @@ import { pushProjects } from './services/push-projects'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
+import initialListEn from './list.en.json'
 import type { ImageItem } from './components/image-upload-dialog'
+import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -105,7 +107,11 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { locale } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
+
+	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
+	const displayProjects = !isEditMode && locale === 'en' ? (initialListEn as Project[]) : projects
 
 	const handleUpdate = (updatedProject: Project, oldProject: Project, imageItem?: ImageItem) => {
 		setProjects(prev => prev.map(p => (p.url === oldProject.url ? updatedProject : p)))
@@ -216,7 +222,7 @@ export default function Page() {
 
 			<div {...stylex.props(styles.container)}>
 				<div {...stylex.props(styles.grid)}>
-					{projects.map((project, index) => (
+					{displayProjects.map((project, index) => (
 						<ProjectCard key={project.url} project={project} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={() => handleDelete(project)} />
 					))}
 				</div>
@@ -225,15 +231,10 @@ export default function Page() {
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							{...stylex.props(card.hover, styles.ghostButton)}>
+						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostButton)}>
 							取消
 						</button>
-						<button
-							onClick={handleAdd}
-							{...stylex.props(card.hover, styles.ghostButton)}>
+						<button onClick={handleAdd} {...stylex.props(card.hover, styles.ghostButton)}>
 							添加
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
@@ -242,9 +243,7 @@ export default function Page() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={() => setIsEditMode(true)}
-							{...stylex.props(card.hover, styles.editButton)}>
+						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editButton)}>
 							编辑
 						</button>
 					)

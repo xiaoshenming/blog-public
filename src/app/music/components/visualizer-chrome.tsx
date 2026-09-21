@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '../music-store'
+import { useI18n } from '@/i18n/context'
 import { VISUALIZER_REGISTRY } from '../visualizer/registry'
 import type { VisualizerMode } from '../visualizer/types'
 import { cn } from '@/lib/utils'
@@ -48,7 +49,8 @@ const styles = stylex.create({
 		backgroundColor: 'rgb(255 255 255 / 10%)',
 		color: 'rgb(255 255 255 / 80%)',
 		backdropFilter: 'blur(12px)',
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
@@ -104,7 +106,8 @@ const styles = stylex.create({
 		paddingBlock: 4,
 		fontSize: 12,
 		lineHeight: '16px',
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
 	},
@@ -219,6 +222,7 @@ export function stepVisualizerMode(current: VisualizerMode, delta: 1 | -1): Visu
  * 鼠标静止后整体淡出，把画面完全留给歌词。
  */
 export default function VisualizerChrome({ visible, mode, onSelectMode, onClose }: VisualizerChromeProps) {
+	const { t } = useI18n()
 	const { track, isPlaying, togglePlay, playPrevious, playNext } = useMusicStore(
 		useShallow(s => ({
 			track: s.playlist[s.currentIndex],
@@ -232,23 +236,15 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 	const { className: modeScrollClassName } = stylex.props(styles.modeScroll)
 
 	return (
-		<motion.div
-			initial={false}
-			animate={{ opacity: visible ? 1 : 0 }}
-			transition={{ duration: 0.3 }}
-			{...stylex.props(styles.root)}>
+		<motion.div initial={false} animate={{ opacity: visible ? 1 : 0 }} transition={{ duration: 0.3 }} {...stylex.props(styles.root)}>
 			<div {...stylex.props(styles.topRow)}>
-				<button
-					type='button'
-					aria-label='退出沉浸歌词'
-					onClick={onClose}
-					{...stylex.props(styles.closeBtn, visible && styles.interactive)}>
+				<button type='button' aria-label={t('music.exitImmersive')} onClick={onClose} {...stylex.props(styles.closeBtn, visible && styles.interactive)}>
 					<X {...stylex.props(styles.iconMd)} />
 				</button>
 				<div {...stylex.props(styles.modeBar, visible && styles.interactive)}>
 					<button
 						type='button'
-						aria-label='上一个动效'
+						aria-label={t('music.prevEffect')}
 						onClick={() => onSelectMode(stepVisualizerMode(mode, -1))}
 						{...stylex.props(styles.arrowBtn)}>
 						<ChevronLeft {...stylex.props(styles.iconSm)} />
@@ -265,11 +261,7 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 							</button>
 						))}
 					</div>
-					<button
-						type='button'
-						aria-label='下一个动效'
-						onClick={() => onSelectMode(stepVisualizerMode(mode, 1))}
-						{...stylex.props(styles.arrowBtn)}>
+					<button type='button' aria-label={t('music.nextEffect')} onClick={() => onSelectMode(stepVisualizerMode(mode, 1))} {...stylex.props(styles.arrowBtn)}>
 						<ChevronRight {...stylex.props(styles.iconSm)} />
 					</button>
 				</div>
@@ -278,24 +270,24 @@ export default function VisualizerChrome({ visible, mode, onSelectMode, onClose 
 			<div {...stylex.props(styles.bottomRow)}>
 				<div {...stylex.props(styles.playBar, visible && styles.interactive)}>
 					<div {...stylex.props(styles.trackInfo)}>
-						<div {...stylex.props(styles.trackName)}>{track?.name || '音乐播放器'}</div>
+						<div {...stylex.props(styles.trackName)}>{track?.name || t('music.title')}</div>
 						<div {...stylex.props(styles.trackArtist)}>{track?.artist}</div>
 					</div>
-					<button type='button' aria-label='上一首' onClick={playPrevious} {...stylex.props(styles.skipBtn)}>
+					<button type='button' aria-label={t('music.previous')} onClick={playPrevious} {...stylex.props(styles.skipBtn)}>
 						<SkipBack {...stylex.props(styles.iconMd)} fill='currentColor' />
 					</button>
-					<button
-						type='button'
-						aria-label={isPlaying ? '暂停' : '播放'}
-						onClick={togglePlay}
-						{...stylex.props(styles.playBtn)}>
-						{isPlaying ? <Pause {...stylex.props(styles.iconMd)} fill='currentColor' /> : <Play {...stylex.props(styles.iconMd, styles.playIcon)} fill='currentColor' />}
+					<button type='button' aria-label={isPlaying ? t('music.pause') : t('music.play')} onClick={togglePlay} {...stylex.props(styles.playBtn)}>
+						{isPlaying ? (
+							<Pause {...stylex.props(styles.iconMd)} fill='currentColor' />
+						) : (
+							<Play {...stylex.props(styles.iconMd, styles.playIcon)} fill='currentColor' />
+						)}
 					</button>
-					<button type='button' aria-label='下一首' onClick={playNext} {...stylex.props(styles.skipBtn)}>
+					<button type='button' aria-label={t('music.next')} onClick={playNext} {...stylex.props(styles.skipBtn)}>
 						<SkipForward {...stylex.props(styles.iconMd)} fill='currentColor' />
 					</button>
 				</div>
-				<p {...stylex.props(styles.hint)}>Esc 退出 · ← / → 切换动效 · 歌词动效移植自 Folia</p>
+				<p {...stylex.props(styles.hint)}>{t('music.visualizerHint')}</p>
 			</div>
 		</motion.div>
 	)

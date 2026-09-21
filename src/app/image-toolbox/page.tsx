@@ -7,6 +7,7 @@ import { ANIMATION_DELAY, INIT_DELAY } from '@/consts'
 import { DialogModal } from '@/components/dialog-modal'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type ConvertedMeta = {
 	url: string
@@ -457,6 +458,7 @@ const styles = stylex.create({
 })
 
 export default function Page() {
+	const { t } = useI18n()
 	const [images, setImages] = useState<SelectedImage[]>([])
 	const [quality, setQuality] = useState(0.8)
 	const [limitMaxWidth, setLimitMaxWidth] = useState(false)
@@ -573,11 +575,11 @@ export default function Page() {
 				)
 			} catch (error) {
 				console.error(error)
-				alert('转换过程中出现问题，请稍后再试')
+				alert(t('toolbox.convertFailed'))
 				setImages(prev => prev.map((item, idx) => (idx === index ? { ...item, converting: false } : item)))
 			}
 		},
-		[images, quality, limitMaxWidth, maxWidth]
+		[images, quality, limitMaxWidth, maxWidth, t]
 	)
 
 	const handleDownloadImage = useCallback(
@@ -624,11 +626,11 @@ export default function Page() {
 			}
 		} catch (error) {
 			console.error(error)
-			alert('批量转换过程中出现问题，请稍后再试')
+			alert(t('toolbox.batchConvertFailed'))
 		} finally {
 			setBatchConverting(false)
 		}
-	}, [batchConverting, hasImages, quality, limitMaxWidth, maxWidth])
+	}, [batchConverting, hasImages, quality, limitMaxWidth, maxWidth, t])
 
 	const handleDownloadAll = useCallback(() => {
 		if (!hasConverted) return
@@ -684,8 +686,8 @@ export default function Page() {
 			<div {...stylex.props(styles.content)}>
 				<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: INIT_DELAY }} {...stylex.props(styles.header)}>
 					<p {...stylex.props(styles.caption)}>Image Toolbox</p>
-					<h1 {...stylex.props(styles.title)}>PNG / JPG 转 WEBP</h1>
-					<p {...stylex.props(styles.subtitle)}>选择图片 → 调整质量 → 一键转换下载</p>
+					<h1 {...stylex.props(styles.title)}>{t('toolbox.pngJpgToWebp')}</h1>
+					<p {...stylex.props(styles.subtitle)}>{t('toolbox.convertFlowHint')}</p>
 				</motion.div>
 
 				<motion.label
@@ -698,19 +700,17 @@ export default function Page() {
 					onDrop={handleDrop}
 					{...uploadZoneSx}>
 					<input type='file' accept='image/*' multiple {...stylex.props(styles.fileInput)} onChange={event => handleFiles(event.target.files)} />
-					<div {...stylex.props(styles.uploadIcon, styles.transitionAll)}>
-						📷
-					</div>
+					<div {...stylex.props(styles.uploadIcon, styles.transitionAll)}>📷</div>
 					<div>
-						<p {...stylex.props(styles.uploadTitle)}>点击或拖拽图片</p>
-						<p {...stylex.props(styles.uploadHint)}>支持 PNG、JPG、JPEG、HEIC 等常见格式</p>
+						<p {...stylex.props(styles.uploadTitle)}>{t('toolbox.clickOrDragToUpload')}</p>
+						<p {...stylex.props(styles.uploadHint)}>{t('toolbox.uploadFormatHint')}</p>
 					</div>
 				</motion.label>
 
 				{hasImages && (
 					<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(card.base, styles.cardShell)}>
 						<div {...stylex.props(styles.listHeader)}>
-							<span>已选择 {images.length} 张图片</span>
+							<span>{t('toolbox.selectedCount', { count: images.length })}</span>
 							<span>{totalSize}</span>
 						</div>
 						<ul>
@@ -725,34 +725,25 @@ export default function Page() {
 											<p {...stylex.props(styles.itemName)}>{formatFileName(file.name)}</p>
 											<p {...stylex.props(styles.itemMeta)}>
 												{item.width} × {item.height} · {formatBytes(file.size)}
-												{converted ? `（转换后 ${formatBytes(converted.size)}）` : ''}
+												{converted ? t('toolbox.convertedSize', { size: formatBytes(converted.size) }) : ''}
 											</p>
 										</div>
 										<div {...stylex.props(styles.itemActions)}>
-											<button
-												onClick={() => handleConvertImage(index)}
-												disabled={!!converting}
-												{...stylex.props(styles.convertBtn, styles.transitionAll)}>
-												{converting ? '转换中...' : converted ? '重新转换' : '转换'}
+											<button onClick={() => handleConvertImage(index)} disabled={!!converting} {...stylex.props(styles.convertBtn, styles.transitionAll)}>
+												{converting ? t('toolbox.converting') : converted ? t('toolbox.reconvert') : t('toolbox.convert')}
 											</button>
 											{converted ? (
 												<>
-													<button
-														onClick={() => handleCompareImage(index)}
-														{...stylex.props(styles.brandOutlineBtn, styles.transitionAll)}>
-														对比
+													<button onClick={() => handleCompareImage(index)} {...stylex.props(styles.brandOutlineBtn, styles.transitionAll)}>
+														{t('toolbox.compare')}
 													</button>
-													<button
-														onClick={() => handleDownloadImage(index)}
-														{...stylex.props(styles.brandOutlineBtn, styles.transitionAll)}>
-														下载
+													<button onClick={() => handleDownloadImage(index)} {...stylex.props(styles.brandOutlineBtn, styles.transitionAll)}>
+														{t('toolbox.download')}
 													</button>
 												</>
 											) : null}
-											<button
-												onClick={() => handleRemoveImage(index)}
-												{...stylex.props(styles.removeBtn, styles.transitionAll)}>
-												移除
+											<button onClick={() => handleRemoveImage(index)} {...stylex.props(styles.removeBtn, styles.transitionAll)}>
+												{t('toolbox.remove')}
 											</button>
 										</div>
 									</li>
@@ -770,7 +761,7 @@ export default function Page() {
 					<div {...stylex.props(styles.settingsRow)}>
 						<div {...stylex.props(styles.settingsMain)}>
 							<div>
-								<p {...stylex.props(styles.caption)}>质量</p>
+								<p {...stylex.props(styles.caption)}>{t('toolbox.quality')}</p>
 								<div {...stylex.props(styles.rangeRow)}>
 									<input
 										type='range'
@@ -783,7 +774,7 @@ export default function Page() {
 									/>
 									<span {...stylex.props(styles.rangeValue)}>{Math.round(quality * 100)}%</span>
 								</div>
-								<p {...stylex.props(styles.mutedText)}>使用 canvas.toDataURL('image/webp', {quality.toFixed(2)})</p>
+								<p {...stylex.props(styles.mutedText)}>{t('toolbox.qualityCodeHint', { quality: quality.toFixed(2) })}</p>
 							</div>
 							<div {...stylex.props(styles.checkRow)}>
 								<div {...stylex.props(styles.checkGroup)}>
@@ -795,7 +786,7 @@ export default function Page() {
 										{...stylex.props(styles.checkbox)}
 									/>
 									<label htmlFor='limit-max-width' {...stylex.props(styles.caption, styles.checkLabel)}>
-										限制最大宽度
+										{t('toolbox.limitMaxWidth')}
 									</label>
 								</div>
 								{limitMaxWidth && (
@@ -815,17 +806,11 @@ export default function Page() {
 							</div>
 						</div>
 						<div {...stylex.props(styles.actionGroup)}>
-							<button
-								onClick={handleConvertAll}
-								disabled={!hasConvertible || batchConverting}
-								{...stylex.props(styles.secondaryBtn, styles.transitionAll)}>
-								{batchConverting ? '全部转换中…' : '全部转换'}
+							<button onClick={handleConvertAll} disabled={!hasConvertible || batchConverting} {...stylex.props(styles.secondaryBtn, styles.transitionAll)}>
+								{batchConverting ? t('toolbox.convertingAll') : t('toolbox.convertAll')}
 							</button>
-							<button
-								onClick={handleDownloadAll}
-								disabled={!hasConverted}
-								{...stylex.props(styles.brandOutlineLgBtn, styles.transitionAll)}>
-								全部下载
+							<button onClick={handleDownloadAll} disabled={!hasConverted} {...stylex.props(styles.brandOutlineLgBtn, styles.transitionAll)}>
+								{t('toolbox.downloadAll')}
 							</button>
 						</div>
 					</div>
@@ -837,13 +822,13 @@ export default function Page() {
 					<div {...stylex.props(styles.compareGrid)} onClick={handleCloseCompare}>
 						<div {...stylex.props(styles.comparePaneEnd)}>
 							<div>
-								<div {...stylex.props(styles.compareLabel)}>原图 ({formatBytes(images[compareIndex].file.size)})</div>
+								<div {...stylex.props(styles.compareLabel)}>{t('toolbox.originalWithSize', { size: formatBytes(images[compareIndex].file.size) })}</div>
 								<img src={images[compareIndex].preview} alt='Original' {...stylex.props(styles.compareImage)} />
 							</div>
 						</div>
 						<div {...stylex.props(styles.comparePaneStart)}>
 							<div>
-								<div {...stylex.props(styles.compareLabel)}>WEBP ({formatBytes(images[compareIndex].converted!.size)})</div>
+								<div {...stylex.props(styles.compareLabel)}>{t('toolbox.webpWithSize', { size: formatBytes(images[compareIndex].converted!.size) })}</div>
 								<img src={images[compareIndex].converted!.url} alt='Converted' {...stylex.props(styles.compareImage)} />
 							</div>
 						</div>

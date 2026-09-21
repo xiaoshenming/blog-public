@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { type LogoItem } from './components/logo-upload-dialog'
 import { ShareCard, type Share } from './components/share-card'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 interface GridViewProps {
 	shares: Share[]
@@ -100,6 +101,7 @@ const styles = stylex.create({
 })
 
 export default function GridView({ shares, isEditMode = false, onUpdate, onDelete }: GridViewProps) {
+	const { t } = useI18n()
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedTag, setSelectedTag] = useState<string>('all')
 
@@ -116,23 +118,18 @@ export default function GridView({ shares, isEditMode = false, onUpdate, onDelet
 			<div {...stylex.props(styles.filters)}>
 				<input
 					type='text'
-					placeholder='搜索资源...'
+					placeholder={t('collections.searchPlaceholder')}
 					value={searchTerm}
 					onChange={e => setSearchTerm(e.target.value)}
 					{...stylex.props(styles.searchInput)}
 				/>
 
 				<div {...stylex.props(styles.tagRow)}>
-					<button
-						onClick={() => setSelectedTag('all')}
-						{...stylex.props(styles.tagButton, selectedTag === 'all' ? styles.tagActive : styles.tagIdle)}>
-						全部
+					<button onClick={() => setSelectedTag('all')} {...stylex.props(styles.tagButton, selectedTag === 'all' ? styles.tagActive : styles.tagIdle)}>
+						{t('collections.all')}
 					</button>
 					{allTags.map(tag => (
-						<button
-							key={tag}
-							onClick={() => setSelectedTag(tag)}
-							{...stylex.props(styles.tagButton, selectedTag === tag ? styles.tagActive : styles.tagIdle)}>
+						<button key={tag} onClick={() => setSelectedTag(tag)} {...stylex.props(styles.tagButton, selectedTag === tag ? styles.tagActive : styles.tagIdle)}>
 							{tag}
 						</button>
 					))}
@@ -147,7 +144,7 @@ export default function GridView({ shares, isEditMode = false, onUpdate, onDelet
 
 			{filteredShares.length === 0 && (
 				<div {...stylex.props(styles.empty)}>
-					<p>没有找到相关资源</p>
+					<p>{t('collections.noResults')}</p>
 				</div>
 			)}
 		</div>

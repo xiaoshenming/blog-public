@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import dayjs from 'dayjs'
 import { motion } from 'motion/react'
 import * as stylex from '@stylexjs/stylex'
 import { BlogPreview } from '@/components/blog-preview'
@@ -14,6 +13,8 @@ import DragonEscape from '@/components/pretext-demo/dragon-escape'
 import type { Creature } from '@/components/pretext-demo/creature'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
+import { formatDate } from '@/i18n/dates'
 import '@/styles/dragon-burn.css'
 
 /** 状态提示 / 游戏化容器 / 编辑按钮样式（数值取自 Tailwind v4 编译产物） */
@@ -77,6 +78,7 @@ export default function Page() {
 	const slug = Array.isArray(params?.id) ? params.id[0] : params?.id || ''
 	const router = useRouter()
 	const { markAsRead } = useReadArticles()
+	const { locale, t } = useI18n()
 	const pretextRef = useRef<PretextDemoHandle>(null)
 	const proseRef = useRef<HTMLDivElement>(null)
 	const [escapedDragon, setEscapedDragon] = useState<{ dragon: Creature; rect: DOMRect } | null>(null)
@@ -113,7 +115,7 @@ export default function Page() {
 			if (!slug) return
 			try {
 				setLoading(true)
-				const blogData = await loadBlog(slug)
+				const blogData = await loadBlog(slug, locale)
 
 				if (!cancelled) {
 					setBlog(blogData)
@@ -121,7 +123,7 @@ export default function Page() {
 					markAsRead(slug)
 				}
 			} catch (e: any) {
-				if (!cancelled) setError(e?.message || '加载失败')
+				if (!cancelled) setError(e?.message || t('blog.loadFailed'))
 			} finally {
 				if (!cancelled) setLoading(false)
 			}
@@ -130,10 +132,10 @@ export default function Page() {
 		return () => {
 			cancelled = true
 		}
-	}, [slug, markAsRead])
+	}, [slug, markAsRead, locale, t])
 
 	const title = useMemo(() => (blog?.config.title ? blog.config.title : slug), [blog?.config.title, slug])
-	const date = useMemo(() => dayjs(blog?.config.date).format('YYYY年 M月 D日'), [blog?.config.date])
+	const date = useMemo(() => formatDate(blog?.config.date, locale), [blog?.config.date, locale])
 	const tags = blog?.config.tags || []
 
 	const handleEdit = () => {
@@ -141,11 +143,11 @@ export default function Page() {
 	}
 
 	if (!slug) {
-		return <div {...stylex.props(styles.stateBox)}>无效的链接</div>
+		return <div {...stylex.props(styles.stateBox)}>{t('blog.invalidLink')}</div>
 	}
 
 	if (loading) {
-		return <div {...stylex.props(styles.stateBox)}>加载中...</div>
+		return <div {...stylex.props(styles.stateBox)}>{t('common.loading')}</div>
 	}
 
 	if (error) {
@@ -153,7 +155,7 @@ export default function Page() {
 	}
 
 	if (!blog) {
-		return <div {...stylex.props(styles.stateBox)}>文章不存在</div>
+		return <div {...stylex.props(styles.stateBox)}>{t('blog.notFound')}</div>
 	}
 
 	return (
@@ -185,14 +187,7 @@ export default function Page() {
 
 			{slug === 'liquid-grass' && <LiquidGrass />}
 
-			{escapedDragon && (
-				<DragonEscape
-					dragon={escapedDragon.dragon}
-					startPos={escapedDragon.rect}
-					proseRef={proseRef}
-					onCaptured={handleCaptured}
-				/>
-			)}
+			{escapedDragon && <DragonEscape dragon={escapedDragon.dragon} startPos={escapedDragon.rect} proseRef={proseRef} onCaptured={handleCaptured} />}
 		</>
 	)
 }

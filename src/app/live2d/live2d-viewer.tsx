@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** PIXI Application 实例（CDN 加载，无类型包） */
 interface PixiAppInstance {
@@ -82,6 +83,7 @@ const styles = stylex.create({
 })
 
 export default function Live2DViewer() {
+	const { t } = useI18n()
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 	const [errorMsg, setErrorMsg] = useState<string>('')
@@ -157,7 +159,7 @@ export default function Live2DViewer() {
 	return (
 		<div {...stylex.props(styles.stage)}>
 			<div ref={containerRef} {...stylex.props(styles.canvasHost)} />
-			{status === 'loading' && <div {...stylex.props(styles.statusOverlay)}>加载 Live2D 模型中…</div>}
+			{status === 'loading' && <div {...stylex.props(styles.statusOverlay)}>{t('toolbox.loadingLive2dModel')}</div>}
 			{status === 'error' && <div {...stylex.props(styles.errorOverlay)}>{errorMsg}</div>}
 		</div>
 	)

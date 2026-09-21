@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { Plus, X } from 'lucide-react'
@@ -8,8 +8,10 @@ import { DialogModal } from '@/components/dialog-modal'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
+import initialListEn from './list.en.json'
 import { pushSnippets } from './services/push-snippets'
 import * as stylex from '@stylexjs/stylex'
+import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { util } from '@/styles/shared/util.stylex'
@@ -218,7 +220,14 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
+
+	/** 英文随机句只在挂载时抽取一次，避免每次渲染变化 */
+	const enSnippet = useMemo(() => getRandomSnippet(initialListEn as string[]), [])
+
+	/** 访客态英文展示英文句子；编辑态固定中文（中文为管理端数据源） */
+	const displaySnippet = !isEditMode && locale === 'en' ? enSnippet || currentSnippet : currentSnippet
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -328,22 +337,17 @@ export default function Page() {
 
 			<div className={stylex.props(styles.page).className}>
 				<div className={stylex.props(styles.quoteBox).className}>
-					<p className={stylex.props(styles.quote).className}>{currentSnippet || '无'}</p>
+					<p className={stylex.props(styles.quote).className}>{displaySnippet || t('collections.noSnippet')}</p>
 				</div>
 			</div>
 
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(styles.toolbar).className}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							className={stylex.props(card.hover, styles.toolbarBtn).className}>
+						<button onClick={handleCancel} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							取消
 						</button>
-						<button
-							onClick={openManageDialog}
-							className={stylex.props(card.hover, styles.toolbarBtn).className}>
+						<button onClick={openManageDialog} className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							管理
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
@@ -352,9 +356,7 @@ export default function Page() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={() => setIsEditMode(true)}
-							className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
+						<button onClick={() => setIsEditMode(true)} className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
 							编辑
 						</button>
 					)
@@ -390,9 +392,7 @@ export default function Page() {
 					</div>
 
 					<div className={stylex.props(styles.dialogFooter).className}>
-						<button
-							onClick={cancelManageChanges}
-							className={stylex.props(styles.cancelBtn).className}>
+						<button onClick={cancelManageChanges} className={stylex.props(styles.cancelBtn).className}>
 							取消
 						</button>
 						<button onClick={applyManageChanges} className={stylex.props(brandBtn.base, styles.saveFooterBtn).className}>

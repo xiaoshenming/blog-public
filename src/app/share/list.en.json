@@ -1,0 +1,236 @@
+[
+	{
+		"name": "iLoveIMG",
+		"url": "https://www.iloveimg.com/zh-cn",
+		"logo": "/images/share/7e91e93e3cdd586b.svg",
+		"description": "A free image processing website I often use to compress images, with better compression results than Tinypng. The chained processing feature is very useful.",
+		"tags": [
+			"Image"
+		],
+		"stars": 4
+	},
+	{
+		"name": "TinyPNG",
+		"url": "https://tinypng.com/",
+		"logo": "https://tinypng.com/static/images/george-anim/large_george_x2.webp",
+		"description": "A well-known international tool for compressing images, which was mentioned in old books, but it has size and quantity limitations. It's a good alternative to image compression tools.",
+		"tags": [
+			"Image"
+		],
+		"stars": 3
+	},
+	{
+		"name": "removebg",
+		"url": "https://www.remove.bg/zh",
+		"logo": "/images/share/859bfb2ef1c6a503.svg",
+		"description": "AI image extraction tools feature a simple interface, with results that are better than those provided by Windows' built-in background removal feature. The downside is that there is a free version with size limitations for exports.",
+		"tags": [
+			"Image",
+			"AI"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Neumorphism",
+		"url": "https://neumorphism.io/",
+		"logo": "https://neumorphism.io/apple-touch-icon.png",
+		"description": "Neumorphism is a distinctive design style that always inspires awe in newcomers. However, its application is not widespread, and there are many drawbacks in actual development. It is more of a form of remembrance.",
+		"tags": [
+			"CSS",
+			"Github"
+		],
+		"stars": 2
+	},
+	{
+		"name": "Nucleo",
+		"url": "https://nucleoapp.com/app/?library=core",
+		"logo": "/images/share/7e720f35557fa9de.svg",
+		"description": "The icon library has a clean overall design on the website. What makes it unique is the presence of a category of pixel-style icons, which is quite interesting. There are also many icons, including those in a grass style.",
+		"tags": [
+			"Icons"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Loadership",
+		"url": "https://www.loadership.com/",
+		"logo": "https://www.loadership.com/loadership_logo_round.svg",
+		"description": "13 styles of loaders for online adjustment use. This may mean much less in the AI era.",
+		"tags": [
+			"CSS",
+			"Github"
+		],
+		"stars": 3
+	},
+	{
+		"name": "CSS Buttons",
+		"url": "https://cssbuttons.io/",
+		"logo": "/images/share/2b8118a3645967ee.svg",
+		"description": "There are many button styles. It has some relation to Neumorphism.",
+		"tags": [
+			"CSS"
+		],
+		"stars": 2
+	},
+	{
+		"name": "Uiverse",
+		"url": "https://uiverse.io/",
+		"logo": "/images/share/5e7b29cb1a84be80.png",
+		"description": "An indispensable reference library with many interactive effects, including popular Button and Loader designs, rich content, and ongoing updates.",
+		"tags": [
+			"CSS"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Magic UI",
+		"url": "https://magicui.design/",
+		"logo": "https://magicui.design/favicon.ico",
+		"description": "shadcn/ui companion library contains many useful designs. It is also easy to use, allowing you to copy independent code by yourself.",
+		"tags": [
+			"Component",
+			"Github"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Ai lman",
+		"url": "https://aliimam.in/docs/backgrounds/shader-rgb",
+		"logo": "https://aliimam.in/_next/image?url=%2Fai-logo-black.png&w=128&q=75",
+		"description": "A class of Magic UI, but it feels lacking. It can be used as a casual option after enjoying Magic.",
+		"tags": [
+			"Component"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Awwwards",
+		"url": "https://www.awwwards.com/",
+		"logo": "https://assets.awwwards.com/assets/images/favicon.svg",
+		"description": "A website selects other websites, and you can always find amazing websites here",
+		"tags": [
+			"Website collection"
+		],
+		"stars": 3
+	},
+	{
+		"name": "CSS Design Awards",
+		"url": "https://www.cssdesignawards.com/",
+		"logo": "/images/share/aaae2bf4f74c8eb1.svg",
+		"description": "A website that selects other websites, similar to Awwwards, where you can see the top websites each time. It feels better in terms of experience.",
+		"tags": [
+			"Website collection"
+		],
+		"stars": 3
+	},
+	{
+		"name": "404s.design",
+		"logo": "/images/share/5c9a8b7deb717c5f.svg",
+		"url": "https://www.404s.design/",
+		"description": "Collect websites designed by 404, you can check it when you feel bored.",
+		"tags": [
+			"Website collection"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Igloo Inc.",
+		"logo": "https://www.igloo.inc/assets/favicon32-af94112f.png",
+		"url": "https://www.igloo.inc/",
+		"description": "Abeito works are incredibly cool",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "abeto 官网",
+		"logo": "https://abeto.co/assets/favicon32-11fb90a3.png",
+		"url": "https://abeto.co/",
+		"description": "Infinite unfolding flowers, drifting leaves, vintage style",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Messenger",
+		"logo": "https://messenger.abeto.co/assets/favicon32-BC0QIL61.png",
+		"url": "https://messenger.abeto.co/",
+		"description": "Abeto works feature a cartoon messenger running in a Earth town, online multiplayer, with customizable outfits",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Summer Afternoon",
+		"logo": "https://summer-afternoon.vlucendo.com/assets/favicon32-e817b074.png",
+		"url": "https://summer-afternoon.vlucendo.com/",
+		"description": "On a summer afternoon, a little boy played on a rural road.",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "The Monolith Project",
+		"logo": "https://themonolithproject.net/assets/images-next/nose_logo.webp",
+		"url": "https://themonolithproject.net/",
+		"description": "An animated interpretation of a fantastical universe, just like watching a movie. \"As we cross multiple stars, a silent giant stone tablet quietly awakens. 'Stone Tablet Project': Every touch can rewrite reality.\"",
+		"tags": [
+			"3D"
+		],
+		"stars": 5
+	},
+	{
+		"name": "Making Software",
+		"logo": "https://www.makingsoftware.com/favicon.ico",
+		"url": "https://www.makingsoftware.com/",
+		"description": "Reference manual for software designers and developers. An excellent learning website in terms of layout.",
+		"tags": [
+			"Learn"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Ease 函数参考",
+		"logo": "https://easings.net/96.8aa68ac4.png",
+		"url": "https://easings.net/",
+		"description": "When adjusting the animation pace, this ease table helps you intuitively understand the effects produced by ease values",
+		"tags": [
+			"Github"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Isocons",
+		"logo": "/images/share/97859f1c57799dd2.png",
+		"url": "https://www.isocons.app/",
+		"description": "A 3D icons website, cool and free.",
+		"tags": [
+			"Icons"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Webp 转换压缩",
+		"logo": "https://www.yysuni.com/images/avatar.png",
+		"url": "https://www.yysuni.com/image-toolbox",
+		"description": "Infinite compression, fast and convenient, allows direct comparison of results",
+		"tags": [
+			"Image"
+		],
+		"stars": 3
+	},
+	{
+		"name": "WoraWork",
+		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
+		"url": "https://worawork.vercel.app/",
+		"description": "Web3D in Grid World has an amazing scene rendering, highly worth experiencing",
+		"tags": [
+			"3D"
+		],
+		"stars": 3
+	}
+]

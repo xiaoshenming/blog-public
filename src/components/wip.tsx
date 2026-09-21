@@ -5,6 +5,7 @@ import * as stylex from '@stylexjs/stylex'
 import { INIT_DELAY } from '@/consts'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 animate-bounce（Tailwind v4 默认 keyframes）：bounce 1s infinite */
 const bounce = stylex.keyframes({
@@ -77,6 +78,7 @@ const styles = stylex.create({
 })
 
 export default function WIP() {
+	const { t } = useI18n()
 	return (
 		<div {...stylex.props(styles.page)}>
 			<div {...stylex.props(styles.container)}>
@@ -86,8 +88,8 @@ export default function WIP() {
 					transition={{ delay: INIT_DELAY }}
 					{...stylex.props(card.base, styles.panel)}>
 					<div {...stylex.props(styles.emoji)}>🚧</div>
-					<h1 {...stylex.props(styles.title)}>开发中</h1>
-					<p {...stylex.props(styles.desc)}>这个功能正在努力开发中，敬请期待！</p>
+					<h1 {...stylex.props(styles.title)}>{t('common.developing')}</h1>
+					<p {...stylex.props(styles.desc)}>{t('blog.developingDesc')}</p>
 					<div {...stylex.props(styles.dots)}>
 						<div {...stylex.props(styles.dot)} style={{ animationDelay: '0ms' }}></div>
 						<div {...stylex.props(styles.dot)} style={{ animationDelay: '150ms' }}></div>

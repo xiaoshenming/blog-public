@@ -6,6 +6,7 @@ import { Music, Pause, Play } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from '@/app/music/music-store'
+import { useI18n } from '@/i18n/context'
 import { colors } from '@/styles/tokens.stylex'
 
 /** 原 animate-spin（Tailwind v4 默认 keyframes 为 rotate(360deg)）→ stylex.keyframes 自建；时长仍由原 20s 内联 animationDuration 提供 */
@@ -115,6 +116,7 @@ const styles = stylex.create({
 
 export default function MusicMiniBar() {
 	const router = useRouter()
+	const { t } = useI18n()
 	const { track, isPlaying, progress, initialized, init, togglePlay } = useMusicStore(
 		useShallow(s => ({
 			track: s.playlist[s.currentIndex],
@@ -145,14 +147,14 @@ export default function MusicMiniBar() {
 				)}
 			</div>
 			<div {...stylex.props(styles.info)}>
-				<div {...stylex.props(styles.name)}>{track?.name || '音乐播放器'}</div>
+				<div {...stylex.props(styles.name)}>{track?.name || t('music.title')}</div>
 				<div {...stylex.props(styles.track)}>
 					<div {...stylex.props(styles.fill)} style={{ width: `${progress}%` }} />
 				</div>
 			</div>
 			<button
 				type='button'
-				aria-label={isPlaying ? '暂停' : '播放'}
+				aria-label={isPlaying ? t('music.pause') : t('music.play')}
 				onClick={event => {
 					event.stopPropagation()
 					togglePlay()

@@ -26,6 +26,8 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn, btnRounded } from '@/styles/shared/button.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
+import { formatDate } from '@/i18n/dates'
 
 type DisplayMode = 'day' | 'week' | 'month' | 'year' | 'category'
 
@@ -431,6 +433,7 @@ export default function BlogPage() {
 	const { isRead } = useReadArticles()
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
 	const enableCategories = siteContent.enableCategories ?? false
 
@@ -468,26 +471,26 @@ export default function BlogPage() {
 
 				switch (displayMode) {
 					case 'category':
-						key = item.category || '未分类'
+						key = item.category || t('blog.uncategorized')
 						label = key
 						break
 					case 'day':
 						key = date.format('YYYY-MM-DD')
-						label = date.format('YYYY年MM月DD日')
+						label = formatDate(item.date, locale)
 						break
 					case 'week':
 						const week = date.week()
 						key = `${date.format('YYYY')}-W${week.toString().padStart(2, '0')}`
-						label = `${date.format('YYYY')}年第${week}周`
+						label = t('blog.weekOfYear', { year: date.year(), week })
 						break
 					case 'month':
 						key = date.format('YYYY-MM')
-						label = date.format('YYYY年MM月')
+						label = t('blog.monthOfYear', { year: date.year(), month: date.month() + 1 })
 						break
 					case 'year':
 					default:
 						key = date.format('YYYY')
-						label = date.format('YYYY年')
+						label = t('blog.yearOf', { year: date.year() })
 						break
 				}
 
@@ -524,7 +527,7 @@ export default function BlogPage() {
 			groupKeys: keys,
 			getGroupLabel: (key: string) => grouped[key]?.label || key
 		}
-	}, [displayItems, displayMode, categoryList])
+	}, [displayItems, displayMode, categoryList, locale, t])
 
 	const selectedCount = selectedSlugs.size
 	const buttonText = isAuth ? '保存' : '导入密钥'
@@ -728,16 +731,13 @@ export default function BlogPage() {
 
 			<div {...stylex.props(styles.page)}>
 				{items.length > 0 && (
-					<motion.div
-						initial={{ opacity: 0, scale: 0.6 }}
-						animate={{ opacity: 1, scale: 1 }}
-						{...stylex.props(card.base, btnRounded.base, styles.filterBar)}>
+					<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(card.base, btnRounded.base, styles.filterBar)}>
 						{[
-							{ value: 'day', label: '日' },
-							{ value: 'week', label: '周' },
-							{ value: 'month', label: '月' },
-							{ value: 'year', label: '年' },
-							...(enableCategories ? ([{ value: 'category', label: '分类' }] as const) : [])
+							{ value: 'day', label: t('blog.timeDay') },
+							{ value: 'week', label: t('blog.timeWeek') },
+							{ value: 'month', label: t('blog.timeMonth') },
+							{ value: 'year', label: t('blog.timeYear') },
+							...(enableCategories ? ([{ value: 'category', label: t('blog.category') }] as const) : [])
 						].map(option => (
 							<button
 								key={option.value}
@@ -765,7 +765,7 @@ export default function BlogPage() {
 								<div {...stylex.props(styles.groupHeaderLeft)}>
 									<div {...stylex.props(styles.groupTitle)}>{getGroupLabel(groupKey)}</div>
 									<div {...stylex.props(styles.groupDot)}></div>
-									<div {...stylex.props(styles.groupCount)}>{group.items.length} 篇文章</div>
+									<div {...stylex.props(styles.groupCount)}>{t('blog.articlesCount', { count: group.items.length })}</div>
 								</div>
 								{editMode &&
 									(() => {
@@ -810,7 +810,7 @@ export default function BlogPage() {
 											</div>
 											<div {...stylex.props(styles.itemTitle, !editMode && styles.titleHover)}>
 												{it.title || it.slug}
-												{hasRead && <span {...stylex.props(styles.readTag)}>[已阅读]</span>}
+												{hasRead && <span {...stylex.props(styles.readTag)}>[{t('blog.readTag')}]</span>}
 											</div>
 											<div {...stylex.props(styles.tagList)}>
 												{(it.tags || []).map(t => (
@@ -835,46 +835,32 @@ export default function BlogPage() {
 							target='_blank'
 							{...stylex.props(card.hover, card.base, styles.moreLink)}>
 							<GithubSVG {...stylex.props(styles.githubIcon)} />
-							更多
+							{t('blog.loadMore')}
 						</motion.a>
 					</div>
 				)}
 			</div>
 
 			<div {...stylex.props(styles.bottomArea)}>
-				{!loading && items.length === 0 && <div {...stylex.props(styles.statusText)}>暂无文章</div>}
-				{loading && <div {...stylex.props(styles.statusText)}>加载中...</div>}
+				{!loading && items.length === 0 && <div {...stylex.props(styles.statusText)}>{t('blog.noArticles')}</div>}
+				{loading && <div {...stylex.props(styles.statusText)}>{t('blog.loading')}</div>}
 			</div>
 
-			<motion.div
-				initial={{ opacity: 0, scale: 0.6 }}
-				animate={{ opacity: 1, scale: 1 }}
-				{...stylex.props(styles.toolbar)}>
+			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{editMode ? (
 					<>
 						{enableCategories && (
-							<button
-								onClick={() => setCategoryModalOpen(true)}
-								disabled={saving}
-								{...stylex.props(card.hover, styles.toolBtn)}>
+							<button onClick={() => setCategoryModalOpen(true)} disabled={saving} {...stylex.props(card.hover, styles.toolBtn)}>
 								分类
 							</button>
 						)}
-						<button
-							onClick={handleCancel}
-							disabled={saving}
-							{...stylex.props(card.hover, styles.cancelBtn)}>
+						<button onClick={handleCancel} disabled={saving} {...stylex.props(card.hover, styles.cancelBtn)}>
 							取消
 						</button>
-						<button
-							onClick={selectedCount === editableItems.length ? handleDeselectAll : handleSelectAll}
-							{...stylex.props(card.hover, styles.toolBtn)}>
+						<button onClick={selectedCount === editableItems.length ? handleDeselectAll : handleSelectAll} {...stylex.props(card.hover, styles.toolBtn)}>
 							{selectedCount === editableItems.length ? '取消全选' : '全选'}
 						</button>
-						<button
-							onClick={handleDeleteSelected}
-							disabled={selectedCount === 0}
-							{...stylex.props(card.hover, styles.deleteBtn)}>
+						<button onClick={handleDeleteSelected} disabled={selectedCount === 0} {...stylex.props(card.hover, styles.deleteBtn)}>
 							删除(已选:{selectedCount}篇)
 						</button>
 						<button onClick={handleSaveClick} disabled={saving} {...stylex.props(card.hover, brandBtn.base, styles.saveBtn)}>
@@ -883,9 +869,7 @@ export default function BlogPage() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={toggleEditMode}
-							{...stylex.props(card.hover, styles.editBtn)}>
+						<button onClick={toggleEditMode} {...stylex.props(card.hover, styles.editBtn)}>
 							编辑
 						</button>
 					)

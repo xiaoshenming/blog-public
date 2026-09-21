@@ -7,6 +7,7 @@ import type { StyleXProp } from '@/styles/shared/types'
 import TopSVG from '@/svgs/top.svg'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type ScrollTopButtonProps = {
 	/** 调用方注入的定位/阴影等样式；在同一次 stylex.props() 中合并（后写覆盖） */
@@ -31,6 +32,7 @@ const styles = stylex.create({
 })
 
 export function ScrollTopButton({ style, delay }: ScrollTopButtonProps) {
+	const { t } = useI18n()
 	const [show, setShow] = useState(false)
 	const [active, setActive] = useState(false)
 	useEffect(() => {
@@ -60,7 +62,7 @@ export function ScrollTopButton({ style, delay }: ScrollTopButtonProps) {
 			initial={{ opacity: 0, scale: 0.4 }}
 			animate={{ opacity: 1, scale: 1 }}
 			onClick={handleClick}
-			aria-label='Scroll to top'
+			aria-label={t('toolbox.scrollToTop')}
 			className={sxClassName}
 			style={sxStyle}>
 			<TopSVG {...stylex.props(styles.icon)} />

@@ -4,6 +4,10 @@ import { useCallback, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
+import type { TranslationKey, TranslationParams } from '@/i18n/translate'
+
+type TranslateFn = (key: TranslationKey, params?: TranslationParams) => string
 
 interface CardRecord {
 	cardPoolType: string
@@ -21,19 +25,19 @@ type PitySegment = {
 	time: string | null
 }
 
-function parseCardRecords(raw: string): CardRecord[] {
+function parseCardRecords(raw: string, t: TranslateFn): CardRecord[] {
 	const data = JSON.parse(raw) as unknown
 	if (!Array.isArray(data)) {
-		throw new Error('根节点必须是数组')
+		throw new Error(t('toolbox.errorRootNotArray'))
 	}
 	return data.map((item, i) => {
 		if (typeof item !== 'object' || item === null) {
-			throw new Error(`第 ${i + 1} 项不是对象`)
+			throw new Error(t('toolbox.errorItemNotObject', { index: i + 1 }))
 		}
 		const r = item as Record<string, unknown>
 		const qualityLevel = Number(r.qualityLevel)
 		if (!Number.isFinite(qualityLevel)) {
-			throw new Error(`第 ${i + 1} 项缺少有效的 qualityLevel`)
+			throw new Error(t('toolbox.errorMissingQualityLevel', { index: i + 1 }))
 		}
 		return {
 			cardPoolType: String(r.cardPoolType ?? ''),
@@ -208,6 +212,7 @@ const styles = stylex.create({
 })
 
 export default function Page() {
+	const { t } = useI18n()
 	const [input, setInput] = useState('')
 	const [error, setError] = useState<string | null>(null)
 	const [segments, setSegments] = useState<PitySegment[]>([])
@@ -220,37 +225,51 @@ export default function Page() {
 			return
 		}
 		try {
-			const records = parseCardRecords(trimmed)
+			const records = parseCardRecords(trimmed, t)
 			setSegments(buildPitySegments(records))
 		} catch (e) {
 			setSegments([])
-			setError(e instanceof Error ? e.message : '解析失败')
+			setError(e instanceof Error ? e.message : t('toolbox.parseFailed'))
 		}
-	}, [input])
+	}, [input, t])
 
 	return (
 		<div className={stylex.props(styles.page).className}>
-			<h1 className={stylex.props(styles.heading).className}>鸣潮 · 抽卡记录分析</h1>
+			<h1 className={stylex.props(styles.heading).className}>{t('toolbox.gachaAnalysisTitle')}</h1>
 			<p className={stylex.props(styles.para).className}>
-				<span>使用方法：</span>
+				<span>{t('toolbox.usageTitle')}</span>
 			</p>
 			<ul className={stylex.props(styles.steps).className}>
 				<li>
-					进入{' '}
+					{t('toolbox.step1BeforeLink')}{' '}
 					<a href='https://mc.kurogames.com/cloud/#/tools' target='_blank' className={stylex.props(styles.link).className}>
 						https://mc.kurogames.com/cloud/#/tools
 					</a>
-					，登录账号。
+					{t('toolbox.step1AfterLink')}
 				</li>
 				<li>
-					点击 <span className={stylex.props(styles.accent).className}>F12</span>，点击右侧 <span className={stylex.props(styles.accent).className}>Network</span> 面板。左侧选择<span className={stylex.props(styles.accent).className}>换取记录</span>
-					，右侧观察出现最新的 <span className={stylex.props(styles.accent).className}>query</span> 请求。
+					{t('toolbox.step2BeforeF12')}
+					<span className={stylex.props(styles.accent).className}>F12</span>
+					{t('toolbox.step2BeforeNetwork')}
+					<span className={stylex.props(styles.accent).className}>Network</span>
+					{t('toolbox.step2BeforeExchange')}
+					<span className={stylex.props(styles.accent).className}>{t('toolbox.exchangeRecord')}</span>
+					{t('toolbox.step2BeforeQuery')}
+					<span className={stylex.props(styles.accent).className}>query</span>
+					{t('toolbox.step2AfterQuery')}
 				</li>
 				<li>
-					点击 <span className={stylex.props(styles.accent).className}>query</span> 请求，点击 <span className={stylex.props(styles.accent).className}>Preview</span> 面板，右键 <span className={stylex.props(styles.accent).className}>data</span> 值{' '}
-					<span className={stylex.props(styles.accent).className}>Copy Value</span>。
+					{t('toolbox.step3BeforeQuery')}
+					<span className={stylex.props(styles.accent).className}>query</span>
+					{t('toolbox.step3BeforePreview')}
+					<span className={stylex.props(styles.accent).className}>Preview</span>
+					{t('toolbox.step3BeforeData')}
+					<span className={stylex.props(styles.accent).className}>data</span>
+					{t('toolbox.step3BeforeCopyValue')}
+					<span className={stylex.props(styles.accent).className}>Copy Value</span>
+					{t('toolbox.step3AfterCopyValue')}
 				</li>
-				<li>最后粘贴到下方输入框 - 分析。</li>
+				<li>{t('toolbox.step4PasteAnalyze')}</li>
 			</ul>
 
 			<textarea
@@ -264,7 +283,7 @@ export default function Page() {
 			/>
 
 			<button type='button' onClick={analyze} className={stylex.props(styles.analyzeBtn).className}>
-				分析
+				{t('toolbox.analyze')}
 			</button>
 
 			{error ? (
@@ -280,7 +299,7 @@ export default function Page() {
 							<div
 								className={stylex.props(styles.pullBar).className}
 								style={{ width: seg.pulls * 4 + 16 }}
-								title={`${seg.pulls} 抽`}>
+								title={t('toolbox.pullsCount', { count: seg.pulls })}>
 								{seg.pulls}
 							</div>
 							<span className={stylex.props(styles.segmentName).className}>
@@ -289,7 +308,7 @@ export default function Page() {
 										{seg.name} <span {...stylex.props(styles.timeHint)}>({seg.time?.slice(0, 10)})</span>
 									</span>
 								) : (
-									<span className={stylex.props(styles.pending).className}>（未到 5 星）</span>
+									<span className={stylex.props(styles.pending).className}>{t('toolbox.notFiveStarYet')}</span>
 								)}
 							</span>
 						</li>

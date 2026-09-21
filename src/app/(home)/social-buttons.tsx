@@ -26,6 +26,7 @@ import { createPortal } from 'react-dom'
 import * as stylex from '@stylexjs/stylex'
 import { colors, fonts } from '@/styles/tokens.stylex'
 import { card } from '@/styles/shared/card.stylex'
+import { useI18n } from '@/i18n/context'
 
 type SocialButtonType =
 	| 'github'
@@ -195,12 +196,15 @@ const iconMap: Record<SocialButtonType, React.ComponentType<{ className?: string
 }
 
 export default function SocialButtons() {
+	const { t } = useI18n()
 	const center = useCenterStore()
-	const { styles, hiCardStyles, socialButtonsContent } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.socialButtons,
-		hiCardStyles: s.cardStyles.hiCard,
-		socialButtonsContent: s.siteContent.socialButtons,
-	})))
+	const { styles, hiCardStyles, socialButtonsContent } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.socialButtons,
+			hiCardStyles: s.cardStyles.hiCard,
+			socialButtonsContent: s.siteContent.socialButtons
+		}))
+	)
 	const { maxSM, init } = useSize()
 	const order = maxSM && init ? 0 : styles.order
 	const delay = maxSM && init ? 0 : 100
@@ -221,14 +225,18 @@ export default function SocialButtons() {
 
 		sortedButtons.forEach((button, index) => {
 			const showDelay = baseDelay + index * delay
-			timers.push(setTimeout(() => {
-				setShowStates(prev => ({ ...prev, [button.id]: true }))
-			}, showDelay))
+			timers.push(
+				setTimeout(() => {
+					setShowStates(prev => ({ ...prev, [button.id]: true }))
+				}, showDelay)
+			)
 		})
 
-		timers.push(setTimeout(() => {
-			setShowStates(prev => ({ ...prev, container: true }))
-		}, baseDelay))
+		timers.push(
+			setTimeout(() => {
+				setShowStates(prev => ({ ...prev, container: true }))
+			}, baseDelay)
+		)
 
 		return () => timers.forEach(t => clearTimeout(t))
 	}, [order, delay, sortedButtons])
@@ -289,9 +297,9 @@ export default function SocialButtons() {
 
 		if (button.type === 'email' || button.type === 'wechat' || button.type === 'qq') {
 			const messageMap: Record<'email' | 'wechat' | 'qq', string> = {
-				email: '邮箱已复制到剪贴板',
-				wechat: '微信号已复制到剪贴板',
-				qq: 'QQ号已复制到剪贴板'
+				email: t('home.emailCopied'),
+				wechat: t('home.wechatCopied'),
+				qq: t('home.qqCopied')
 			}
 
 			const isImagePath = button.value.startsWith('/images/social-buttons/')
@@ -337,7 +345,7 @@ export default function SocialButtons() {
 													left: buttonRefs.current[button.id] ? `${buttonRefs.current[button.id]!.getBoundingClientRect().left}px` : '0px',
 													boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
 												}}>
-													<img src={button.value} alt='QR Code' {...stylex.props(sx.qrImg)} />
+												<img src={button.value} alt='QR Code' {...stylex.props(sx.qrImg)} />
 											</motion.div>
 										</>
 									)}
@@ -365,12 +373,7 @@ export default function SocialButtons() {
 
 		if (button.type === 'link') {
 			return (
-				<motion.a
-					key={button.id}
-					href={button.value}
-					target='_blank'
-					{...commonProps}
-					{...stylex.props(card.base, sx.linkButton)}>
+				<motion.a key={button.id} href={button.value} target='_blank' {...commonProps} {...stylex.props(card.base, sx.linkButton)}>
 					{hasLabel ? button.label : button.value}
 				</motion.a>
 			)

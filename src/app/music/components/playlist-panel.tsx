@@ -4,6 +4,7 @@ import { Music } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from '../music-store'
+import { useI18n } from '@/i18n/context'
 import { cn } from '@/lib/utils'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -36,7 +37,8 @@ const styles = stylex.create({
 		paddingBlock: 8,
 		borderRadius: 16,
 		textAlign: 'left',
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
 	},
@@ -96,6 +98,7 @@ const styles = stylex.create({
 })
 
 export default function PlaylistPanel() {
+	const { t } = useI18n()
 	const { playlist, currentIndex, playTrack } = useMusicStore(
 		useShallow(s => ({
 			playlist: s.playlist,
@@ -108,7 +111,7 @@ export default function PlaylistPanel() {
 
 	return (
 		<div className={cn(rootClassName, 'scrollbar-none')}>
-			<div {...stylex.props(styles.header)}>播放列表 · {playlist.length} 首</div>
+			<div {...stylex.props(styles.header)}>{t('music.playlistCount', { count: playlist.length })}</div>
 			{playlist.map((track, index) => (
 				<button
 					type='button'

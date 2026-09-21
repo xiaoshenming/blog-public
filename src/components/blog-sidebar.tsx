@@ -9,6 +9,7 @@ import LikeButton from '@/components/like-button'
 import { BlogToc } from '@/components/blog-toc'
 import { ScrollTopButton } from '@/components/scroll-top-button'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { useI18n } from '@/i18n/context'
 
 type TocItem = {
 	id: string
@@ -88,6 +89,7 @@ const styles = stylex.create({
 
 export function BlogSidebar({ cover, summary, toc, slug }: BlogSidebarProps) {
 	const { siteContent } = useConfigStore()
+	const { t } = useI18n()
 	const summaryInContent = siteContent.summaryInContent ?? false
 	const { className: asideClassName, style: asideStyle } = stylex.props(styles.aside)
 	const { className: summaryBodyClassName } = stylex.props(styles.summaryBody)
@@ -110,7 +112,7 @@ export function BlogSidebar({ cover, summary, toc, slug }: BlogSidebarProps) {
 					animate={{ opacity: 1, scale: 1 }}
 					transition={{ delay: INIT_DELAY + ANIMATION_DELAY * 2 }}
 					{...stylex.props(styles.summaryBox)}>
-					<h2 {...stylex.props(styles.summaryTitle)}>摘要</h2>
+					<h2 {...stylex.props(styles.summaryTitle)}>{t('blog.summary')}</h2>
 					<div className={cn(summaryBodyClassName, 'scrollbar-none')}>{summary}</div>
 				</motion.div>
 			)}

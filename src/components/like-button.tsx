@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { BLOG_SLUG_KEY } from '@/consts'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type LikeButtonProps = {
 	slug?: string
@@ -73,6 +74,7 @@ const styles = stylex.create({
 
 export default function LikeButton({ slug = 'xiaoshenming', delay, className }: LikeButtonProps) {
 	slug = BLOG_SLUG_KEY + slug
+	const { t } = useI18n()
 	const [liked, setLiked] = useState(false)
 	const [show, setShow] = useState(false)
 	const [justLiked, setJustLiked] = useState(false)
@@ -125,13 +127,13 @@ export default function LikeButton({ slug = 'xiaoshenming', delay, className }: 
 			const url = `${ENDPOINT}?slug=${encodeURIComponent(slug)}`
 			const res = await fetch(url, { method: 'POST' })
 			const data = await res.json().catch(() => ({}))
-			if (data.reason == 'rate_limited') toast('谢谢啦😘，今天已经不能再点赞啦💕')
+			if (data.reason == 'rate_limited') toast(t('blog.likeLimited'))
 			const value = typeof data?.count === 'number' ? data.count : (fetchedCount ?? 0) + 1
 			await mutate(value, { revalidate: false })
 		} catch {
 			// ignore
 		}
-	}, [slug, fetchedCount, mutate])
+	}, [slug, fetchedCount, mutate, t])
 
 	const count = typeof fetchedCount === 'number' ? fetchedCount : null
 
@@ -170,10 +172,7 @@ export default function LikeButton({ slug = 'xiaoshenming', delay, className }: 
 				</AnimatePresence>
 
 				{typeof count === 'number' && (
-					<motion.span
-						initial={{ scale: 0.4 }}
-						animate={{ scale: 1 }}
-						className={badgeClassName}>
+					<motion.span initial={{ scale: 0.4 }} animate={{ scale: 1 }} className={badgeClassName}>
 						{count}
 					</motion.span>
 				)}

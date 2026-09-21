@@ -7,6 +7,7 @@ import { motion } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
 import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from './music-store'
+import { useI18n } from '@/i18n/context'
 import MusicProgress from './components/music-progress'
 import MusicControls from './components/music-controls'
 import LyricsPanel from './components/lyrics-panel'
@@ -189,7 +190,8 @@ const styles = stylex.create({
 		lineHeight: '16px',
 		color: colors.secondary,
 		backdropFilter: 'blur(8px)',
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
@@ -252,6 +254,7 @@ const styles = stylex.create({
 })
 
 export default function MusicPage() {
+	const { t } = useI18n()
 	const { track, isPlaying, initialized, loading, usingFallback, error, hasLyrics, init, setVisualizerOpen } = useMusicStore(
 		useShallow(s => ({
 			track: s.playlist[s.currentIndex],
@@ -285,14 +288,14 @@ export default function MusicPage() {
 							</div>
 						</div>
 						<div {...stylex.props(styles.meta)}>
-							<h1 {...stylex.props(styles.title)}>{track?.name || (loading ? '正在加载歌单…' : '音乐播放器')}</h1>
-							<p {...stylex.props(styles.artist)}>{track?.artist || '稍等一下，音乐马上就来'}</p>
+							<h1 {...stylex.props(styles.title)}>{track?.name || (loading ? t('music.loadingPlaylist') : t('music.title'))}</h1>
+							<p {...stylex.props(styles.artist)}>{track?.artist || t('music.loadingArtistHint')}</p>
 						</div>
 						<div {...stylex.props(styles.controls)}>
 							<MusicProgress />
 							<MusicControls />
 						</div>
-						{usingFallback && <p {...stylex.props(styles.fallbackNote)}>在线歌单暂不可用，已切换到本地音乐</p>}
+						{usingFallback && <p {...stylex.props(styles.fallbackNote)}>{t('music.fallbackNote')}</p>}
 						{error && <p {...stylex.props(styles.errorNote)}>{error}</p>}
 					</div>
 					<div {...stylex.props(styles.lyricsCol)}>
@@ -300,14 +303,14 @@ export default function MusicPage() {
 							type='button'
 							onClick={() => setVisualizerOpen(true)}
 							disabled={!hasLyrics}
-							title={hasLyrics ? '全屏沉浸歌词' : '这首歌没有歌词'}
+							title={hasLyrics ? t('music.immersiveLyricsTitle') : t('music.noLyricsTitle')}
 							{...stylex.props(styles.immersiveBtn)}>
 							<Maximize2 {...stylex.props(styles.btnIcon)} />
-							沉浸歌词
+							{t('music.immersiveLyrics')}
 						</button>
 						{loading && !track ? (
 							<div {...stylex.props(styles.loadingBox)}>
-								<Loader2 {...stylex.props(styles.loadIcon, util.spinner)} /> 正在加载
+								<Loader2 {...stylex.props(styles.loadIcon, util.spinner)} /> {t('common.loading')}
 							</div>
 						) : (
 							<LyricsPanel />
@@ -317,7 +320,7 @@ export default function MusicPage() {
 				<aside {...stylex.props(card.base, styles.playlistCard)}>
 					<div {...stylex.props(styles.playlistHeader)}>
 						<Music2 {...stylex.props(styles.playlistIcon)} />
-						<h2 {...stylex.props(styles.playlistTitle)}>我的歌单</h2>
+						<h2 {...stylex.props(styles.playlistTitle)}>{t('music.myPlaylist')}</h2>
 					</div>
 					<PlaylistPanel />
 				</aside>

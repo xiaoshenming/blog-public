@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
 import initialList from './list.json'
+import initialListEn from './list.en.json'
 import { RandomLayout } from './components/random-layout'
 import UploadDialog from './components/upload-dialog'
 import { pushPictures } from './services/push-pictures'
@@ -12,6 +13,7 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
 import { useRouter } from 'next/navigation'
+import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -117,7 +119,11 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
+
+	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
+	const displayPictures = !isEditMode && locale === 'en' ? (initialListEn as Picture[]) : pictures
 
 	const handleUploadSubmit = ({ images, description }: { images: ImageItem[]; description: string }) => {
 		const now = new Date().toISOString()
@@ -194,7 +200,7 @@ export default function Page() {
 			} else {
 				// 删除特定索引的文件项
 				next.delete(`${pictureId}::${imageIndex}`)
-				
+
 				// 重新索引：删除索引 imageIndex 后，后面的索引需要前移
 				// 例如：删除索引 1，原来的索引 2 变成 1，索引 3 变成 2
 				const keysToUpdate: Array<{ oldKey: string; newKey: string }> = []
@@ -211,7 +217,7 @@ export default function Page() {
 						}
 					}
 				}
-				
+
 				// 执行重新索引
 				for (const { oldKey, newKey } of keysToUpdate) {
 					const value = next.get(oldKey)
@@ -316,31 +322,20 @@ export default function Page() {
 				}}
 			/>
 
-			<RandomLayout pictures={pictures} isEditMode={isEditMode} onDeleteSingle={handleDeleteSingleImage} onDeleteGroup={handleDeleteGroup} />
+			<RandomLayout pictures={displayPictures} isEditMode={isEditMode} onDeleteSingle={handleDeleteSingleImage} onDeleteGroup={handleDeleteGroup} />
 
-			{pictures.length === 0 && (
-				<div className={stylex.props(styles.emptyState).className}>
-					还没有上传图片，点击右上角「编辑」后即可开始上传。
-				</div>
-			)}
+			{displayPictures.length === 0 && <div className={stylex.props(styles.emptyState).className}>{t('collections.emptyPictures')}</div>}
 
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={() => router.push('/image-toolbox')}
-							{...stylex.props(card.hover, styles.compressButton)}>
+						<button onClick={() => router.push('/image-toolbox')} {...stylex.props(card.hover, styles.compressButton)}>
 							压缩工具
 						</button>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							{...stylex.props(card.hover, styles.ghostButton)}>
+						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostButton)}>
 							取消
 						</button>
-						<button
-							onClick={() => setIsUploadDialogOpen(true)}
-							{...stylex.props(card.hover, styles.ghostButton)}>
+						<button onClick={() => setIsUploadDialogOpen(true)} {...stylex.props(card.hover, styles.ghostButton)}>
 							上传
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
@@ -349,9 +344,7 @@ export default function Page() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={() => setIsEditMode(true)}
-							{...stylex.props(card.hover, styles.editButton)}>
+						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editButton)}>
 							编辑
 						</button>
 					)

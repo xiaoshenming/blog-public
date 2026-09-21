@@ -4,11 +4,12 @@ import { useLatestBlog } from '@/hooks/use-blog-index'
 import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
-import dayjs from 'dayjs'
 import Link from 'next/link'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
+import { useI18n } from '@/i18n/context'
+import { formatDate } from '@/i18n/dates'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -115,13 +116,16 @@ const sx = stylex.create({
 
 export default function ArticleCard() {
 	const center = useCenterStore()
-	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.articleCard,
-		hiCardStyles: s.cardStyles.hiCard,
-		socialButtonsStyles: s.cardStyles.socialButtons,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-	})))
+	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.articleCard,
+			hiCardStyles: s.cardStyles.hiCard,
+			socialButtonsStyles: s.cardStyles.socialButtons,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined
+		}))
+	)
 	const { blog, loading } = useLatestBlog()
+	const { locale, t } = useI18n()
 
 	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + hiCardStyles.width / 2 - socialButtonsStyles.width - CARD_SPACING - styles.width
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y + hiCardStyles.height / 2 + CARD_SPACING
@@ -140,28 +144,24 @@ export default function ArticleCard() {
 					</>
 				)}
 
-				<h2 {...stylex.props(sx.title)}>最新文章</h2>
+				<h2 {...stylex.props(sx.title)}>{t('home.latestArticles')}</h2>
 
 				{loading ? (
 					<div {...stylex.props(sx.placeholder)}>
-						<span {...stylex.props(sx.hint)}>加载中...</span>
+						<span {...stylex.props(sx.hint)}>{t('common.loading')}</span>
 					</div>
 				) : blog ? (
 					<Link href={`/blog/${blog.slug}`} {...stylex.props(sx.articleLink)}>
-						{blog.cover ? (
-							<img src={blog.cover} alt='cover' {...stylex.props(sx.cover)} />
-						) : (
-							<div {...stylex.props(sx.coverFallback)}>+</div>
-						)}
+						{blog.cover ? <img src={blog.cover} alt='cover' {...stylex.props(sx.cover)} /> : <div {...stylex.props(sx.coverFallback)}>+</div>}
 						<div {...stylex.props(sx.body)}>
 							<h3 {...stylex.props(sx.articleTitle)}>{blog.title || blog.slug}</h3>
 							{blog.summary && <p {...stylex.props(sx.summary)}>{blog.summary}</p>}
-							<p {...stylex.props(sx.date)}>{dayjs(blog.date).format('YYYY/M/D')}</p>
+							<p {...stylex.props(sx.date)}>{formatDate(blog.date, locale, 'short')}</p>
 						</div>
 					</Link>
 				) : (
 					<div {...stylex.props(sx.placeholder)}>
-						<span {...stylex.props(sx.hint)}>暂无文章</span>
+						<span {...stylex.props(sx.hint)}>{t('home.noArticles')}</span>
 					</div>
 				)}
 			</Card>

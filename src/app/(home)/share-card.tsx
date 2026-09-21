@@ -6,11 +6,13 @@ import { useCenterStore } from '@/hooks/use-center'
 import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
-import shareList from '@/app/share/list.json'
+import shareListZh from '@/app/share/list.json'
+import shareListEn from '@/app/share/list.en.json'
 import Link from 'next/link'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -81,18 +83,22 @@ type ShareItem = {
 
 export default function ShareCard() {
 	const center = useCenterStore()
-	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.shareCard,
-		hiCardStyles: s.cardStyles.hiCard,
-		socialButtonsStyles: s.cardStyles.socialButtons,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-	})))
+	const { styles, hiCardStyles, socialButtonsStyles, enableChristmas } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.shareCard,
+			hiCardStyles: s.cardStyles.hiCard,
+			socialButtonsStyles: s.cardStyles.socialButtons,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined
+		}))
+	)
 	const [randomItem, setRandomItem] = useState<ShareItem | null>(null)
+	const { locale, t } = useI18n()
 
 	useEffect(() => {
+		const shareList = locale === 'en' ? shareListEn : shareListZh
 		const randomIndex = Math.floor(Math.random() * shareList.length)
 		setRandomItem(shareList[randomIndex])
-	}, [])
+	}, [locale])
 
 	if (!randomItem) {
 		return null
@@ -115,7 +121,7 @@ export default function ShareCard() {
 					</>
 				)}
 
-				<h2 {...stylex.props(sx.title)}>随机推荐</h2>
+				<h2 {...stylex.props(sx.title)}>{t('home.randomPick')}</h2>
 
 				<Link href='/share' {...stylex.props(sx.recLink)}>
 					<div {...stylex.props(sx.recItem)}>

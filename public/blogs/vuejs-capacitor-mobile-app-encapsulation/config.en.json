@@ -1,0 +1,11 @@
+{
+	"title": "There are only 6 steps to encapsulate Vue.js for mobile: packaging → configuration → compilation → initialization → add platform → synchronization",
+	"tags": [
+		"Front-end development",
+		"Vue"
+	],
+	"date": "2025-12-11T16:35",
+	"summary": "Have a front-end project that allows quick packaging of apps!",
+	"cover": "/blogs/vuejs-capacitor-mobile-app-encapsulation/2e3d72a33d9dc100.webp",
+	"hidden": false
+}

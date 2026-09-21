@@ -8,6 +8,7 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { util } from '@/styles/shared/util.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -81,6 +82,7 @@ function AuthCallbackContent() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const { setOAuth2Auth } = useAuthStore()
+	const { t } = useI18n()
 	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 	const [error, setError] = useState('')
 
@@ -93,13 +95,13 @@ function AuthCallbackContent() {
 			if (errorParam) {
 				setError(searchParams.get('error_description') || errorParam)
 				setStatus('error')
-				toast.error(`GitHub 授权失败: ${errorParam}`)
+				toast.error(t('toolbox.githubAuthFailed', { error: errorParam }))
 				setTimeout(() => router.push('/'), 3000)
 				return
 			}
 
 			if (!code || !state) {
-				setError('缺少必需的授权参数')
+				setError(t('toolbox.missingAuthParams'))
 				setStatus('error')
 				setTimeout(() => router.push('/'), 3000)
 				return
@@ -109,16 +111,17 @@ function AuthCallbackContent() {
 			if (success) {
 				setOAuth2Auth()
 				setStatus('success')
-				toast.success('GitHub OAuth2 登录成功')
+				toast.success(t('toolbox.githubLoginSuccess'))
 				setTimeout(() => router.push('/'), 1500)
 			} else {
-				setError('登录失败，请重试')
+				setError(t('toolbox.loginFailedRetry'))
 				setStatus('error')
-				toast.error('登录失败')
+				toast.error(t('toolbox.loginFailed'))
 				setTimeout(() => router.push('/'), 3000)
 			}
 		}
 		process()
+		// t 刻意不进依赖：语言切换不应重跑 OAuth 回调（code 一次性，重复兑换会失败）
 	}, [searchParams, router, setOAuth2Auth])
 
 	return (
@@ -127,20 +130,20 @@ function AuthCallbackContent() {
 				{status === 'loading' && (
 					<>
 						<div {...stylex.props(styles.spinnerRing, styles.spinnerOffset, util.spinner)} />
-						<p {...stylex.props(styles.loadingText)}>正在处理 GitHub 登录...</p>
+						<p {...stylex.props(styles.loadingText)}>{t('toolbox.processingGithubLogin')}</p>
 					</>
 				)}
 				{status === 'success' && (
 					<>
 						<div {...stylex.props(styles.successIcon)}>✓</div>
-						<p>登录成功，正在跳转...</p>
+						<p>{t('toolbox.loginSuccessRedirecting')}</p>
 					</>
 				)}
 				{status === 'error' && (
 					<>
 						<div {...stylex.props(styles.errorIcon)}>✗</div>
 						<p {...stylex.props(styles.errorText)}>{error}</p>
-						<p {...stylex.props(styles.redirectHint)}>3 秒后自动跳转...</p>
+						<p {...stylex.props(styles.redirectHint)}>{t('toolbox.autoRedirectHint', { seconds: 3 })}</p>
 					</>
 				)}
 			</div>

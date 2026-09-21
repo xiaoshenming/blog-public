@@ -1,0 +1,75 @@
+// 由 scripts/i18n/dict.ts 生成；可直接手工修正，重跑默认保留已有译文（--force 覆盖）
+export const toolbox = {
+	// 秒表 / 计时器（/clock）
+	stopwatch: 'Stopwatch',
+	timer: 'Timer',
+	hours: 'H',
+	minutes: 'M',
+	seconds: 'S',
+	lap: 'Lap',
+
+	// PNG / JPG 转 WEBP（/image-toolbox）
+	pngJpgToWebp: 'PNG / JPG to WEBP',
+	convertFlowHint: 'Pick images → Adjust quality → Convert & download',
+	clickOrDragToUpload: 'Click or drag images here',
+	uploadFormatHint: 'Supports PNG, JPG, JPEG, HEIC and other common formats',
+	selectedCount: '{count} images selected',
+	convertedSize: '({size} after conversion)',
+	converting: 'Converting...',
+	reconvert: 'Reconvert',
+	convert: 'Convert',
+	compare: 'Compare',
+	download: 'Download',
+	remove: 'Remove',
+	quality: 'Quality',
+	qualityCodeHint: "Uses canvas.toDataURL('image/webp', {quality})",
+	limitMaxWidth: 'Limit max width',
+	convertingAll: 'Converting all…',
+	convertAll: 'Convert all',
+	downloadAll: 'Download all',
+	originalWithSize: 'Original ({size})',
+	webpWithSize: 'WEBP ({size})',
+	convertFailed: 'Something went wrong during conversion, please try again later',
+	batchConvertFailed: 'Something went wrong during batch conversion, please try again later',
+
+	// 鸣潮 · 抽卡记录分析（/wuthering-waves）
+	gachaAnalysisTitle: 'Wuthering Waves · Gacha Record Analysis',
+	usageTitle: 'How to use:',
+	step1BeforeLink: 'Go to',
+	step1AfterLink: ', and log in.',
+	step2BeforeF12: 'Press ',
+	step2BeforeNetwork: ', then open the ',
+	step2BeforeExchange: ' panel. On the left, select ',
+	exchangeRecord: 'Exchange Records',
+	step2BeforeQuery: ', then watch for the latest ',
+	step2AfterQuery: ' request on the right.',
+	step3BeforeQuery: 'Click the latest ',
+	step3BeforePreview: ' request, open the ',
+	step3BeforeData: ' panel, right-click the ',
+	step3BeforeCopyValue: ' value and pick ',
+	step3AfterCopyValue: '.',
+	step4PasteAnalyze: 'Finally, paste it into the input below and press Analyze.',
+	analyze: 'Analyze',
+	errorRootNotArray: 'The root node must be an array',
+	errorItemNotObject: 'Item {index} is not an object',
+	errorMissingQualityLevel: 'Item {index} is missing a valid qualityLevel',
+	parseFailed: 'Failed to parse',
+	notFiveStarYet: '(not 5-star yet)',
+	pullsCount: '{count} pulls',
+
+	// Live2D（/live2d）
+	loadingLive2dModel: 'Loading Live2D model…',
+
+	// GitHub 登录回调（/auth/callback）
+	processingGithubLogin: 'Processing GitHub login...',
+	loginSuccessRedirecting: 'Login successful, redirecting...',
+	autoRedirectHint: 'Redirecting in {seconds}s...',
+	githubAuthFailed: 'GitHub authorization failed: {error}',
+	missingAuthParams: 'Missing required authorization parameters',
+	githubLoginSuccess: 'GitHub OAuth2 login successful',
+	loginFailedRetry: 'Login failed, please try again',
+	loginFailed: 'Login failed',
+
+	// 回到顶部按钮
+	scrollToTop: 'Scroll to top'
+}

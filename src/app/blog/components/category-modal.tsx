@@ -9,6 +9,7 @@ import { Select } from '@/components/select'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import { X } from 'lucide-react'
 
 interface CategoryModalProps {
@@ -208,10 +209,11 @@ export function CategoryModal({
 	editableItems,
 	onAssignCategory
 }: CategoryModalProps) {
+	const { t } = useI18n()
 	const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
 	const categoryOptions = useMemo(
-		() => [{ value: '', label: '未分类' }, ...categoryList.map(cat => ({ value: cat, label: cat }))],
-		[categoryList]
+		() => [{ value: '', label: t('blog.uncategorized') }, ...categoryList.map(cat => ({ value: cat, label: cat }))],
+		[categoryList, t]
 	)
 
 	const handleDragStart = useCallback((index: number) => {
@@ -257,12 +259,7 @@ export function CategoryModal({
 			</div>
 			<div>
 				<div {...stylex.props(styles.inputRow)}>
-					<input
-						value={newCategory}
-						onChange={e => onNewCategoryChange(e.target.value)}
-						placeholder='输入分类名称'
-						{...stylex.props(styles.input)}
-					/>
+					<input value={newCategory} onChange={e => onNewCategoryChange(e.target.value)} placeholder='输入分类名称' {...stylex.props(styles.input)} />
 					<button onClick={onAddCategory} {...stylex.props(brandBtn.base, styles.addButton)}>
 						新增分类
 					</button>
@@ -281,11 +278,7 @@ export function CategoryModal({
 								onDragEnd={handleDragEnd}
 								{...stylex.props(styles.chip, draggingIndex === index && styles.chipDragging)}>
 								<span {...stylex.props(styles.chipLabel)}>{cat}</span>
-								<button
-									type='button'
-									onClick={() => onRemoveCategory(cat)}
-									{...stylex.props(styles.removeButton)}
-									aria-label='Remove category'>
+								<button type='button' onClick={() => onRemoveCategory(cat)} {...stylex.props(styles.removeButton)} aria-label='Remove category'>
 									<X {...stylex.props(styles.removeIcon)} />
 								</button>
 							</span>
@@ -299,15 +292,10 @@ export function CategoryModal({
 								{item.title || item.slug}
 								<span {...stylex.props(styles.itemDate)}>{dayjs(item.date).format('YYYY-MM-DD')}</span>
 							</div>
-							<Select
-								value={item.category || ''}
-								onChange={value => onAssignCategory(item.slug, value)}
-								options={categoryOptions}
-								style={styles.rowSelect}
-							/>
+							<Select value={item.category || ''} onChange={value => onAssignCategory(item.slug, value)} options={categoryOptions} style={styles.rowSelect} />
 						</div>
 					))}
-					{editableItems.length === 0 && <div {...stylex.props(styles.emptyItems)}>暂无文章</div>}
+					{editableItems.length === 0 && <div {...stylex.props(styles.emptyItems)}>{t('blog.noArticles')}</div>}
 				</div>
 			</div>
 		</DialogModal>

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { card } from '@/styles/shared/card.stylex'
 import { util } from '@/styles/shared/util.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type TimerMode = 'stopwatch' | 'timer'
 
@@ -260,6 +261,7 @@ const styles = stylex.create({
 })
 
 export default function ClockPage() {
+	const { t } = useI18n()
 	const [mode, setMode] = useState<TimerMode>('stopwatch')
 	const [stopwatchTime, setStopwatchTime] = useState(0)
 	const [timerTime, setTimerTime] = useState(0)
@@ -400,7 +402,7 @@ export default function ClockPage() {
 							initialTimerTimeRef.current = 0
 						}}
 						className={stylex.props(card.hover, styles.modeBtn, mode === 'stopwatch' ? styles.modeActive : styles.modeIdle).className}>
-						秒表
+						{t('toolbox.stopwatch')}
 					</button>
 					<button
 						onClick={() => {
@@ -413,7 +415,7 @@ export default function ClockPage() {
 							initialTimerTimeRef.current = 0
 						}}
 						className={stylex.props(card.hover, styles.modeBtn, mode === 'timer' ? styles.modeActive : styles.modeIdle).className}>
-						计时器
+						{t('toolbox.timer')}
 					</button>
 				</div>
 
@@ -428,7 +430,7 @@ export default function ClockPage() {
 					<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(card.base, styles.timerCard).className}>
 						<div className={stylex.props(styles.inputRow).className}>
 							<div className={stylex.props(styles.fieldCol).className}>
-								<label className={stylex.props(styles.fieldLabel).className}>时</label>
+								<label className={stylex.props(styles.fieldLabel).className}>{t('toolbox.hours')}</label>
 								<input
 									type='number'
 									min='0'
@@ -440,7 +442,7 @@ export default function ClockPage() {
 							</div>
 							<div className={stylex.props(styles.inputColon).className}>:</div>
 							<div className={stylex.props(styles.fieldCol).className}>
-								<label className={stylex.props(styles.fieldLabel).className}>分</label>
+								<label className={stylex.props(styles.fieldLabel).className}>{t('toolbox.minutes')}</label>
 								<input
 									type='number'
 									min='0'
@@ -452,7 +454,7 @@ export default function ClockPage() {
 							</div>
 							<div className={stylex.props(styles.inputColon).className}>:</div>
 							<div className={stylex.props(styles.fieldCol).className}>
-								<label className={stylex.props(styles.fieldLabel).className}>秒</label>
+								<label className={stylex.props(styles.fieldLabel).className}>{t('toolbox.seconds')}</label>
 								<input
 									type='number'
 									min='0'
@@ -469,11 +471,8 @@ export default function ClockPage() {
 				{/* Control Buttons */}
 				<div className={stylex.props(styles.controls).className}>
 					{mode === 'stopwatch' && (
-						<button
-							onClick={handleLap}
-							disabled={!isRunning}
-							className={stylex.props(card.hover, styles.roundBtn, styles.roundBtnText).className}>
-							计次
+						<button onClick={handleLap} disabled={!isRunning} className={stylex.props(card.hover, styles.roundBtn, styles.roundBtnText).className}>
+							{t('toolbox.lap')}
 						</button>
 					)}
 					<button
@@ -482,10 +481,7 @@ export default function ClockPage() {
 						className={stylex.props(card.hover, styles.startBtn, isRunning ? styles.startRunning : styles.startIdle).className}>
 						{isRunning ? <Pause {...stylex.props(styles.iconLg)} /> : <Play {...stylex.props(styles.iconLg)} />}
 					</button>
-					<button
-						onClick={handleReset}
-						disabled={isRunning && mode === 'stopwatch'}
-						className={stylex.props(card.hover, styles.roundBtn).className}>
+					<button onClick={handleReset} disabled={isRunning && mode === 'stopwatch'} className={stylex.props(card.hover, styles.roundBtn).className}>
 						<RotateCcw {...stylex.props(styles.iconMd)} />
 					</button>
 				</div>

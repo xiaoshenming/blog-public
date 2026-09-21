@@ -24,41 +24,57 @@ import { useSize } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { HomeDraggableLayer } from '@/app/(home)/home-draggable-layer'
+import { useI18n } from '@/i18n/context'
+import { localeLabel } from '@/i18n/config'
+import { Languages } from 'lucide-react'
 
 const list = [
 	{
 		icon: ScrollOutlineSVG,
 		iconActive: ScrollFilledSVG,
-		label: '近期文章',
+		labelKey: 'nav.recentPosts',
 		href: '/blog'
 	},
 	{
 		icon: ProjectsOutlineSVG,
 		iconActive: ProjectsFilledSVG,
-		label: '我的项目',
+		labelKey: 'nav.myProjects',
 		href: '/projects'
 	},
 	{
 		icon: AboutOutlineSVG,
 		iconActive: AboutFilledSVG,
-		label: '关于网站',
+		labelKey: 'nav.aboutSite',
 		href: '/about'
 	},
 	{
 		icon: ShareOutlineSVG,
 		iconActive: ShareFilledSVG,
-		label: '推荐分享',
+		labelKey: 'nav.recommendShare',
 		href: '/share'
 	},
 	{
 		icon: WebsiteOutlineSVG,
 		iconActive: WebsiteFilledSVG,
-		label: '优秀博客',
+		labelKey: 'nav.greatBlogs',
 		href: '/bloggers'
 	}
-]
+] as const
 
 const extraSize = 8
+
+type NavItem = {
+	icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
+	iconActive: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
+	label: string
+	labelKey?: string
+	href?: string
+}
+
+/** 语言切换图标：lucide 组件，尺寸对齐自绘 svg 的 28px 并承接样式 */
+function LanguageIcon(props: { className?: string; style?: React.CSSProperties }) {
+	return <Languages size={28} {...props} />
+}
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物）；const styles 已被配置 store 占用，故取名 sx */
 const sx = stylex.create({
@@ -194,12 +210,29 @@ export default function NavCard() {
 	const [show, setShow] = useState(false)
 	const { maxSM } = useSize()
 	const [hoveredIndex, setHoveredIndex] = useState<number>(0)
-	const { styles, hiCardStyles, enableChristmas, metaTitle } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.navCard,
-		hiCardStyles: s.cardStyles.hiCard,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-		metaTitle: s.siteContent.meta.title,
-	})))
+	const { locale, toggleLocale, t } = useI18n()
+	const { styles, hiCardStyles, enableChristmas, metaTitle } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.navCard,
+			hiCardStyles: s.cardStyles.hiCard,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+			metaTitle: s.siteContent.meta.title
+		}))
+	)
+
+	/** 语言切换项挂在导航列表尾部，共享同一套悬停胶囊动画；label 显示目标语言名 */
+	const items = useMemo<NavItem[]>(
+		() => [
+			...list.map(item => ({ ...item, label: t(item.labelKey) })),
+			{
+				icon: LanguageIcon,
+				iconActive: LanguageIcon,
+				label: locale === 'zh' ? localeLabel('en') : localeLabel('zh'),
+				href: undefined
+			}
+		],
+		[locale, t]
+	)
 
 	const activeIndex = useMemo(() => {
 		const index = list.findIndex(item => pathname === item.href)
@@ -210,7 +243,7 @@ export default function NavCard() {
 		setShow(true)
 	}, [])
 
-	const [activityStatus, setActivityStatus] = useState('开发中')
+	const [activityStatus, setActivityStatus] = useState(() => t('common.developing'))
 
 	useEffect(() => {
 		const fetchStatus = () => {
@@ -218,15 +251,15 @@ export default function NavCard() {
 			fetch('https://activity.zmark.top')
 				.then(res => res.json())
 				.then(data => {
-					const newStatus = data.status || '离线'
-					setActivityStatus(prev => prev === newStatus ? prev : newStatus)
+					const newStatus = data.status || t('common.offline')
+					setActivityStatus(prev => (prev === newStatus ? prev : newStatus))
 				})
-				.catch(() => setActivityStatus('开发中'))
+				.catch(() => setActivityStatus(t('common.developing')))
 		}
 		fetchStatus()
 		const timer = setInterval(fetchStatus, 30000)
 		return () => clearInterval(timer)
-	}, [])
+	}, [t])
 
 	let form = useMemo(() => {
 		if (pathname == '/') return 'full'
@@ -276,13 +309,7 @@ export default function NavCard() {
 					height={size.height}
 					x={position.x}
 					y={position.y}
-					style={
-						form === 'mini'
-							? [sx.cardOverflow, sx.cardMini]
-							: form === 'icons'
-								? [sx.cardOverflow, sx.cardIcons]
-								: undefined
-					}>
+					style={form === 'mini' ? [sx.cardOverflow, sx.cardMini] : form === 'icons' ? [sx.cardOverflow, sx.cardIcons] : undefined}>
 					{form === 'full' && enableChristmas && (
 						<>
 							<img
@@ -295,7 +322,14 @@ export default function NavCard() {
 					)}
 
 					<Link {...stylex.props(sx.logoLink)} href='/'>
-						<Image src='/images/avatar.png' alt='avatar' width={40} height={40} style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }} className={stylex.props(sx.avatar).className} />
+						<Image
+							src='/images/avatar.png'
+							alt='avatar'
+							width={40}
+							height={40}
+							style={{ boxShadow: ' 0 12px 20px -5px #E2D9CE' }}
+							className={stylex.props(sx.avatar).className}
+						/>
 						{form === 'full' && (
 							<div {...stylex.props(sx.logoText)}>
 								<span {...stylex.props(sx.title)}>{metaTitle}</span>
@@ -331,18 +365,31 @@ export default function NavCard() {
 									style={{ backgroundImage: 'linear-gradient(to right bottom, var(--color-border) 60%, var(--color-card) 100%)' }}
 								/>
 
-								{list.map((item, index) => (
-									<Link
-										key={item.href}
-										href={item.href}
-										{...stylex.props(sx.navLink, form === 'icons' && sx.navLinkIcons, form !== 'icons' && index < list.length - 1 && sx.navItemGap)}
-										onMouseEnter={() => setHoveredIndex(index)}>
-										<div {...stylex.props(sx.iconBox)}>
-											{hoveredIndex == index ? <item.iconActive {...stylex.props(sx.icon, sx.iconActive)} /> : <item.icon {...stylex.props(sx.icon)} />}
-										</div>
-										{form !== 'icons' && <span {...stylex.props(index === hoveredIndex && sx.labelActive)}>{item.label}</span>}
-									</Link>
-								))}
+								{items.map((item, index) => {
+									const isLanguageItem = !item.href
+									return (
+										<Link
+											key={item.labelKey ?? item.label}
+											href={item.href ?? '#'}
+											{...stylex.props(sx.navLink, form === 'icons' && sx.navLinkIcons, form !== 'icons' && index < items.length - 1 && sx.navItemGap)}
+											onMouseEnter={() => setHoveredIndex(index)}
+											onClick={
+												isLanguageItem
+													? event => {
+															event.preventDefault()
+															toggleLocale()
+														}
+													: undefined
+											}
+											aria-label={isLanguageItem ? t('common.switchTo') : undefined}
+											title={isLanguageItem ? t('common.switchTo') : undefined}>
+											<div {...stylex.props(sx.iconBox)}>
+												{hoveredIndex == index ? <item.iconActive {...stylex.props(sx.icon, sx.iconActive)} /> : <item.icon {...stylex.props(sx.icon)} />}
+											</div>
+											{form !== 'icons' && <span {...stylex.props(index === hoveredIndex && sx.labelActive)}>{item.label}</span>}
+										</Link>
+									)
+								})}
 							</div>
 						</>
 					)}

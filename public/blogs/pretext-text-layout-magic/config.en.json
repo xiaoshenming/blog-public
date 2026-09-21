@@ -1,0 +1,14 @@
+{
+	"title": "Pretext: The dark magic that makes text flow like water",
+	"tags": [
+		"pretext",
+		"Text layout",
+		"Performance optimization",
+		"Open source"
+	],
+	"date": "2026-04-01T12:00",
+	"summary": "A 15KB zero-dependency library that makes text measurement 300-600 times faster. Drag the dragon! Watch the text flow around in real time.",
+	"cover": "/blogs/pretext-text-layout-magic/cover.png",
+	"hidden": false,
+	"category": "Open source"
+}

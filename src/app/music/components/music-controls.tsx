@@ -4,13 +4,14 @@ import { ListRestart, Pause, Play, Repeat1, Shuffle, SkipBack, SkipForward, Volu
 import { useShallow } from 'zustand/react/shallow'
 import * as stylex from '@stylexjs/stylex'
 import { useMusicStore } from '../music-store'
+import { useI18n } from '@/i18n/context'
 import { colors } from '@/styles/tokens.stylex'
 
 const modeMeta = {
-	list: { label: '列表循环', Icon: ListRestart },
-	one: { label: '单曲循环', Icon: Repeat1 },
-	random: { label: '随机播放', Icon: Shuffle }
-}
+	list: { labelKey: 'music.modeListLoop', shortKey: 'music.modeShortList', Icon: ListRestart },
+	one: { labelKey: 'music.modeOneLoop', shortKey: 'music.modeShortOne', Icon: Repeat1 },
+	random: { labelKey: 'music.modeRandom', shortKey: 'music.modeShortRandom', Icon: Shuffle }
+} as const
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -100,6 +101,7 @@ const styles = stylex.create({
 })
 
 export default function MusicControls() {
+	const { t } = useI18n()
 	const { isPlaying, playMode, volume, togglePlay, playPrevious, playNext, cyclePlayMode, setVolume } = useMusicStore(
 		useShallow(s => ({
 			isPlaying: s.isPlaying,
@@ -112,7 +114,8 @@ export default function MusicControls() {
 			setVolume: s.setVolume
 		}))
 	)
-	const { label, Icon } = modeMeta[playMode]
+	const { labelKey, shortKey, Icon } = modeMeta[playMode]
+	const label = t(labelKey)
 
 	return (
 		<div>
@@ -120,21 +123,21 @@ export default function MusicControls() {
 				<button type='button' title={label} aria-label={label} onClick={cyclePlayMode} {...stylex.props(styles.modeBtn)}>
 					<Icon {...stylex.props(styles.iconMd)} />
 				</button>
-				<button type='button' aria-label='上一首' onClick={playPrevious} {...stylex.props(styles.skipBtn)}>
+				<button type='button' aria-label={t('music.previous')} onClick={playPrevious} {...stylex.props(styles.skipBtn)}>
 					<SkipBack {...stylex.props(styles.iconLg)} fill='currentColor' />
 				</button>
-				<button
-					type='button'
-					aria-label={isPlaying ? '暂停' : '播放'}
-					onClick={togglePlay}
-					{...stylex.props(styles.playBtn)}>
-					{isPlaying ? <Pause {...stylex.props(styles.iconLg)} fill='currentColor' /> : <Play {...stylex.props(styles.iconLg, styles.playIcon)} fill='currentColor' />}
+				<button type='button' aria-label={isPlaying ? t('music.pause') : t('music.play')} onClick={togglePlay} {...stylex.props(styles.playBtn)}>
+					{isPlaying ? (
+						<Pause {...stylex.props(styles.iconLg)} fill='currentColor' />
+					) : (
+						<Play {...stylex.props(styles.iconLg, styles.playIcon)} fill='currentColor' />
+					)}
 				</button>
-				<button type='button' aria-label='下一首' onClick={playNext} {...stylex.props(styles.skipBtn)}>
+				<button type='button' aria-label={t('music.next')} onClick={playNext} {...stylex.props(styles.skipBtn)}>
 					<SkipForward {...stylex.props(styles.iconLg)} fill='currentColor' />
 				</button>
 				<div {...stylex.props(styles.modeHintBox)} title={label}>
-					<span {...stylex.props(styles.modeHintText)}>{label.slice(0, 2)}</span>
+					<span {...stylex.props(styles.modeHintText)}>{t(shortKey)}</span>
 				</div>
 			</div>
 			<label {...stylex.props(styles.volumeLabel)}>
@@ -145,7 +148,7 @@ export default function MusicControls() {
 					max='1'
 					step='0.01'
 					value={volume}
-					aria-label='音量'
+					aria-label={t('music.volume')}
 					onChange={event => setVolume(Number(event.target.value))}
 					{...stylex.props(styles.volumeInput)}
 				/>

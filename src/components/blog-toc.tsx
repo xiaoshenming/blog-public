@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type TocItem = {
 	id: string
@@ -53,7 +54,8 @@ const styles = stylex.create({
 		position: 'relative',
 		display: 'block',
 		paddingLeft: 12,
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
@@ -68,6 +70,7 @@ const styles = stylex.create({
 })
 
 export function BlogToc({ toc, delay = 0 }: BlogTocProps) {
+	const { t } = useI18n()
 	const [activeIds, setActiveIds] = useState<Set<string>>(new Set())
 	const minActiveId = useMemo(() => {
 		return Array.from(activeIds).sort((a, b) => toc.findIndex(item => item.id === a) - toc.findIndex(item => item.id === b))[0]
@@ -111,14 +114,10 @@ export function BlogToc({ toc, delay = 0 }: BlogTocProps) {
 	}, [toc])
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, scale: 0.8 }}
-			animate={{ opacity: 1, scale: 1 }}
-			transition={{ delay }}
-			{...stylex.props(styles.box)}>
-			<h2 {...stylex.props(styles.title)}>目录</h2>
+		<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} {...stylex.props(styles.box)}>
+			<h2 {...stylex.props(styles.title)}>{t('blog.tableOfContents')}</h2>
 			<div {...stylex.props(styles.list)}>
-				{toc.length === 0 && <div {...stylex.props(styles.empty)}>暂无</div>}
+				{toc.length === 0 && <div {...stylex.props(styles.empty)}>{t('blog.tocEmpty')}</div>}
 				{toc.map(item => (
 					<a
 						key={item.id + item.level}

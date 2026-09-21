@@ -10,8 +10,10 @@ import { pushShares } from './services/push-shares'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
+import initialListEn from './list.en.json'
 import type { Share } from './components/share-card'
 import type { LogoItem } from './components/logo-upload-dialog'
+import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -57,7 +59,8 @@ const styles = stylex.create({
 		fontSize: 14,
 		lineHeight: '20px',
 		backdropFilter: 'blur(8px)',
-		transitionProperty: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+		transitionProperty:
+			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
@@ -84,7 +87,11 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { locale } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
+
+	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
+	const displayShares = !isEditMode && locale === 'en' ? (initialListEn as Share[]) : shares
 
 	const handleUpdate = (updatedShare: Share, oldShare: Share, logoItem?: LogoItem) => {
 		setShares(prev => prev.map(s => (s.url === oldShare.url ? updatedShare : s)))
@@ -201,20 +208,15 @@ export default function Page() {
 				}}
 			/>
 
-			<GridView shares={shares} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
+			<GridView shares={displayShares} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
 
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							{...stylex.props(card.hover, styles.ghostBtn)}>
+						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostBtn)}>
 							取消
 						</button>
-						<button
-							onClick={handleAdd}
-							{...stylex.props(card.hover, styles.ghostBtn)}>
+						<button onClick={handleAdd} {...stylex.props(card.hover, styles.ghostBtn)}>
 							添加
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveBtn)}>
@@ -223,9 +225,7 @@ export default function Page() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={() => setIsEditMode(true)}
-							{...stylex.props(card.hover, styles.editBtn)}>
+						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editBtn)}>
 							编辑
 						</button>
 					)

@@ -9,11 +9,13 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import LikeButton from '@/components/like-button'
 import GithubSVG from '@/svgs/github.svg'
-import initialData from './list.json'
+import initialDataZh from './list.json'
+import initialDataEn from './list.en.json'
 import * as stylex from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 本页样式（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
 const styles = stylex.create({
@@ -174,8 +176,9 @@ const styles = stylex.create({
 })
 
 export default function Page() {
-	const [data, setData] = useState<AboutData>(initialData as AboutData)
-	const [originalData, setOriginalData] = useState<AboutData>(initialData as AboutData)
+	const { locale, t } = useI18n()
+	const [data, setData] = useState<AboutData>(initialDataZh as AboutData)
+	const [originalData, setOriginalData] = useState<AboutData>(initialDataZh as AboutData)
 	const [isEditMode, setIsEditMode] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
 	const [isPreviewMode, setIsPreviewMode] = useState(false)
@@ -183,8 +186,12 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
-	const { content, loading } = useMarkdownRender(data.content)
 	const hideEditButton = siteContent.hideEditButton ?? false
+
+	// 浏览态按当前语言展示（英文缺失字段回落中文）；编辑态始终编辑中文源文件，保存不会波及英文版
+	const enData = initialDataEn as Partial<AboutData> | undefined
+	const displayData: AboutData = !isEditMode && locale === 'en' && enData ? { ...data, ...enData } : data
+	const { content, loading } = useMarkdownRender(displayData.content)
 
 	const handleChoosePrivateKey = async (file: File) => {
 		try {
@@ -315,14 +322,17 @@ export default function Page() {
 					) : (
 						<>
 							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={stylex.props(styles.headerBlock).className}>
-								<h1 className={stylex.props(styles.title).className}>{data.title}</h1>
-								<p className={stylex.props(styles.lead).className}>{data.description}</p>
+								<h1 className={stylex.props(styles.title).className}>{displayData.title}</h1>
+								<p className={stylex.props(styles.lead).className}>{displayData.description}</p>
 							</motion.div>
 
 							{loading ? (
-								<div className={stylex.props(styles.loading).className}>加载中...</div>
+								<div className={stylex.props(styles.loading).className}>{t('about.loading')}</div>
 							) : (
-								<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(card.base, styles.cardRel).className}>
+								<motion.div
+									initial={{ opacity: 0, scale: 0.8 }}
+									animate={{ opacity: 1, scale: 1 }}
+									className={stylex.props(card.base, styles.cardRel).className}>
 									<div className='prose prose-sm max-w-none'>{content}</div>
 								</motion.div>
 							)}
@@ -349,16 +359,10 @@ export default function Page() {
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={stylex.props(styles.toolbar).className}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							className={stylex.props(card.hover, styles.toolbarBtn).className}>
+						<button onClick={handleCancel} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							取消
 						</button>
-						<button
-							onClick={() => setIsPreviewMode(prev => !prev)}
-							disabled={isSaving}
-							className={stylex.props(card.hover, styles.toolbarBtn).className}>
+						<button onClick={() => setIsPreviewMode(prev => !prev)} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
 							{isPreviewMode ? '继续编辑' : '预览'}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
@@ -367,9 +371,7 @@ export default function Page() {
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={handleEnterEditMode}
-							className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
+						<button onClick={handleEnterEditMode} className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
 							编辑
 						</button>
 					)

@@ -6,6 +6,8 @@
 		"dev": "next dev --turbopack -p 2025",
 		"svg": "node scripts/gen-svgs-index.js",
 		"test": "vitest run",
+		"i18n:dict": "npx -y tsx scripts/i18n/dict.ts",
+		"i18n:content": "npx -y tsx scripts/i18n/content.ts --skip-existing",
 		"font:split": "npx -y cn-font-split run --css.fontDisplay swap --css.compress true --css.commentUnicodes false --testHtml false --reporter false",
 		"build": "next build",
 		"start": "next start",

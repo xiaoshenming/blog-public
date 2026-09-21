@@ -13,6 +13,7 @@ import MusicSVG from '@/svgs/music.svg'
 import PlaySVG from '@/svgs/play.svg'
 import { HomeDraggableLayer } from '@/app/(home)/home-draggable-layer'
 import { useMusicStore } from '@/app/music/music-store'
+import { useI18n } from '@/i18n/context'
 import { util } from '@/styles/shared/util.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -106,6 +107,7 @@ const sx = stylex.create({
 export default function MusicCard() {
 	const router = useRouter()
 	const center = useCenterStore()
+	const { t } = useI18n()
 	const { styles, hiCardWidth, clockCardOffset, calendarCardHeight, enableChristmas } = useConfigStore(
 		useShallow(s => ({
 			styles: s.cardStyles.musicCard,
@@ -145,33 +147,23 @@ export default function MusicCard() {
 	return (
 		<HomeDraggableLayer cardKey='musicCard' x={position.x} y={position.y} width={styles.width} height={styles.height}>
 			<Card order={styles.order} width={styles.width} height={styles.height} x={position.x} y={position.y} className={sxCardBox}>
-				<button type='button' aria-label='打开音乐播放器' {...stylex.props(sx.fullLink)} onClick={() => router.push('/music')} />
+				<button type='button' aria-label={t('music.openPlayer')} {...stylex.props(sx.fullLink)} onClick={() => router.push('/music')} />
 				{enableChristmas && (
 					<>
-						<img
-							src='/images/christmas/snow-10.webp'
-							alt=''
-							{...stylex.props(sx.snow)}
-							style={{ width: 120, left: -8, top: -12, opacity: 0.8 }}
-						/>
-						<img
-							src='/images/christmas/snow-11.webp'
-							alt=''
-							{...stylex.props(sx.snow)}
-							style={{ width: 80, right: -10, top: -12, opacity: 0.8 }}
-						/>
+						<img src='/images/christmas/snow-10.webp' alt='' {...stylex.props(sx.snow)} style={{ width: 120, left: -8, top: -12, opacity: 0.8 }} />
+						<img src='/images/christmas/snow-11.webp' alt='' {...stylex.props(sx.snow)} style={{ width: 80, right: -10, top: -12, opacity: 0.8 }} />
 					</>
 				)}
 				<MusicSVG {...stylex.props(sx.icon)} />
 				<div {...stylex.props(sx.info)}>
-					<div {...stylex.props(sx.title)}>{loading ? '正在加载歌单…' : currentTrack?.name || '音乐播放器'}</div>
+					<div {...stylex.props(sx.title)}>{loading ? t('music.loadingPlaylist') : currentTrack?.name || t('music.title')}</div>
 					<div {...stylex.props(sx.track)}>
 						<div {...stylex.props(util.bgLinear, sx.fill)} style={{ width: `${progress}%` }} />
 					</div>
 				</div>
 				<button
 					type='button'
-					aria-label={isPlaying ? '暂停' : '播放'}
+					aria-label={isPlaying ? t('music.pause') : t('music.play')}
 					onClick={event => {
 						event.stopPropagation()
 						togglePlay()

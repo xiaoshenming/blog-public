@@ -10,6 +10,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { BlogSidebar } from '@/components/blog-sidebar'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { useI18n } from '@/i18n/context'
 
 type BlogPreviewProps = {
 	markdown: string
@@ -107,20 +108,17 @@ export function BlogPreview({ markdown, title, tags, date, summary, cover, slug,
 	const { maxSM: isMobile } = useSize()
 	const { content, toc, loading } = useMarkdownRender(markdown)
 	const { siteContent } = useConfigStore()
+	const { t } = useI18n()
 	const summaryInContent = siteContent.summaryInContent ?? false
 	const { className: proseClassName } = stylex.props(styles.proseBody)
 
 	if (loading) {
-		return <div {...stylex.props(styles.loading)}>渲染中...</div>
+		return <div {...stylex.props(styles.loading)}>{t('blog.rendering')}</div>
 	}
 
 	return (
 		<div {...stylex.props(styles.container)}>
-			<motion.article
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ delay: INIT_DELAY }}
-				{...stylex.props(card.base, styles.article)}>
+			<motion.article initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: INIT_DELAY }} {...stylex.props(card.base, styles.article)}>
 				<div>
 					<div {...stylex.props(styles.title)}>{title}</div>
 
@@ -134,7 +132,9 @@ export function BlogPreview({ markdown, title, tags, date, summary, cover, slug,
 
 					{summary && summaryInContent && <div {...stylex.props(styles.summary)}>“{summary}”</div>}
 
-					<div ref={proseRef} className={cn(proseClassName, 'prose')}>{content}</div>
+					<div ref={proseRef} className={cn(proseClassName, 'prose')}>
+						{content}
+					</div>
 				</div>
 			</motion.article>
 

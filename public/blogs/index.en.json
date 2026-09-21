@@ -1,0 +1,147 @@
+[
+	{
+		"slug": "tailwind-to-stylex-migration",
+		"title": "Remove Tailwind: A major move of styles in 133 files, CSS reduced by 38%",
+		"summary": "The style system of the entire blog has been changed from Tailwind to StyleX: 21 routes, 133 files, and 19 commits. The main stylesheet has been trimmed by 38%, and several major issues were addressed, along with removing several \"broken out of the original\" hover effects. This is a complete review.",
+		"tags": [
+			"StyleX",
+			"Tailwind",
+			"CSS",
+			"Refactoring"
+		],
+		"category": "Code implementation"
+	},
+	{
+		"slug": "human-needs-idle",
+		"title": "People need Idle: written before leaving the job",
+		"summary": "From April until my departure, as I integrated AI into real production, I gradually realized that systems can keep processing events, but humans should not.",
+		"tags": [
+			"Resignation",
+			"AI",
+			"Agent",
+			"Work"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "liuxiandong-night-after-work",
+		"title": "The night in Liuxiandong is brightly lit",
+		"summary": "After the gathering, stepping into the night of Liuxiandong, amidst brightly lit office buildings and hot air, one sees the routine of Shenzhen and feels a sense of relaxation as the project progresses steadily.",
+		"tags": [
+			"Shenzhen",
+			"Liuxiandong",
+			"Work",
+			"Agent"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "birthday-in-shenzhen",
+		"title": "In Shenzhen, I celebrated my own birthday.",
+		"summary": "Between work pressure and a strange city, a late birthday was celebrated with a dinner, a night walk, and two movies.",
+		"tags": [
+			"Birthday",
+			"Shenzhen",
+			"Movies",
+			"Life"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "birthday-almost-forgotten",
+		"title": "Almost forgot my birthday",
+		"summary": "I was so busy that I didn’t remember my birthday until 11:40 p.m., and by searching through old photos, I saw again those people in college who were not many but very important.",
+		"tags": [
+			"Birthday",
+			"Life",
+			"University Memories"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "pretext-text-layout-magic",
+		"title": "Pretext: The dark magic that makes text flow like water",
+		"summary": "A 15KB zero-dependency library that makes text measurement 300-600 times faster. Drag the dragon! Watch the text flow around in real time.",
+		"tags": [
+			"pretext",
+			"Text layout",
+			"Performance optimization",
+			"Open source"
+		],
+		"category": "Open source"
+	},
+	{
+		"slug": "timezone-confusion-tonight-9pm",
+		"title": "The overseas customer said \"9 o’clock tonight,\" and I almost exploded on the spot",
+		"summary": "When American clients say \"9 o’clock tonight,\" do you think it's 9 o’clock in the Chinese evening? No, it's 9 o’clock in the Chinese morning! I start work at 10 and wake up at 9:45 only to find the client has already gone to sleep...",
+		"tags": [
+			"Time Zone",
+			"Pitfalls",
+			"Cross-border Collaboration"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "aigc-rewrite-experience",
+		"title": "AI writing paraphrasing guide: The journey from 66.6% to 8.5% transformation",
+		"summary": "From 66.6% AI rate to 8.5%, how I achieved this breakthrough using the Claude Opus model combined with carefully designed prompts",
+		"tags": [
+			"AI paraphrasing",
+			"Academic writing",
+			"Experience sharing",
+			"Claude"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "mirror-sources-guide-complete",
+		"title": "Things I have to talk about with the mirror source",
+		"summary": "2026 latest solution! Use Clash Verge + alias for ArchLinux, with a single px command to make any tool use proxies instantly",
+		"tags": [
+			"Development tools",
+			"Image source",
+			"Proxy"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "my-git-disaster-experience",
+		"title": "My Git disaster diary: The embarrassing experience of submitting 180 files with errors",
+		"summary": "Whoa, everyone, I got screwed! %% Who could understand this?",
+		"tags": [
+			"Git",
+			"Pitfalls"
+		],
+		"category": "Summary"
+	},
+	{
+		"slug": "vuejs-capacitor-mobile-app-encapsulation",
+		"title": "There are only 6 steps to encapsulate Vue.js for mobile: packaging → configuration → compilation → initialization → add platform → sync",
+		"summary": "Have a front-end project that allows quick packaging of apps!",
+		"tags": [
+			"Front-end development",
+			"Vue"
+		],
+		"category": "Code implementation"
+	},
+	{
+		"slug": "java-design-patterns-guide",
+		"title": "A Practical Guide to Design Principles and Patterns in Java Development",
+		"summary": "Tired of code that breaks after a single modification? This article explains Java design principles and patterns in the simplest way possible to make your code easier to maintain.",
+		"tags": [
+			"Backend development",
+			"JAVA"
+		],
+		"category": "Code implementation"
+	},
+	{
+		"slug": "liquid-grass",
+		"title": "Fun liquid glass",
+		"summary": "It's very easy to achieve this liquid glass effect, amazing!",
+		"tags": [
+			"Liquid glass",
+			"iOS"
+		],
+		"category": "Code implementation"
+	}
+]

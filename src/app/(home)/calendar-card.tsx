@@ -4,13 +4,13 @@ import { useConfigStore } from './stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { CARD_SPACING } from '@/consts'
 import dayjs from 'dayjs'
+import 'dayjs/locale/en'
 import 'dayjs/locale/zh-cn'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { util } from '@/styles/shared/util.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
-
-dayjs.locale('zh-cn')
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -75,14 +75,19 @@ const sx = stylex.create({
 })
 
 export default function CalendarCard() {
+	const { locale, t } = useI18n()
 	const center = useCenterStore()
-	const { styles, hiCardWidth, clockCardOffset, enableChristmas } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.calendarCard,
-		hiCardWidth: s.cardStyles.hiCard.width,
-		clockCardOffset: s.cardStyles.clockCard.offset,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-	})))
-	const now = dayjs()
+	const { styles, hiCardWidth, clockCardOffset, enableChristmas } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.calendarCard,
+			hiCardWidth: s.cardStyles.hiCard.width,
+			clockCardOffset: s.cardStyles.clockCard.offset,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined
+		}))
+	)
+	const now = dayjs().locale(locale === 'en' ? 'en' : 'zh-cn')
+	/** 星期表头（周一在前），单字随语言切换 */
+	const weekdayLabels = [t('home.weekMon'), t('home.weekTue'), t('home.weekWed'), t('home.weekThu'), t('home.weekFri'), t('home.weekSat'), t('home.weekSun')]
 	const currentDate = now.date()
 	const firstDayOfMonth = now.startOf('month')
 	const firstDayWeekday = (firstDayOfMonth.day() + 6) % 7
@@ -114,7 +119,7 @@ export default function CalendarCard() {
 						const isCurrentWeekday = index === currentWeekday
 						return (
 							<li key={index} {...stylex.props(sx.cell, isCurrentWeekday && sx.weekdayActive)}>
-								{dates[index]}
+								{weekdayLabels[index]}
 							</li>
 						)
 					})}
@@ -137,5 +142,3 @@ export default function CalendarCard() {
 		</HomeDraggableLayer>
 	)
 }
-
-const dates = ['一', '二', '三', '四', '五', '六', '日']
