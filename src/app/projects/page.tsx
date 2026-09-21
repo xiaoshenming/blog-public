@@ -13,6 +13,7 @@ import initialList from './list.json'
 import initialListEn from './list.en.json'
 import type { ImageItem } from './components/image-upload-dialog'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -111,7 +112,7 @@ export default function Page() {
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
-	const displayProjects = !isEditMode && locale === 'en' ? (initialListEn as Project[]) : projects
+	const displayProjects = !isEditMode && locale !== DEFAULT_LOCALE ? (initialListEn as Project[]) : projects
 
 	const handleUpdate = (updatedProject: Project, oldProject: Project, imageItem?: ImageItem) => {
 		setProjects(prev => prev.map(p => (p.url === oldProject.url ? updatedProject : p)))

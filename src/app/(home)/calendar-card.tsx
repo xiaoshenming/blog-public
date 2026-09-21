@@ -11,6 +11,7 @@ import { colors } from '@/styles/tokens.stylex'
 import { util } from '@/styles/shared/util.stylex'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -85,7 +86,7 @@ export default function CalendarCard() {
 			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined
 		}))
 	)
-	const now = dayjs().locale(locale === 'en' ? 'en' : 'zh-cn')
+	const now = dayjs().locale(locale === DEFAULT_LOCALE ? 'zh-cn' : locale)
 	/** 星期表头（周一在前），单字随语言切换 */
 	const weekdayLabels = [t('home.weekMon'), t('home.weekTue'), t('home.weekWed'), t('home.weekThu'), t('home.weekFri'), t('home.weekSat'), t('home.weekSun')]
 	const currentDate = now.date()

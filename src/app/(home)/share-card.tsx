@@ -13,6 +13,7 @@ import { HomeDraggableLayer } from './home-draggable-layer'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -95,7 +96,7 @@ export default function ShareCard() {
 	const { locale, t } = useI18n()
 
 	useEffect(() => {
-		const shareList = locale === 'en' ? shareListEn : shareListZh
+		const shareList = locale !== DEFAULT_LOCALE ? shareListEn : shareListZh
 		const randomIndex = Math.floor(Math.random() * shareList.length)
 		setRandomItem(shareList[randomIndex])
 	}, [locale])

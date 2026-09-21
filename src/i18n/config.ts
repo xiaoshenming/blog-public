@@ -15,9 +15,13 @@ export function localeLabel(locale: Locale): string {
 	return LOCALE_LABELS[locale]
 }
 
-/** <html lang> 的取值：中文用 zh-CN，英文用 en */
+/** 各语言的 <html lang> 取值；未登记的语言直接用语言码本身 */
+const HTML_LANGS: Partial<Record<Locale, string>> = {
+	zh: 'zh-CN'
+}
+
 export function htmlLang(locale: Locale): string {
-	return locale === 'en' ? 'en' : 'zh-CN'
+	return HTML_LANGS[locale] ?? locale
 }
 
 export function isLocale(value: unknown): value is Locale {

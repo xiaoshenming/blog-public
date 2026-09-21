@@ -13,7 +13,7 @@
 		"name": "TinyPNG",
 		"url": "https://tinypng.com/",
 		"logo": "https://tinypng.com/static/images/george-anim/large_george_x2.webp",
-		"description": "A well-known international tool for compressing images, which was mentioned in old books, but it has size and quantity limitations. It's a good alternative to image compression tools.",
+		"description": "A well-known international tool for compressing images. This website was known in past books, but it has size and quantity limitations. It's a good alternative to image compression tools.",
 		"tags": [
 			"Image"
 		],
@@ -23,7 +23,7 @@
 		"name": "removebg",
 		"url": "https://www.remove.bg/zh",
 		"logo": "/images/share/859bfb2ef1c6a503.svg",
-		"description": "AI image extraction tools feature a simple interface, with results that are better than those provided by Windows' built-in background removal feature. The downside is that there is a free version with size limitations for exports.",
+		"description": "AI image extraction tools feature a simple interface, with results that are better than those provided by Windows' built-in background removal feature. The downside is that while they are free, there are size limitations on exports.",
 		"tags": [
 			"Image",
 			"AI"
@@ -34,7 +34,7 @@
 		"name": "Neumorphism",
 		"url": "https://neumorphism.io/",
 		"logo": "https://neumorphism.io/apple-touch-icon.png",
-		"description": "Neumorphism is a distinctive design style that always inspires awe in newcomers. However, its application is not widespread, and there are many drawbacks in actual development. It is more of a form of remembrance.",
+		"description": "Neumorphism is a distinctive design style that always impresses newcomers. However, its application is not widespread, and there are many drawbacks in actual development. It is more of a keepsake.",
 		"tags": [
 			"CSS",
 			"Github"
@@ -45,7 +45,7 @@
 		"name": "Nucleo",
 		"url": "https://nucleoapp.com/app/?library=core",
 		"logo": "/images/share/7e720f35557fa9de.svg",
-		"description": "The icon library has a clean overall design on the website. What makes it unique is the presence of a category of pixel-style icons, which is quite interesting. There are also many icons, including those in a grass style.",
+		"description": "The icon library has a clean overall design on the website. What makes it unique is the presence of a category of pixel-style icons, which is very interesting. There are also many icons, including those in a grass style.",
 		"tags": [
 			"Icons"
 		],
@@ -55,7 +55,7 @@
 		"name": "Loadership",
 		"url": "https://www.loadership.com/",
 		"logo": "https://www.loadership.com/loadership_logo_round.svg",
-		"description": "13 styles of loaders for online adjustment use. This may mean much less in the AI era.",
+		"description": "13 styles of Loader, adjustable online. This may mean much less in the AI era.",
 		"tags": [
 			"CSS",
 			"Github"
@@ -86,7 +86,7 @@
 		"name": "Magic UI",
 		"url": "https://magicui.design/",
 		"logo": "https://magicui.design/favicon.ico",
-		"description": "shadcn/ui companion library contains many useful designs. It is also easy to use, allowing you to copy independent code by yourself.",
+		"description": "shadcn/ui companion library features many useful designs. It is also easy to use, allowing you to copy independent code on your own.",
 		"tags": [
 			"Component",
 			"Github"
@@ -97,7 +97,7 @@
 		"name": "Ai lman",
 		"url": "https://aliimam.in/docs/backgrounds/shader-rgb",
 		"logo": "https://aliimam.in/_next/image?url=%2Fai-logo-black.png&w=128&q=75",
-		"description": "A class of Magic UI, but it feels lacking. It can be used as a casual option after enjoying Magic.",
+		"description": "A class of Magic UI, but it feels a bit lacking. It can be used as a casual option after enjoying Magic.",
 		"tags": [
 			"Component"
 		],
@@ -107,7 +107,7 @@
 		"name": "Awwwards",
 		"url": "https://www.awwwards.com/",
 		"logo": "https://assets.awwwards.com/assets/images/favicon.svg",
-		"description": "A website selects other websites, and you can always find amazing websites here",
+		"description": "A website selects other websites, and you can always find stunning websites here",
 		"tags": [
 			"Website collection"
 		],
@@ -117,7 +117,7 @@
 		"name": "CSS Design Awards",
 		"url": "https://www.cssdesignawards.com/",
 		"logo": "/images/share/aaae2bf4f74c8eb1.svg",
-		"description": "A website that selects other websites, similar to Awwwards, where you can see the top websites each time. It feels better in terms of experience.",
+		"description": "A website that selects other websites, similar to Awwwards, allowing you to see the top websites each time. It feels better in terms of experience.",
 		"tags": [
 			"Website collection"
 		],
@@ -147,7 +147,7 @@
 		"name": "abeto 官网",
 		"logo": "https://abeto.co/assets/favicon32-11fb90a3.png",
 		"url": "https://abeto.co/",
-		"description": "Infinite unfolding flowers, drifting leaves, vintage style",
+		"description": "Infinite blossoms, drifting leaves, vintage style",
 		"tags": [
 			"3D"
 		],
@@ -157,7 +157,7 @@
 		"name": "Messenger",
 		"logo": "https://messenger.abeto.co/assets/favicon32-BC0QIL61.png",
 		"url": "https://messenger.abeto.co/",
-		"description": "Abeto works feature a cartoon messenger running in a Earth town, online multiplayer, with customizable outfits",
+		"description": "Abeto works feature a cartoon postman running in a Earth town, online multiplayer, with customizable outfits",
 		"tags": [
 			"3D"
 		],
@@ -187,9 +187,9 @@
 		"name": "Making Software",
 		"logo": "https://www.makingsoftware.com/favicon.ico",
 		"url": "https://www.makingsoftware.com/",
-		"description": "Reference manual for software designers and developers. An excellent learning website in terms of layout.",
+		"description": "Reference manual for software designers and developers. A great learning website with its style.",
 		"tags": [
-			"Learn"
+			"Study"
 		],
 		"stars": 4
 	},
@@ -197,7 +197,7 @@
 		"name": "Ease 函数参考",
 		"logo": "https://easings.net/96.8aa68ac4.png",
 		"url": "https://easings.net/",
-		"description": "When adjusting the animation pace, this ease table helps you intuitively understand the effects produced by ease values",
+		"description": "When adjusting the animation rhythm, this ease table helps you intuitively understand the effects produced by ease.",
 		"tags": [
 			"Github"
 		],
@@ -217,7 +217,7 @@
 		"name": "Webp 转换压缩",
 		"logo": "https://www.yysuni.com/images/avatar.png",
 		"url": "https://www.yysuni.com/image-toolbox",
-		"description": "Infinite compression, fast and convenient, allows direct comparison of results",
+		"description": "Infinite compression, fast and convenient, can directly compare results",
 		"tags": [
 			"Image"
 		],
@@ -227,7 +227,7 @@
 		"name": "WoraWork",
 		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
 		"url": "https://worawork.vercel.app/",
-		"description": "Web3D in Grid World has an amazing scene rendering, highly worth experiencing",
+		"description": "Web3D in Grid World has amazing scene rendering, highly worth experiencing",
 		"tags": [
 			"3D"
 		],

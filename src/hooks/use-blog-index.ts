@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 import type { BlogIndexItem } from '@/app/blog/types'
 
 export type { BlogIndexItem } from '@/app/blog/types'
@@ -17,19 +18,19 @@ const fetcher = async (url: string) => {
 	return Array.isArray(data) ? data : []
 }
 
-/** 英文标题/摘要/标签/分类按 slug 覆盖中文索引；en 索引缺失时整体回落中文 */
+/** 非默认语言的语言版标题/摘要/标签/分类按 slug 覆盖中文索引；语言版索引缺失时整体回落中文 */
 async function fetchIndexWithLocale(locale: string): Promise<BlogIndexItem[]> {
 	const list = await fetcher('/blogs/index.json')
-	if (locale !== 'en') return list
+	if (locale === DEFAULT_LOCALE) return list
 	try {
-		const res = await fetch('/blogs/index.en.json', { cache: 'no-store' })
+		const res = await fetch(`/blogs/index.${locale}.json`, { cache: 'no-store' })
 		if (!res.ok) return list
-		const enList: BlogIndexItem[] = await res.json()
+		const localizedList: BlogIndexItem[] = await res.json()
 		const map = new Map(list.map(item => [item.slug, item]))
-		for (const en of enList) {
-			const base = map.get(en.slug)
-			if (base) map.set(en.slug, { ...base, ...en, date: base.date, cover: base.cover })
-			else map.set(en.slug, en)
+		for (const localized of localizedList) {
+			const base = map.get(localized.slug)
+			if (base) map.set(localized.slug, { ...base, ...localized, date: base.date, cover: base.cover })
+			else map.set(localized.slug, localized)
 		}
 		return Array.from(map.values())
 	} catch {

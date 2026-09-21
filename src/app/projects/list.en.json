@@ -2,7 +2,7 @@
 	{
 		"name": "OpenArcade · 午夜街机",
 		"year": 2026,
-		"description": "A plug-and-play micro-gaming hall built for her, open to everyone. The portal, host strategy, and game tapes are completely separate; new games are integrated via SDK without touching the host state. 30 tapes have been launched, all of which are deterministic, replayable, and constructively solvable.",
+		"description": "A plug-and-play micro-gaming hall built for her, open to everyone. The portal, host strategy, and game cartridges are completely separate; new games are integrated via SDK without affecting the host state. 30 cartridges have been launched, all of which are deterministic, replayable, and constructively solvable.",
 		"image": "/images/project/openarcade.svg",
 		"url": "https://game.zmark.top/",
 		"tags": [
@@ -16,7 +16,7 @@
 	{
 		"name": "pptx-storyboard · 分镜成片",
 		"year": 2026,
-		"description": "Convert PowerPoint original animations into videos with explanations: analyze animation timestamps per page, automatically split scenes, generate narration text, use neural voice synthesis, and finally render a 1080p video with subtitles. All operations run locally, and a 19-page lesson set took only 7 minutes to produce the final video.",
+		"description": "Convert PowerPoint original animations into video with explanations: analyze animation timestamps per page, automatically split scenes, generate narration, produce neural voiceover, and finally render a 1080p video with subtitles. All operations run locally, and a 19-page lesson set took only 7 minutes to produce the final video.",
 		"image": "/images/project/pptx-storyboard.svg",
 		"url": "https://github.com/xiaoshenming/pptx-storyboard",
 		"tags": [
@@ -30,7 +30,7 @@
 	{
 		"name": "dsh-session-surgeon",
 		"year": 2026,
-		"description": "DeepSeek Harness Conversation Emergency Plugin: Fixes conversation files that cannot open (seq gaps, zstd corruption, isolated agents), and can also copy the conversation ID to a new dialogue to continue the conversation. It is also my first project to achieve a star rating.",
+		"description": "DeepSeek Harness Conversation Emergency Plugin: Fixes conversation files that cannot open (seq gaps, zstd corruption, isolated agents), and can also copy the conversation ID to a new dialogue to continue the conversation. It is also my first project to reach the star rating.",
 		"image": "/images/project/dsh-session-surgeon.svg",
 		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
 		"tags": [
@@ -43,7 +43,7 @@
 	{
 		"name": "CC Switch Auth Converter",
 		"year": 2026,
-		"description": "A pure static single-page tool with just an index.html file, zero dependencies, and zero build required. It converts any Codex or ChatGPT authentication JSON into an auth.json file compatible with CC Switch, with tokens stored locally on the device.",
+		"description": "A pure static single-page tool with just an index.html file, zero dependencies, and no build process. It converts any Codex or ChatGPT authentication JSON into an auth.json file compatible with CC Switch, ensuring tokens remain on the device itself.",
 		"image": "/images/project/ccswitch-auth-converter.svg",
 		"url": "https://ccswitch.zmark.top/",
 		"tags": [
@@ -57,7 +57,7 @@
 	{
 		"name": "我的博客",
 		"year": 2025,
-		"description": "The website you are viewing is built based on the open-source blog project 2025-blog, where the frontend serves as the backend: you can write and manage content without writing code. It is for recording frontend development, exploration, and notes.",
+		"description": "The website you are viewing is built based on the open-source blog project 2025-blog, where the frontend serves as the backend: you can write and manage content without writing code. It features records of frontend development, exploration, and notes.",
 		"image": "https://blog.zmark.top/favicon.png",
 		"url": "https://blog.zmark.top",
 		"tags": [
@@ -70,7 +70,7 @@
 	{
 		"name": "multi-tool",
 		"year": 2026,
-		"description": "Designed for a multi-functional small tool on the Linux desktop based on niri + noctalia-shell, written in QML.",
+		"description": "Designed for a multi-functional small tool on Linux desktop based on niri + noctalia-shell, written in QML.",
 		"image": "/images/project/multi-tool.svg",
 		"url": "https://github.com/xiaoshenming/multi-tool",
 		"tags": [

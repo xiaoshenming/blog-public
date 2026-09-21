@@ -1,6 +1,6 @@
-import { en } from './dictionaries/en'
 import { zh, type Dictionary } from './dictionaries/zh'
 import { DEFAULT_LOCALE, type Locale } from './config'
+import { dictionaries } from './locales'
 
 export type TranslationParams = Record<string, string | number>
 
@@ -8,7 +8,10 @@ export type TranslationParams = Record<string, string | number>
 type DomainKeys<T> = { [K in keyof T & string]: T[K] extends string ? K : never }[keyof T & string]
 export type TranslationKey = { [D in keyof Dictionary & string]: `${D}.${DomainKeys<Dictionary[D]>}` }[keyof Dictionary & string]
 
-const dictionaries: Record<Locale, Dictionary> = { zh, en }
+/** 当前语言缺字典时整体回落中文（注册表不强制校验结构，key 级回落在此兜底） */
+function dictionaryOf(locale: Locale): Dictionary {
+	return (locale !== DEFAULT_LOCALE ? (dictionaries[locale] as Dictionary | undefined) : undefined) ?? zh
+}
 
 /** 非 React 环境的当前语言；由 I18nProvider 在挂载与切换时同步 */
 let activeLocale: Locale = DEFAULT_LOCALE
@@ -31,7 +34,7 @@ function resolve(dict: Dictionary, key: string): string | undefined {
  * 非组件环境（工具函数、store 等）也可直接调用。
  */
 export function translate(locale: Locale, key: TranslationKey, params?: TranslationParams): string {
-	const raw = resolve(dictionaries[locale], key) ?? resolve(zh, key)
+	const raw = resolve(dictionaryOf(locale), key) ?? resolve(zh, key)
 	if (raw === undefined) {
 		if (process.env.NODE_ENV !== 'production') console.warn(`[i18n] 缺少文案: ${key}`)
 		return key

@@ -2,7 +2,7 @@
  * UI 字典翻译：读 src/i18n/dictionaries/zh/*.ts，经本地 LLM 翻译生成 en/*.ts 与 en/index.ts。
  * 增量语义：en 文件里已有的译文保留（可人工校对后重跑不丢），只翻新增 key；--force 全量重翻。
  */
-import { existsSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { chat, mapWithConcurrency } from './client'
@@ -10,7 +10,7 @@ import { translateConfig } from './env'
 import { multiParagraphUser, singleParagraphUser, uiSystem } from './prompt'
 
 const ZH_DIR = resolve(process.cwd(), 'src/i18n/dictionaries/zh')
-const EN_DIR = resolve(process.cwd(), 'src/i18n/dictionaries/en')
+const TARGET_DIR = resolve(process.cwd(), `src/i18n/dictionaries/${translateConfig.targetLocale}`)
 const DOMAINS = ['collections', 'common', 'nav', 'home', 'blog', 'about', 'music', 'toolbox', 'bloggers', 'write', 'config', 'admin', 'dialogs'] as const
 const force = process.argv.includes('--force')
 
@@ -73,17 +73,26 @@ async function translateEntries(entries: Entries): Promise<Entries> {
 	return results
 }
 
+/** 输出与项目 prettier 风格一致的字符串字面量（含单引号且不含双引号时用双引号包裹），重跑零格式 diff */
+function toLiteral(value: string): string {
+	if (value.includes("'") && !value.includes('"')) {
+		return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+	}
+	return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+}
+
 function toTsModule(domain: string, entries: Entries): string {
-	const lines = Object.entries(entries).map(([key, value]) => `\t${key}: ${JSON.stringify(value)}`)
+	const lines = Object.entries(entries).map(([key, value]) => `\t${key}: ${toLiteral(value)}`)
 	return `// 由 scripts/i18n/dict.ts 生成；可直接手工修正，重跑默认保留已有译文（--force 覆盖）\nexport const ${domain} = {\n${lines.join(',\n')}\n}\n`
 }
 
 async function main() {
 	let translatedCount = 0
+	if (!existsSync(TARGET_DIR)) mkdirSync(TARGET_DIR, { recursive: true })
 
 	for (const domain of DOMAINS) {
 		const zhEntries = await importDictionary(ZH_DIR, domain)
-		const oldEntries = force ? {} : await importDictionary(EN_DIR, domain)
+		const oldEntries = force ? {} : await importDictionary(TARGET_DIR, domain)
 
 		const pending: Entries = {}
 		const merged: Entries = {}
@@ -100,7 +109,7 @@ async function main() {
 		Object.assign(merged, translated)
 		translatedCount += Object.keys(pending).length
 
-		await writeFile(resolve(EN_DIR, `${domain}.ts`), toTsModule(domain, merged), 'utf8')
+		await writeFile(resolve(TARGET_DIR, `${domain}.ts`), toTsModule(domain, merged), 'utf8')
 		console.log(`✓ ${domain}: ${Object.keys(zhEntries).length} 条（本次翻译 ${Object.keys(pending).length}）`)
 	}
 
@@ -109,11 +118,12 @@ async function main() {
 }
 
 async function writeAggregatedIndex() {
-	// 聚合文件最后写，确保引用的域文件都已生成
+	// 聚合文件最后写，确保引用的域文件都已生成；导出名即语言码（en/ja/...），与 src/i18n/locales.ts 的注册一致
 	const imports = DOMAINS.map(domain => `import { ${domain} } from './${domain}'`).join('\n')
+	const exportName = translateConfig.targetLocale
 	await writeFile(
-		resolve(EN_DIR, 'index.ts'),
-		`// 由 scripts/i18n/dict.ts 生成：聚合英文字典各域\n${imports}\n\nexport const en = { ${DOMAINS.join(', ')} }\n`,
+		resolve(TARGET_DIR, 'index.ts'),
+		`// 由 scripts/i18n/dict.ts 生成：聚合 ${exportName} 字典各域\n${imports}\n\nexport const ${exportName} = { ${DOMAINS.join(', ')} }\n`,
 		'utf8'
 	)
 }

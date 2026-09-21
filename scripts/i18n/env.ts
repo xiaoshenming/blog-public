@@ -26,11 +26,43 @@ if (!base || !key || !model) {
 	process.exit(1)
 }
 
+const LANGUAGE_NAMES: Record<string, string> = {
+	en: 'English',
+	ja: 'Japanese',
+	ko: 'Korean',
+	fr: 'French',
+	de: 'German',
+	es: 'Spanish',
+	pt: 'Portuguese',
+	it: 'Italian',
+	ru: 'Russian',
+	th: 'Thai',
+	vi: 'Vietnamese',
+	id: 'Indonesian',
+	ar: 'Arabic',
+	'zh-TW': 'Traditional Chinese'
+}
+
+function resolveTargetLanguage(): string {
+	const explicit = process.env.TRANSLATE_TARGET_LANGUAGE
+	if (explicit) return explicit
+	const locale = process.env.TRANSLATE_TARGET || 'en'
+	const name = LANGUAGE_NAMES[locale]
+	if (!name) {
+		console.error(`未知目标语言码 "${locale}"：请设置 TRANSLATE_TARGET_LANGUAGE（提示词用的语言英文名，如 German）`)
+		process.exit(1)
+	}
+	return name
+}
+
 export const translateConfig = {
 	baseUrl: base.replace(/\/$/, ''),
 	apiKey: key,
 	model,
-	targetLanguage: 'English',
+	/** 目标语言的语言码（目录名/文件后缀），如 en / ja / ko */
+	targetLocale: process.env.TRANSLATE_TARGET || 'en',
+	/** 目标语言的英文名（提示词 "Translate to ..." 用）；未设置时按常见语言码推导，未知语言码必须显式提供 */
+	targetLanguage: resolveTargetLanguage(),
 	/** 同时在途的翻译请求数；本地服务无网络开销，适度并发即可 */
 	concurrency: 4,
 	/** 每次请求的最大段落数（沉浸式翻译建议 4，过大易缺段/错位） */

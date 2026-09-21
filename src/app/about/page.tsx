@@ -16,6 +16,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 
 /** 本页样式（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
 const styles = stylex.create({
@@ -190,7 +191,7 @@ export default function Page() {
 
 	// 浏览态按当前语言展示（英文缺失字段回落中文）；编辑态始终编辑中文源文件，保存不会波及英文版
 	const enData = initialDataEn as Partial<AboutData> | undefined
-	const displayData: AboutData = !isEditMode && locale === 'en' && enData ? { ...data, ...enData } : data
+	const displayData: AboutData = !isEditMode && locale !== DEFAULT_LOCALE && enData ? { ...data, ...enData } : data
 	const { content, loading } = useMarkdownRender(displayData.content)
 
 	const handleChoosePrivateKey = async (file: File) => {

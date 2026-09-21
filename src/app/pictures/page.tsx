@@ -14,6 +14,7 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
 import { useRouter } from 'next/navigation'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -123,7 +124,7 @@ export default function Page() {
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
-	const displayPictures = !isEditMode && locale === 'en' ? (initialListEn as Picture[]) : pictures
+	const displayPictures = !isEditMode && locale !== DEFAULT_LOCALE ? (initialListEn as Picture[]) : pictures
 
 	const handleUploadSubmit = ({ images, description }: { images: ImageItem[]; description: string }) => {
 		const now = new Date().toISOString()

@@ -1,4 +1,4 @@
-// 由 scripts/i18n/dict.ts 生成：聚合英文字典各域
+// 由 scripts/i18n/dict.ts 生成：聚合 en 字典各域
 import { collections } from './collections'
 import { common } from './common'
 import { nav } from './nav'

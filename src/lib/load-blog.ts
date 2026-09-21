@@ -1,4 +1,4 @@
-import type { Locale } from '@/i18n/config'
+import { DEFAULT_LOCALE, type Locale } from '@/i18n/config'
 import type { BlogConfig } from '@/app/blog/types'
 
 export type { BlogConfig } from '@/app/blog/types'
@@ -13,22 +13,22 @@ export type LoadedBlog = {
 /**
  * Load blog data from public/blogs/{slug}
  * Used by both view page and edit page.
- * 英文模式优先取 *.en 变体（index.en.md / config.en.json），缺失时回落中文原文。
+ * 非默认语言优先取语言变体（index.<locale>.md / config.<locale>.json），缺失时回落中文原文。
  */
-export async function loadBlog(slug: string, locale: Locale = 'zh'): Promise<LoadedBlog> {
+export async function loadBlog(slug: string, locale: Locale = DEFAULT_LOCALE): Promise<LoadedBlog> {
 	if (!slug) {
 		throw new Error('Slug is required')
 	}
 
 	const path = `blogs/${encodeURIComponent(slug)}`
 
-	// Load config.json（en 优先 config.en.json）
+	// Load config.json（非默认语言优先 config.<locale>.json）
 	let config: BlogConfig = {}
-	if (locale === 'en') {
-		const enConfigRes = await fetch(`/${path}/config.en.json`)
-		if (enConfigRes.ok) {
+	if (locale !== DEFAULT_LOCALE) {
+		const localizedRes = await fetch(`/${path}/config.${locale}.json`)
+		if (localizedRes.ok) {
 			try {
-				config = await enConfigRes.json()
+				config = await localizedRes.json()
 			} catch {
 				config = {}
 			}
@@ -46,11 +46,11 @@ export async function loadBlog(slug: string, locale: Locale = 'zh'): Promise<Loa
 		}
 	}
 
-	// Load index.md（en 优先 index.en.md，缺失回落中文）
+	// Load index.md（非默认语言优先 index.<locale>.md，缺失回落中文）
 	let markdown = ''
-	if (locale === 'en') {
-		const enMdRes = await fetch(`/${path}/index.en.md`)
-		if (enMdRes.ok) markdown = await enMdRes.text()
+	if (locale !== DEFAULT_LOCALE) {
+		const localizedRes = await fetch(`/${path}/index.${locale}.md`)
+		if (localizedRes.ok) markdown = await localizedRes.text()
 	}
 	if (!markdown) {
 		const mdRes = await fetch(`/${path}/index.md`)

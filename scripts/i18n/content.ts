@@ -1,10 +1,10 @@
 /**
  * 内容翻译：把博客正文与内容 JSON 翻成英文变体文件（缺失时站点运行时回落中文）。
- *  - public/blogs/<slug>/index.md        → index.en.md（--skip-existing 时已存在则跳过）
- *  - public/blogs/<slug>/config.json     → config.en.json（title/summary/tags/category）
- *  - public/blogs/index.json             → index.en.json；categories.json → categories.en.json
- *  - src/app/about/list.json             → list.en.json
- *  - src/app/{share,projects,pictures}/list.json、snippets/list.json → list.en.json（只翻文本字段）
+ *  - public/blogs/<slug>/index.md        → index.<locale>.md（--skip-existing 时已存在则跳过）
+ *  - public/blogs/<slug>/config.json     → config.<locale>.json（title/summary/tags/category）
+ *  - public/blogs/index.json             → index.<locale>.json；categories.json → categories.<locale>.json
+ *  - src/app/about/list.json             → list.<locale>.json
+ *  - src/app/{share,projects,pictures}/list.json、snippets/list.json → list.<locale>.json（只翻文本字段）
  */
 import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -16,6 +16,9 @@ import { translateMarkdown } from './markdown'
 
 const skipExisting = process.argv.includes('--skip-existing')
 const only = process.argv.find(arg => arg.startsWith('--only='))?.slice(7)
+
+/** 目标语言码：文件变体后缀（.en / .ja / ...），由 TRANSLATE_TARGET 控制 */
+const t = translateConfig.targetLocale
 
 const BLOGS_DIR = resolve(process.cwd(), 'public/blogs')
 
@@ -54,62 +57,82 @@ async function translateBlogPost(slug: string) {
 	const mdPath = resolve(dir, 'index.md')
 	if (!existsSync(mdPath)) return
 
-	if (skipExisting && existsSync(resolve(dir, 'index.en.md'))) {
+	if (skipExisting && existsSync(resolve(dir, `index.${t}.md`))) {
 		console.log(`- 跳过已有译文: ${slug}`)
 	} else {
 		const markdown = await readFile(mdPath, 'utf8')
 		const translated = await translateMarkdown(markdown)
-		await writeFile(resolve(dir, 'index.en.md'), translated, 'utf8')
+		await writeFile(resolve(dir, `index.${t}.md`), translated, 'utf8')
 		console.log(`✓ 文章: ${slug}（${markdown.length} → ${translated.length} 字符）`)
 	}
 
 	const configPath = resolve(dir, 'config.json')
+	const localizedConfigPath = resolve(dir, `config.${t}.json`)
 	if (existsSync(configPath)) {
-		const config = JSON.parse(await readFile(configPath, 'utf8'))
-		const translatedConfig = await translateFields(config, { text: ['title', 'summary', 'category'], list: ['tags'] })
-		await writeFile(resolve(dir, 'config.en.json'), JSON.stringify(translatedConfig, null, '\t'), 'utf8')
-		console.log(`✓ config: ${slug}`)
+		if (skipExisting && existsSync(localizedConfigPath)) {
+			console.log(`- 跳过已有 config: ${slug}`)
+		} else {
+			const config = JSON.parse(await readFile(configPath, 'utf8'))
+			const translatedConfig = await translateFields(config, { text: ['title', 'summary', 'category'], list: ['tags'] })
+			await writeFile(localizedConfigPath, JSON.stringify(translatedConfig, null, '\t'), 'utf8')
+			console.log(`✓ config: ${slug}`)
+		}
 	}
 }
 
 async function translateBlogsIndex() {
-	const list: Array<Record<string, unknown>> = JSON.parse(await readFile(resolve(BLOGS_DIR, 'index.json'), 'utf8'))
-	const translated = await mapWithConcurrency(list, translateConfig.concurrency, item =>
-		translateFields(item, { text: ['title', 'summary', 'category'], list: ['tags'] })
-	)
-	// en 索引只保留文本字段，date/cover/slug/hidden 以中文索引为准
-	const stripped = translated.map(item => {
-		const { slug, title, summary, tags, category } = item
-		return {
-			slug,
-			...(title !== undefined && { title }),
-			...(summary !== undefined && { summary }),
-			...(tags !== undefined && { tags }),
-			...(category !== undefined && { category })
-		}
-	})
-	await writeFile(resolve(BLOGS_DIR, 'index.en.json'), JSON.stringify(stripped, null, '\t'), 'utf8')
-	console.log(`✓ blogs/index.en.json（${stripped.length} 条）`)
+	const localizedIndexPath = resolve(BLOGS_DIR, `index.${t}.json`)
+	if (skipExisting && existsSync(localizedIndexPath)) {
+		console.log(`- 跳过已有: blogs/index.${t}.json`)
+	} else {
+		const list: Array<Record<string, unknown>> = JSON.parse(await readFile(resolve(BLOGS_DIR, 'index.json'), 'utf8'))
+		const translated = await mapWithConcurrency(list, translateConfig.concurrency, item =>
+			translateFields(item, { text: ['title', 'summary', 'category'], list: ['tags'] })
+		)
+		// 语言版索引只保留文本字段，date/cover/slug/hidden 以中文索引为准
+		const stripped = translated.map(item => {
+			const { slug, title, summary, tags, category } = item
+			return {
+				slug,
+				...(title !== undefined && { title }),
+				...(summary !== undefined && { summary }),
+				...(tags !== undefined && { tags }),
+				...(category !== undefined && { category })
+			}
+		})
+		await writeFile(localizedIndexPath, JSON.stringify(stripped, null, '\t'), 'utf8')
+		console.log(`✓ blogs/index.${t}.json（${stripped.length} 条）`)
+	}
 
 	const categoriesPath = resolve(BLOGS_DIR, 'categories.json')
 	if (existsSync(categoriesPath)) {
 		const { categories } = JSON.parse(await readFile(categoriesPath, 'utf8'))
-		await writeFile(resolve(BLOGS_DIR, 'categories.en.json'), JSON.stringify({ categories: await translateList(categories) }, null, '\t'), 'utf8')
-		console.log('✓ categories.en.json')
+		await writeFile(resolve(BLOGS_DIR, `categories.${t}.json`), JSON.stringify({ categories: await translateList(categories) }, null, '\t'), 'utf8')
+		console.log(`✓ categories.${t}.json`)
 	}
 }
 
 async function translateAbout() {
+	const localizedPath = resolve(process.cwd(), `src/app/about/list.${t}.json`)
+	if (skipExisting && existsSync(localizedPath)) {
+		console.log(`- 跳过已有: about/list.${t}.json`)
+		return
+	}
 	const data = JSON.parse(await readFile(resolve(process.cwd(), 'src/app/about/list.json'), 'utf8'))
 	const output = { ...data }
 	if (hasChinese(data.title)) output.title = await translateText(data.title)
 	if (hasChinese(data.description)) output.description = await translateText(data.description)
 	if (hasChinese(data.content)) output.content = await translateMarkdown(data.content)
-	await writeFile(resolve(process.cwd(), 'src/app/about/list.en.json'), JSON.stringify(output, null, '\t') + '\n', 'utf8')
-	console.log('✓ about/list.en.json')
+	await writeFile(localizedPath, JSON.stringify(output, null, '\t') + '\n', 'utf8')
+	console.log(`✓ about/list.${t}.json`)
 }
 
 async function translateListFile(page: 'share' | 'projects' | 'pictures' | 'snippets') {
+	const localizedPath = resolve(process.cwd(), `src/app/${page}/list.${t}.json`)
+	if (skipExisting && existsSync(localizedPath)) {
+		console.log(`- 跳过已有: ${page}/list.${t}.json`)
+		return
+	}
 	const path = resolve(process.cwd(), `src/app/${page}/list.json`)
 	const data = JSON.parse(await readFile(path, 'utf8'))
 
@@ -121,8 +144,8 @@ async function translateListFile(page: 'share' | 'projects' | 'pictures' | 'snip
 		const fields = page === 'pictures' ? { text: ['description'], list: [] } : { text: ['description'], list: ['tags'] }
 		output = await mapWithConcurrency(data as Array<Record<string, unknown>>, translateConfig.concurrency, item => translateFields(item, fields))
 	}
-	await writeFile(resolve(process.cwd(), `src/app/${page}/list.en.json`), JSON.stringify(output, null, '\t') + '\n', 'utf8')
-	console.log(`✓ ${page}/list.en.json`)
+	await writeFile(localizedPath, JSON.stringify(output, null, '\t') + '\n', 'utf8')
+	console.log(`✓ ${page}/list.${t}.json`)
 }
 
 async function main() {

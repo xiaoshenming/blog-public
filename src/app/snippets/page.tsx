@@ -12,6 +12,7 @@ import initialListEn from './list.en.json'
 import { pushSnippets } from './services/push-snippets'
 import * as stylex from '@stylexjs/stylex'
 import { useI18n } from '@/i18n/context'
+import { DEFAULT_LOCALE } from '@/i18n/config'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { util } from '@/styles/shared/util.stylex'
@@ -227,7 +228,7 @@ export default function Page() {
 	const enSnippet = useMemo(() => getRandomSnippet(initialListEn as string[]), [])
 
 	/** 访客态英文展示英文句子；编辑态固定中文（中文为管理端数据源） */
-	const displaySnippet = !isEditMode && locale === 'en' ? enSnippet || currentSnippet : currentSnippet
+	const displaySnippet = !isEditMode && locale !== DEFAULT_LOCALE ? enSnippet || currentSnippet : currentSnippet
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
