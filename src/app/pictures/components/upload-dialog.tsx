@@ -8,6 +8,7 @@ import { DialogModal } from '@/components/dialog-modal'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { ImageItem } from '../../projects/components/image-upload-dialog'
 
 interface UploadDialogProps {
@@ -233,6 +234,7 @@ const styles = stylex.create({
 })
 
 export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
+	const { t } = useI18n()
 	const [description, setDescription] = useState('')
 	const [images, setImages] = useState<ImageItem[]>([])
 	const fileInputRef = useRef<HTMLInputElement>(null)
@@ -245,7 +247,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 
 		for (const file of files) {
 			if (!file.type.startsWith('image/')) {
-				toast.error('请选择图片文件')
+				toast.error(t('dialogs.selectImageFile'))
 				return
 			}
 
@@ -262,7 +264,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 
 	const handleSubmit = () => {
 		if (images.length === 0) {
-			toast.error('请至少选择一张图片')
+			toast.error(t('dialogs.selectAtLeastOneImage'))
 			return
 		}
 
@@ -290,19 +292,17 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 	return (
 		<DialogModal open onClose={handleClose} style={[card.base, styles.dialogWidth]}>
 			<div>
-				<h2 {...stylex.props(styles.title)}>上传图片</h2>
+				<h2 {...stylex.props(styles.title)}>{t('dialogs.uploadImageTitle')}</h2>
 
 				<div {...stylex.props(styles.uploadSection)}>
-					<label {...stylex.props(styles.label)}>选择图片（可多选）</label>
+					<label {...stylex.props(styles.label)}>{t('dialogs.chooseImagesLabel')}</label>
 					<input ref={fileInputRef} type='file' accept='image/*' multiple {...stylex.props(styles.fileInput)} onChange={handleFileSelect} />
 
 					{images.length === 0 ? (
-						<div
-							onClick={() => fileInputRef.current?.click()}
-							{...stylex.props(styles.uploadBox)}>
+						<div onClick={() => fileInputRef.current?.click()} {...stylex.props(styles.uploadBox)}>
 							<div {...stylex.props(styles.uploadHint)}>
 								<Plus {...stylex.props(styles.plusIcon)} />
-								<p {...stylex.props(styles.hintText)}>点击选择图片</p>
+								<p {...stylex.props(styles.hintText)}>{t('dialogs.clickToChooseImages')}</p>
 							</div>
 						</div>
 					) : (
@@ -312,24 +312,22 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 									image.type === 'file' ? (
 										<div
 											key={index}
-											{...stylex.props(styles.previewCard, index === 0 ? styles.previewCardLeft : index === 1 ? styles.previewCardMid : styles.previewCardRight)}>
+											{...stylex.props(
+												styles.previewCard,
+												index === 0 ? styles.previewCardLeft : index === 1 ? styles.previewCardMid : styles.previewCardRight
+											)}>
 											<img src={image.previewUrl} alt={`preview-${index}`} {...stylex.props(styles.previewImage)} />
 										</div>
 									) : null
 								)}
 
-								{images.length > 3 && (
-									<div {...stylex.props(styles.countBadge)}>共 {images.length} 张</div>
-								)}
+								{images.length > 3 && <div {...stylex.props(styles.countBadge)}>{t('dialogs.imageCountTotal', { count: images.length })}</div>}
 							</div>
 
 							<div {...stylex.props(styles.selectionRow)}>
-								<span {...stylex.props(styles.hintText)}>已选择 {images.length} 张图片</span>
-								<button
-									type='button'
-									onClick={() => fileInputRef.current?.click()}
-									{...stylex.props(styles.addMoreButton)}>
-									继续添加
+								<span {...stylex.props(styles.hintText)}>{t('dialogs.selectedImageCount', { count: images.length })}</span>
+								<button type='button' onClick={() => fileInputRef.current?.click()} {...stylex.props(styles.addMoreButton)}>
+									{t('dialogs.addMore')}
 								</button>
 							</div>
 						</>
@@ -337,25 +335,22 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 				</div>
 
 				<div {...stylex.props(styles.descriptionSection)}>
-					<label {...stylex.props(styles.label)}>描述（可选，应用于本次所有图片）</label>
+					<label {...stylex.props(styles.label)}>{t('dialogs.descriptionLabel')}</label>
 					<textarea
 						value={description}
 						onChange={e => setDescription(e.target.value)}
-						placeholder='这组图片的说明...'
+						placeholder={t('dialogs.descriptionPlaceholder')}
 						{...stylex.props(styles.descriptionInput)}
 						rows={3}
 					/>
 				</div>
 
 				<div {...stylex.props(styles.actions)}>
-					<button
-						type='button'
-						onClick={handleClose}
-						{...stylex.props(styles.cancelButton)}>
-						取消
+					<button type='button' onClick={handleClose} {...stylex.props(styles.cancelButton)}>
+						{t('dialogs.cancel')}
 					</button>
 					<button type='button' onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
-						确认上传
+						{t('dialogs.confirmUpload')}
 					</button>
 				</div>
 			</div>

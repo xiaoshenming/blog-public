@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { Select } from '@/components/select'
 import { hashFileSHA256 } from '@/lib/file-utils'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 import type { SocialButtonImageUploads } from './types'
 
@@ -191,6 +192,7 @@ const styles = stylex.create({
 })
 
 export function SocialButtonsSection({ formData, setFormData, socialButtonImageUploads, setSocialButtonImageUploads }: SocialButtonsSectionProps) {
+	const { t } = useI18n()
 	const buttons = (formData.socialButtons || []) as SocialButtonConfig[]
 	const imageInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
@@ -250,7 +252,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('config.selectImageFile'))
 			return
 		}
 
@@ -294,8 +296,8 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 
 	return (
 		<div>
-			<label {...stylex.props(styles.label)}>社交按钮</label>
-			{buttons.length === 0 && <p {...stylex.props(styles.emptyHint)}>暂未配置社交按钮，点击下方「+」添加。</p>}
+			<label {...stylex.props(styles.label)}>{t('config.socialButtons')}</label>
+			{buttons.length === 0 && <p {...stylex.props(styles.emptyHint)}>{t('config.socialEmptyHint')}</p>}
 			<div {...stylex.props(styles.list)}>
 				{sortedButtons.map((button, index) => (
 					<div key={button.id} {...stylex.props(styles.row)}>
@@ -305,20 +307,20 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 							style={styles.selectW24}
 							options={[
 								{ value: 'github', label: 'Github' },
-								{ value: 'juejin', label: '掘金' },
-								{ value: 'email', label: '邮箱' },
+								{ value: 'juejin', label: t('config.socialJuejin') },
+								{ value: 'email', label: t('config.socialEmail') },
 								{ value: 'x', label: 'X' },
 								{ value: 'tg', label: 'Telegram' },
-								{ value: 'wechat', label: '微信' },
+								{ value: 'wechat', label: t('config.socialWechat') },
 								{ value: 'facebook', label: 'Facebook' },
 								{ value: 'tiktok', label: 'TikTok' },
 								{ value: 'instagram', label: 'Instagram' },
-								{ value: 'weibo', label: '微博' },
-								{ value: 'xiaohongshu', label: '小红书' },
-								{ value: 'zhihu', label: '知乎' },
-								{ value: 'bilibili', label: '哔哩哔哩' },
+								{ value: 'weibo', label: t('config.socialWeibo') },
+								{ value: 'xiaohongshu', label: t('config.socialXiaohongshu') },
+								{ value: 'zhihu', label: t('config.socialZhihu') },
+								{ value: 'bilibili', label: t('config.socialBilibili') },
 								{ value: 'qq', label: 'QQ' },
-								{ value: 'link', label: '链接' }
+								{ value: 'link', label: t('config.socialLink') }
 							]}
 						/>
 						{button.type === 'wechat' || button.type === 'qq' ? (
@@ -343,11 +345,11 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 											type='text'
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
-											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
+											placeholder={button.type === 'wechat' ? t('config.wechatValuePlaceholder') : t('config.qqValuePlaceholder')}
 											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
 										<button type='button' onClick={() => handleRemoveImage(button.id)} {...stylex.props(styles.removeImageButton)}>
-											删除图片
+											{t('config.deleteImage')}
 										</button>
 									</div>
 								) : button.value && button.value.startsWith('/images/social-buttons/') ? (
@@ -357,7 +359,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 											type='text'
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
-											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
+											placeholder={button.type === 'wechat' ? t('config.wechatValuePlaceholder') : t('config.qqValuePlaceholder')}
 											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
 									</div>
@@ -367,14 +369,11 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 											type='text'
 											value={button.value}
 											onChange={e => handleUpdateButton(button.id, { value: e.target.value })}
-											placeholder={button.type === 'wechat' ? '微信号或二维码链接' : 'QQ号或二维码链接'}
+											placeholder={button.type === 'wechat' ? t('config.wechatValuePlaceholder') : t('config.qqValuePlaceholder')}
 											{...stylex.props(styles.fieldBase, styles.fieldFlex)}
 										/>
-										<button
-											type='button'
-											onClick={() => imageInputRefs.current[button.id]?.click()}
-											{...stylex.props(styles.cardButton)}>
-											上传图片
+										<button type='button' onClick={() => imageInputRefs.current[button.id]?.click()} {...stylex.props(styles.cardButton)}>
+											{t('config.uploadImage')}
 										</button>
 									</>
 								)}
@@ -393,7 +392,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								type='text'
 								value={button.label || ''}
 								onChange={e => handleUpdateButton(button.id, { label: e.target.value })}
-								placeholder='标签文本（可选）'
+								placeholder={t('config.labelOptional')}
 								{...stylex.props(styles.fieldBase, styles.fieldWide)}
 							/>
 						)}
@@ -407,15 +406,11 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								}
 							}}
 							min={1}
-							placeholder='顺序'
+							placeholder={t('config.order')}
 							{...stylex.props(styles.fieldBase, styles.fieldNarrow)}
 						/>
 						<div {...stylex.props(styles.actions)}>
-							<button
-								type='button'
-								onClick={() => handleMoveButton(button.id, 'up')}
-								disabled={index === 0}
-								{...stylex.props(styles.moveButton)}>
+							<button type='button' onClick={() => handleMoveButton(button.id, 'up')} disabled={index === 0} {...stylex.props(styles.moveButton)}>
 								↑
 							</button>
 							<button
@@ -426,16 +421,13 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								↓
 							</button>
 							<button type='button' onClick={() => handleRemoveButton(button.id)} {...stylex.props(styles.removeButton)}>
-								删除
+								{t('config.delete')}
 							</button>
 						</div>
 					</div>
 				))}
-				<button
-					type='button'
-					onClick={handleAddButton}
-					{...stylex.props(styles.addButton)}>
-					+ 添加按钮
+				<button type='button' onClick={handleAddButton} {...stylex.props(styles.addButton)}>
+					{t('config.addSocialButton')}
 				</button>
 			</div>
 		</div>

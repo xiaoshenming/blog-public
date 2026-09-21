@@ -6,6 +6,7 @@ import type { Project } from '../components/project-card'
 import type { ImageItem } from '../components/image-upload-dialog'
 import { getFileExt } from '@/lib/utils'
 import { toast } from 'sonner'
+import { t } from '@/i18n/translate'
 
 export type PushProjectsParams = {
 	projects: Project[]
@@ -17,20 +18,20 @@ export async function pushProjects(params: PushProjectsParams): Promise<void> {
 
 	const token = await getAuthToken()
 
-	toast.info('正在获取分支信息...')
+	toast.info(t('dialogs.fetchingBranch'))
 	const refData = await getRef(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, `heads/${GITHUB_CONFIG.BRANCH}`)
 	const latestCommitSha = refData.sha
 
-	const commitMessage = `更新项目列表`
+	const commitMessage = t('dialogs.commitProjects')
 
-	toast.info('正在准备文件...')
+	toast.info(t('dialogs.preparingFiles'))
 
 	const treeItems: TreeItem[] = []
 	const uploadedHashes = new Set<string>()
 	let updatedProjects = [...projects]
 
 	if (imageItems && imageItems.size > 0) {
-		toast.info('正在上传图片...')
+		toast.info(t('dialogs.uploadingImages'))
 		for (const [url, imageItem] of imageItems.entries()) {
 			if (imageItem.type === 'file') {
 				const hash = imageItem.hash || (await hashFileSHA256(imageItem.file))
@@ -65,15 +66,14 @@ export async function pushProjects(params: PushProjectsParams): Promise<void> {
 		sha: projectsBlob.sha
 	})
 
-	toast.info('正在创建文件树...')
+	toast.info(t('dialogs.creatingTree'))
 	const treeData = await createTree(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, treeItems, latestCommitSha)
 
-	toast.info('正在创建提交...')
+	toast.info(t('dialogs.creatingCommit'))
 	const commitData = await createCommit(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, commitMessage, treeData.sha, [latestCommitSha])
 
-	toast.info('正在更新分支...')
+	toast.info(t('dialogs.updatingBranch'))
 	await updateRef(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, `heads/${GITHUB_CONFIG.BRANCH}`, commitData.sha)
 
-	toast.success('发布成功！')
+	toast.success(t('dialogs.publishSuccess'))
 }
-

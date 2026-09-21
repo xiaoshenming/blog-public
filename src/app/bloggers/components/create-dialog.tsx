@@ -10,6 +10,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 interface Blogger {
 	name: string
@@ -172,6 +173,7 @@ const styles = stylex.create({
 })
 
 export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogProps) {
+	const { t } = useI18n()
 	const [formData, setFormData] = useState<Blogger>({
 		name: '',
 		avatar: '',
@@ -205,13 +207,13 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 
 	const handleSubmit = () => {
 		if (!formData.name.trim() || !formData.avatar.trim() || !formData.url.trim() || !formData.description.trim()) {
-			toast.error('请填写所有必填项')
+			toast.error(t('admin.requiredFieldsMissing'))
 			return
 		}
 
 		onSave(formData, avatarItem || undefined)
 		onClose()
-		toast.success(blogger ? '更新成功' : '添加成功')
+		toast.success(blogger ? t('admin.updateSuccess') : t('admin.addSuccess'))
 	}
 
 	return (
@@ -224,7 +226,7 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 							<>
 								<img src={formData.avatar} alt={formData.name} {...stylex.props(styles.avatar)} />
 								<div {...stylex.props(styles.avatarOverlay)}>
-									<span {...stylex.props(styles.overlayText)}>更换</span>
+									<span {...stylex.props(styles.overlayText)}>{t('admin.change')}</span>
 								</div>
 							</>
 						) : (
@@ -238,7 +240,7 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 							type='text'
 							value={formData.name}
 							onChange={e => setFormData({ ...formData, name: e.target.value })}
-							placeholder='博主名称'
+							placeholder={t('admin.bloggerNamePlaceholder')}
 							{...stylex.props(styles.nameInput)}
 						/>
 						<input
@@ -265,7 +267,7 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 				<textarea
 					value={formData.description}
 					onChange={e => setFormData({ ...formData, description: e.target.value })}
-					placeholder='博主介绍...'
+					placeholder={t('admin.bloggerIntroPlaceholder')}
 					{...stylex.props(styles.descriptionInput)}
 					rows={4}
 				/>
@@ -274,10 +276,10 @@ export default function CreateDialog({ blogger, onClose, onSave }: CreateDialogP
 			{/* 操作按钮 */}
 			<div {...stylex.props(styles.actions)}>
 				<button onClick={onClose} {...stylex.props(styles.cancelButton)}>
-					取消
+					{t('admin.cancel')}
 				</button>
 				<button onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
-					{blogger ? '保存' : '添加'}
+					{blogger ? t('admin.save') : t('admin.add')}
 				</button>
 			</div>
 

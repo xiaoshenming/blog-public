@@ -5,23 +5,25 @@ import * as stylex from '@stylexjs/stylex'
 import { useConfigStore, type CardStyles } from '../stores/config-store'
 import { useLayoutEditStore } from '../stores/layout-edit-store'
 import cardStylesDefault from '@/config/card-styles-default.json'
+import { useI18n } from '@/i18n/context'
+import type { TranslationKey } from '@/i18n/translate'
 import { util } from '@/styles/shared/util.stylex'
 import { colors } from '@/styles/tokens.stylex'
 
-const CARD_LABELS: Record<string, string> = {
-	artCard: '首图',
-	hiCard: '中心',
-	clockCard: '时钟',
-	calendarCard: '日历',
-	musicCard: '音乐',
-	socialButtons: '联系',
-	shareCard: '分享',
-	articleCard: '文章',
-	writeButtons: '写作',
-	navCard: '导航',
-	likePosition: '点赞',
-	hatCard: '帽子',
-	beianCard: '备案'
+const CARD_LABEL_KEYS: Record<string, TranslationKey> = {
+	artCard: 'config.cardArt',
+	hiCard: 'config.cardHi',
+	clockCard: 'config.cardClock',
+	calendarCard: 'config.cardCalendar',
+	musicCard: 'config.cardMusic',
+	socialButtons: 'config.cardSocial',
+	shareCard: 'config.cardShare',
+	articleCard: 'config.cardArticle',
+	writeButtons: 'config.cardWrite',
+	navCard: 'config.cardNav',
+	likePosition: 'config.cardLike',
+	hatCard: 'config.cardHat',
+	beianCard: 'config.cardBeian'
 }
 
 interface HomeLayoutProps {
@@ -152,6 +154,7 @@ const styles = stylex.create({
 })
 
 export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeLayoutProps) {
+	const { t } = useI18n()
 	const { setCardStyles } = useConfigStore()
 	const startEditing = useLayoutEditStore(state => state.startEditing)
 	const editing = useLayoutEditStore(state => state.editing)
@@ -169,147 +172,146 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 	return (
 		<div {...stylex.props(styles.scrollWrap)}>
 			<div {...stylex.props(styles.headerRow)}>
-				<div {...stylex.props(styles.hint)}>（偏移代表相对中心的偏移）</div>
+				<div {...stylex.props(styles.hint)}>{t('config.layoutOffsetHint')}</div>
 				<div {...stylex.props(styles.headerActions)}>
 					<button type='button' onClick={handleReset} {...stylex.props(styles.cardButton)}>
-						重置
+						{t('config.reset')}
 					</button>
-					<button
-						type='button'
-						onClick={handleStartManualLayout}
-						disabled={editing}
-						{...stylex.props(styles.cardButton, styles.cardButtonDisabled)}>
-						{editing ? '主页正在编辑中' : '进入主页拖拽布局'}
+					<button type='button' onClick={handleStartManualLayout} disabled={editing} {...stylex.props(styles.cardButton, styles.cardButtonDisabled)}>
+						{editing ? t('config.homeEditing') : t('config.enterDragLayout')}
 					</button>
 				</div>
 			</div>
 			<table {...stylex.props(styles.table)}>
 				<thead>
 					<tr {...stylex.props(styles.headRow)}>
-						<th {...stylex.props(styles.headCell)}>卡片</th>
-						<th {...stylex.props(styles.headCell)}>宽度</th>
-						<th {...stylex.props(styles.headCell)}>高度</th>
-						<th {...stylex.props(styles.headCell)}>显示顺序</th>
-						<th {...stylex.props(styles.headCell)}>横向偏移</th>
-						<th {...stylex.props(styles.headCell)}>纵向偏移</th>
-						<th {...stylex.props(styles.headCell)}>启用</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thCard')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thWidth')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thHeight')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thOrder')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thOffsetX')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thOffsetY')}</th>
+						<th {...stylex.props(styles.headCell)}>{t('config.thEnabled')}</th>
 					</tr>
 				</thead>
 				<tbody>
-					{Object.entries(cardStylesData).map(([key, cardStyle]: [string, any]) => (
-						<tr key={key} {...stylex.props(styles.bodyRow)}>
-							<td {...stylex.props(styles.nameCell)}>{CARD_LABELS[key] ?? key.replace(/([A-Z])/g, ' $1').trim()}</td>
+					{Object.entries(cardStylesData).map(([key, cardStyle]: [string, any]) => {
+						const labelKey = CARD_LABEL_KEYS[key]
+						return (
+							<tr key={key} {...stylex.props(styles.bodyRow)}>
+								<td {...stylex.props(styles.nameCell)}>{labelKey ? t(labelKey) : key.replace(/([A-Z])/g, ' $1').trim()}</td>
 
-							<td {...stylex.props(styles.cell)}>
-								{cardStyle.width !== undefined ? (
+								<td {...stylex.props(styles.cell)}>
+									{cardStyle.width !== undefined ? (
+										<input
+											type='number'
+											value={cardStyle.width}
+											onChange={e =>
+												setCardStylesData(prev => ({
+													...prev,
+													[key]: {
+														...prev[key as keyof CardStyles],
+														width: parseInt(e.target.value) || 0
+													}
+												}))
+											}
+											{...stylex.props(util.noSpinner, styles.numberInput)}
+										/>
+									) : (
+										<span {...stylex.props(styles.emptyText)}>-</span>
+									)}
+								</td>
+								<td {...stylex.props(styles.cell)}>
+									{cardStyle.height !== undefined ? (
+										<input
+											type='number'
+											value={cardStyle.height}
+											onChange={e =>
+												setCardStylesData(prev => ({
+													...prev,
+													[key]: {
+														...prev[key as keyof CardStyles],
+														height: parseInt(e.target.value) || 0
+													}
+												}))
+											}
+											{...stylex.props(util.noSpinner, styles.numberInput)}
+										/>
+									) : (
+										<span {...stylex.props(styles.emptyText)}>-</span>
+									)}
+								</td>
+								<td {...stylex.props(styles.cell)}>
 									<input
 										type='number'
-										value={cardStyle.width}
+										value={cardStyle.order}
 										onChange={e =>
 											setCardStylesData(prev => ({
 												...prev,
 												[key]: {
 													...prev[key as keyof CardStyles],
-													width: parseInt(e.target.value) || 0
+													order: parseInt(e.target.value) || 0
 												}
 											}))
 										}
-										{...stylex.props(util.noSpinner, styles.numberInput)}
+										{...stylex.props(styles.numberInput)}
 									/>
-								) : (
-									<span {...stylex.props(styles.emptyText)}>-</span>
-								)}
-							</td>
-							<td {...stylex.props(styles.cell)}>
-								{cardStyle.height !== undefined ? (
+								</td>
+								<td {...stylex.props(styles.cell)}>
 									<input
 										type='number'
-										value={cardStyle.height}
+										value={cardStyle.offsetX ?? ''}
+										placeholder='null'
+										onChange={e => {
+											const value = e.target.value === '' ? null : parseInt(e.target.value) || 0
+											setCardStylesData(prev => ({
+												...prev,
+												[key]: {
+													...prev[key as keyof CardStyles],
+													offsetX: value
+												}
+											}))
+										}}
+										{...stylex.props(util.noSpinner, styles.numberInput)}
+									/>
+								</td>
+								<td {...stylex.props(styles.cell)}>
+									<input
+										type='number'
+										value={cardStyle.offsetY ?? ''}
+										placeholder='null'
+										onChange={e => {
+											const value = e.target.value === '' ? null : parseInt(e.target.value) || 0
+											setCardStylesData(prev => ({
+												...prev,
+												[key]: {
+													...prev[key as keyof CardStyles],
+													offsetY: value
+												}
+											}))
+										}}
+										{...stylex.props(util.noSpinner, styles.numberInput)}
+									/>
+								</td>
+								<td {...stylex.props(styles.cell)}>
+									<input
+										type='checkbox'
+										checked={cardStyle.enabled ?? true}
 										onChange={e =>
 											setCardStylesData(prev => ({
 												...prev,
 												[key]: {
 													...prev[key as keyof CardStyles],
-													height: parseInt(e.target.value) || 0
+													enabled: e.target.checked
 												}
 											}))
 										}
-										{...stylex.props(util.noSpinner, styles.numberInput)}
+										{...stylex.props(styles.checkbox)}
 									/>
-								) : (
-									<span {...stylex.props(styles.emptyText)}>-</span>
-								)}
-							</td>
-							<td {...stylex.props(styles.cell)}>
-								<input
-									type='number'
-									value={cardStyle.order}
-									onChange={e =>
-										setCardStylesData(prev => ({
-											...prev,
-											[key]: {
-												...prev[key as keyof CardStyles],
-												order: parseInt(e.target.value) || 0
-											}
-										}))
-									}
-									{...stylex.props(styles.numberInput)}
-								/>
-							</td>
-							<td {...stylex.props(styles.cell)}>
-								<input
-									type='number'
-									value={cardStyle.offsetX ?? ''}
-									placeholder='null'
-									onChange={e => {
-										const value = e.target.value === '' ? null : parseInt(e.target.value) || 0
-										setCardStylesData(prev => ({
-											...prev,
-											[key]: {
-												...prev[key as keyof CardStyles],
-												offsetX: value
-											}
-										}))
-									}}
-									{...stylex.props(util.noSpinner, styles.numberInput)}
-								/>
-							</td>
-							<td {...stylex.props(styles.cell)}>
-								<input
-									type='number'
-									value={cardStyle.offsetY ?? ''}
-									placeholder='null'
-									onChange={e => {
-										const value = e.target.value === '' ? null : parseInt(e.target.value) || 0
-										setCardStylesData(prev => ({
-											...prev,
-											[key]: {
-												...prev[key as keyof CardStyles],
-												offsetY: value
-											}
-										}))
-									}}
-									{...stylex.props(util.noSpinner, styles.numberInput)}
-								/>
-							</td>
-							<td {...stylex.props(styles.cell)}>
-								<input
-									type='checkbox'
-									checked={cardStyle.enabled ?? true}
-									onChange={e =>
-										setCardStylesData(prev => ({
-											...prev,
-											[key]: {
-												...prev[key as keyof CardStyles],
-												enabled: e.target.checked
-											}
-										}))
-									}
-									{...stylex.props(styles.checkbox)}
-								/>
-							</td>
-						</tr>
-					))}
+								</td>
+							</tr>
+						)
+					})}
 				</tbody>
 			</table>
 		</div>

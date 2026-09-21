@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { FileItem } from './types'
 
 interface FaviconAvatarUploadProps {
@@ -84,6 +85,7 @@ const styles = stylex.create({
 })
 
 export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, setAvatarItem }: FaviconAvatarUploadProps) {
+	const { t } = useI18n()
 	const faviconInputRef = useRef<HTMLInputElement>(null)
 	const avatarInputRef = useRef<HTMLInputElement>(null)
 
@@ -92,7 +94,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('config.selectImageFile'))
 			return
 		}
 
@@ -107,7 +109,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('config.selectImageFile'))
 			return
 		}
 
@@ -129,7 +131,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 						<img src='/favicon.png' alt='current favicon' {...stylex.props(styles.image)} />
 					)}
 					<div {...stylex.props(styles.overlay, styles.radiusSquare)}>
-						<span {...stylex.props(styles.overlayText)}>{faviconItem ? '更换' : '上传'}</span>
+						<span {...stylex.props(styles.overlayText)}>{faviconItem ? t('config.change') : t('config.upload')}</span>
 					</div>
 
 					<div {...stylex.props(styles.clickLayer)} onClick={() => faviconInputRef.current?.click()} />
@@ -146,7 +148,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 						<img src='/images/avatar.png' alt='current avatar' {...stylex.props(styles.image)} />
 					)}
 					<div {...stylex.props(styles.overlay, styles.radiusRound)}>
-						<span {...stylex.props(styles.overlayText)}>{avatarItem ? '更换' : '上传'}</span>
+						<span {...stylex.props(styles.overlayText)}>{avatarItem ? t('config.change') : t('config.upload')}</span>
 					</div>
 					<div {...stylex.props(styles.clickLayer)} onClick={() => avatarInputRef.current?.click()} />
 				</div>

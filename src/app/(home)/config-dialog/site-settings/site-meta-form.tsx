@@ -2,6 +2,7 @@
 
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 
 interface SiteMetaFormProps {
@@ -38,11 +39,12 @@ const styles = stylex.create({
 })
 
 export function SiteMetaForm({ formData, setFormData }: SiteMetaFormProps) {
+	const { t } = useI18n()
 	return (
 		<>
 			<div {...stylex.props(styles.grid)}>
 				<div>
-					<label {...stylex.props(styles.label)}>站点标题</label>
+					<label {...stylex.props(styles.label)}>{t('config.siteTitle')}</label>
 					<input
 						type='text'
 						value={formData.meta.title}
@@ -52,7 +54,7 @@ export function SiteMetaForm({ formData, setFormData }: SiteMetaFormProps) {
 				</div>
 
 				<div>
-					<label {...stylex.props(styles.label)}>用户名</label>
+					<label {...stylex.props(styles.label)}>{t('config.username')}</label>
 					<input
 						type='text'
 						value={formData.meta.username || ''}
@@ -63,7 +65,7 @@ export function SiteMetaForm({ formData, setFormData }: SiteMetaFormProps) {
 			</div>
 
 			<div>
-				<label {...stylex.props(styles.label)}>站点描述</label>
+				<label {...stylex.props(styles.label)}>{t('config.siteDescription')}</label>
 				<textarea
 					value={formData.meta.description}
 					onChange={e => setFormData({ ...formData, meta: { ...formData.meta, description: e.target.value } })}

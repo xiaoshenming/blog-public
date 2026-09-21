@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { util } from '@/styles/shared/util.stylex'
+import { useI18n } from '@/i18n/context'
 
 const defaultText = 'text'
 
@@ -66,6 +67,7 @@ const styles = stylex.create({
 
 export function WriteEditor() {
 	const { form, updateForm, images, addFiles } = useWriteStore()
+	const { t } = useI18n()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	const insertText = (text: string) => {
@@ -223,14 +225,14 @@ export function WriteEditor() {
 			<div {...stylex.props(styles.titleRow)}>
 				<input
 					type='text'
-					placeholder='标题'
+					placeholder={t('write.titlePlaceholder')}
 					{...stylex.props(styles.field, styles.titleInput)}
 					value={form.title}
 					onChange={e => updateForm({ title: e.target.value })}
 				/>
 				<input
 					type='text'
-					placeholder='slug（xx-xx）'
+					placeholder={t('write.slugPlaceholder')}
 					{...stylex.props(styles.field, styles.slugInput)}
 					value={form.slug}
 					onChange={e => updateForm({ slug: e.target.value })}
@@ -238,7 +240,7 @@ export function WriteEditor() {
 			</div>
 			<textarea
 				ref={textareaRef}
-				placeholder='Markdown 内容'
+				placeholder={t('write.mdPlaceholder')}
 				{...stylex.props(styles.mdArea)}
 				value={form.md}
 				onChange={e => updateForm({ md: e.target.value })}

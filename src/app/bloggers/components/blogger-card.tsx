@@ -12,6 +12,7 @@ import AvatarUploadDialog, { type AvatarItem } from './avatar-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 interface BloggerCardProps {
 	blogger: Blogger
@@ -225,6 +226,7 @@ const styles = stylex.create({
 })
 
 export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }: BloggerCardProps) {
+	const { t } = useI18n()
 	const [expanded, setExpanded] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const { maxSM } = useSize()
@@ -264,19 +266,19 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 					{isEditing ? (
 						<>
 							<button onClick={handleCancel} {...stylex.props(styles.actionButton, styles.actionCancel)}>
-								取消
+								{t('admin.cancel')}
 							</button>
 							<button onClick={() => setIsEditing(false)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								完成
+								{t('admin.done')}
 							</button>
 						</>
 					) : (
 						<>
 							<button onClick={() => setIsEditing(true)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								编辑
+								{t('admin.edit')}
 							</button>
 							<button onClick={onDelete} {...stylex.props(styles.actionButton, styles.actionDelete)}>
-								删除
+								{t('admin.delete')}
 							</button>
 						</>
 					)}
@@ -294,7 +296,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 						/>
 						{canEdit && (
 							<div {...stylex.props(styles.avatarOverlay)}>
-								<span {...stylex.props(styles.overlayText)}>更换</span>
+								<span {...stylex.props(styles.overlayText)}>{t('admin.change')}</span>
 							</div>
 						)}
 					</div>
@@ -315,11 +317,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 								{localBlogger.url}
 							</div>
 						) : (
-							<a
-								href={localBlogger.url}
-								target='_blank'
-								rel='noopener noreferrer'
-								{...stylex.props(styles.url, styles.urlLink)}>
+							<a href={localBlogger.url} target='_blank' rel='noopener noreferrer' {...stylex.props(styles.url, styles.urlLink)}>
 								{localBlogger.url}
 							</a>
 						)}
@@ -340,7 +338,7 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 								type='button'
 								onClick={() => handleFieldChange('status', status)}
 								{...stylex.props(styles.statusButton, (localBlogger.status ?? 'recent') === status ? styles.statusActive : styles.statusIdle)}>
-								{status === 'recent' ? '近期更新' : '长期失联'}
+								{status === 'recent' ? t('admin.statusRecent') : t('admin.statusDisconnected')}
 							</button>
 						))}
 					</div>
@@ -356,7 +354,11 @@ export function BloggerCard({ blogger, isEditMode = false, onUpdate, onDelete }:
 							setExpanded(!expanded)
 						}
 					}}
-					{...stylex.props(styles.description, canEdit ? styles.cursorText : styles.cursorPointer, !canEdit && (expanded ? styles.clampExpanded : styles.clampThumb))}>
+					{...stylex.props(
+						styles.description,
+						canEdit ? styles.cursorText : styles.cursorPointer,
+						!canEdit && (expanded ? styles.clampExpanded : styles.clampThumb)
+					)}>
 					{localBlogger.description}
 				</p>
 			</div>

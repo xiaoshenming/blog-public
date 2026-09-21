@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 import type { ArtImageUploads, FileItem } from './types'
 
@@ -161,6 +162,7 @@ const styles = stylex.create({
 })
 
 export function ArtImagesSection({ formData, setFormData, artImageUploads, setArtImageUploads }: ArtImagesSectionProps) {
+	const { t } = useI18n()
 	const artInputRef = useRef<HTMLInputElement>(null)
 	const [artUrlInput, setArtUrlInput] = useState('')
 
@@ -170,7 +172,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 
 		for (const file of files) {
 			if (!file.type.startsWith('image/')) {
-				toast.error('请选择图片文件')
+				toast.error(t('config.selectImageFile'))
 				continue
 			}
 
@@ -203,7 +205,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 
 	const handleArtUrlSubmit = () => {
 		if (!artUrlInput.trim()) {
-			toast.error('请输入图片 URL')
+			toast.error(t('config.enterImageUrl'))
 			return
 		}
 
@@ -254,9 +256,9 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 
 	return (
 		<div>
-			<label {...stylex.props(styles.label)}>首页图片</label>
+			<label {...stylex.props(styles.label)}>{t('config.homeImages')}</label>
 			<input ref={artInputRef} type='file' accept='image/*' multiple {...stylex.props(styles.fileInput)} onChange={handleArtFilesSelect} />
-			{(formData.artImages?.length ?? 0) === 0 && <p {...stylex.props(styles.emptyHint)}>暂未配置 Art 图片，点击下方「+」添加。</p>}
+			{(formData.artImages?.length ?? 0) === 0 && <p {...stylex.props(styles.emptyHint)}>{t('config.artEmptyHint')}</p>}
 			<div {...stylex.props(styles.grid)}>
 				{formData.artImages?.map(item => {
 					const isActive = formData.currentArtImageId === item.id
@@ -271,23 +273,15 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 								{...stylex.props(styles.thumbButton, isActive ? styles.thumbActive : styles.thumbIdle)}>
 								<img src={src} alt='art preview' {...stylex.props(styles.thumbImage)} />
 							</button>
-							{isActive && (
-								<span {...stylex.props(styles.badge)}>当前使用</span>
-							)}
-							<button
-								type='button'
-								onClick={() => handleRemoveArtImage(item.id)}
-								{...stylex.props(styles.removeButton)}>
-								删除
+							{isActive && <span {...stylex.props(styles.badge)}>{t('config.currentlyUsed')}</span>}
+							<button type='button' onClick={() => handleRemoveArtImage(item.id)} {...stylex.props(styles.removeButton)}>
+								{t('config.delete')}
 							</button>
 						</div>
 					)
 				})}
 				<div {...stylex.props(styles.addCell)}>
-					<button
-						type='button'
-						onClick={() => artInputRef.current?.click()}
-						{...stylex.props(styles.addButton)}>
+					<button type='button' onClick={() => artInputRef.current?.click()} {...stylex.props(styles.addButton)}>
 						+
 					</button>
 				</div>
@@ -303,11 +297,11 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 							handleArtUrlSubmit()
 						}
 					}}
-					placeholder='输入图片 URL'
+					placeholder={t('config.imageUrlPlaceholder')}
 					{...stylex.props(styles.urlInput)}
 				/>
 				<button type='button' onClick={handleArtUrlSubmit} {...stylex.props(styles.cardButton)}>
-					添加 URL
+					{t('config.addUrl')}
 				</button>
 			</div>
 		</div>

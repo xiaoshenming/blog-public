@@ -249,10 +249,10 @@ export default function Page() {
 			await pushSnippets({ snippets })
 			setOriginalSnippets(snippets)
 			setIsEditMode(false)
-			toast.success('保存成功！')
+			toast.success(t('dialogs.saveSuccess'))
 		} catch (error: any) {
 			console.error('Failed to save snippets:', error)
-			toast.error(`保存失败: ${error?.message || '未知错误'}`)
+			toast.error(t('dialogs.saveFailed', { message: error?.message || t('dialogs.unknownError') }))
 		} finally {
 			setIsSaving(false)
 		}
@@ -278,7 +278,7 @@ export default function Page() {
 			await handleSave()
 		} catch (error) {
 			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
+			toast.error(t('dialogs.readKeyFileFailed'))
 		}
 	}
 
@@ -291,7 +291,7 @@ export default function Page() {
 	const handleAddDraft = () => {
 		const value = newSnippet.trim()
 		if (!value) {
-			toast.error('请输入句子')
+			toast.error(t('dialogs.enterSentence'))
 			return
 		}
 		setDraftSnippets(prev => [...prev, value])
@@ -305,12 +305,12 @@ export default function Page() {
 	const applyManageChanges = () => {
 		const cleaned = draftSnippets.map(item => item.trim()).filter(Boolean)
 		if (cleaned.length === 0) {
-			toast.error('请至少添加一句话')
+			toast.error(t('dialogs.addAtLeastOneSentence'))
 			return
 		}
 		setSnippets(cleaned)
 		setIsManageOpen(false)
-		toast.success('已更新列表')
+		toast.success(t('dialogs.listUpdated'))
 	}
 
 	const cancelManageChanges = () => {
@@ -319,7 +319,7 @@ export default function Page() {
 		setNewSnippet('')
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
+	const buttonText = isAuth ? t('dialogs.save') : t('dialogs.importKey')
 
 	return (
 		<>
@@ -345,19 +345,19 @@ export default function Page() {
 				{isEditMode ? (
 					<>
 						<button onClick={handleCancel} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
-							取消
+							{t('dialogs.cancel')}
 						</button>
 						<button onClick={openManageDialog} className={stylex.props(card.hover, styles.toolbarBtn).className}>
-							管理
+							{t('dialogs.manage')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
-							{isSaving ? '保存中...' : buttonText}
+							{isSaving ? t('dialogs.saving') : buttonText}
 						</button>
 					</>
 				) : (
 					!hideEditButton && (
 						<button onClick={() => setIsEditMode(true)} className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
-							编辑
+							{t('dialogs.edit')}
 						</button>
 					)
 				)}
@@ -370,17 +370,17 @@ export default function Page() {
 							type='text'
 							value={newSnippet}
 							onChange={e => setNewSnippet(e.target.value)}
-							placeholder='新增'
+							placeholder={t('dialogs.addItem')}
 							className={stylex.props(styles.draftInput).className}
 						/>
 						<button onClick={handleAddDraft} className={stylex.props(brandBtn.base, styles.addBtn).className}>
 							<Plus {...stylex.props(util.iconSm)} />
-							新增
+							{t('dialogs.addItem')}
 						</button>
 					</div>
 
 					<div className={stylex.props(styles.draftList).className}>
-						{draftSnippets.length === 0 && <p className={stylex.props(styles.empty).className}>暂无内容</p>}
+						{draftSnippets.length === 0 && <p className={stylex.props(styles.empty).className}>{t('dialogs.emptyContent')}</p>}
 						{draftSnippets.map((item, index) => (
 							<div key={`${item}-${index}`} {...stylex.props(styles.draftItem)}>
 								<p className={stylex.props(styles.draftText).className}>{item}</p>
@@ -393,10 +393,10 @@ export default function Page() {
 
 					<div className={stylex.props(styles.dialogFooter).className}>
 						<button onClick={cancelManageChanges} className={stylex.props(styles.cancelBtn).className}>
-							取消
+							{t('dialogs.cancel')}
 						</button>
 						<button onClick={applyManageChanges} className={stylex.props(brandBtn.base, styles.saveFooterBtn).className}>
-							保存
+							{t('dialogs.save')}
 						</button>
 					</div>
 				</div>

@@ -7,5 +7,10 @@ import { blog } from './blog'
 import { about } from './about'
 import { music } from './music'
 import { toolbox } from './toolbox'
+import { bloggers } from './bloggers'
+import { write } from './write'
+import { config } from './config'
+import { admin } from './admin'
+import { dialogs } from './dialogs'
 
-export const en = { collections, common, nav, home, blog, about, music, toolbox }
+export const en = { collections, common, nav, home, blog, about, music, toolbox, bloggers, write, config, admin, dialogs }

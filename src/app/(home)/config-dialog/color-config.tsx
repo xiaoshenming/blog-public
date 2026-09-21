@@ -5,6 +5,8 @@ import { XIcon } from 'lucide-react'
 import * as stylex from '@stylexjs/stylex'
 import type { SiteContent } from '../stores/config-store'
 import siteContent from '@/config/site-content.json'
+import { useI18n } from '@/i18n/context'
+import type { TranslationKey } from '@/i18n/translate'
 import { card } from '@/styles/shared/card.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -17,14 +19,14 @@ interface ColorConfigProps {
 const DEFAULT_THEME_COLORS = siteContent.theme
 
 type ColorPreset = {
-	name: string
+	nameKey: TranslationKey
 	theme: Partial<SiteContent['theme']>
 	backgroundColors: string[]
 }
 
 const COLOR_PRESETS: ColorPreset[] = [
 	{
-		name: '春暖',
+		nameKey: 'config.presetSpringWarm',
 		theme: {
 			colorBrand: '#35bfab',
 			colorBrandSecondary: '#1fc9e7',
@@ -38,7 +40,7 @@ const COLOR_PRESETS: ColorPreset[] = [
 		backgroundColors: ['#EDDD62', '#9EE7D1', '#84D68A', '#EDDD62', '#88E6E5', '#a7f3d0']
 	},
 	{
-		name: '秋实',
+		nameKey: 'config.presetAutumnHarvest',
 		theme: {
 			colorPrimary: '#4E3F42',
 			colorBrand: '#de4331',
@@ -47,19 +49,19 @@ const COLOR_PRESETS: ColorPreset[] = [
 		backgroundColors: ['#FCC841', '#DFEFFC', '#DEDE92', '#DE4331', '#FE9750', '#FCC841']
 	},
 	{
-		name: '晴空',
+		nameKey: 'config.presetClearSky',
 		theme: {
 			colorBrand: '#2fcbe7',
 			colorPrimary: '#5B423F',
 			colorSecondary: '#8b7667',
 			colorBrandSecondary: '#eec25e',
 			colorBg: '#d4e8f3',
-			colorCard: '#ffffff99',
+			colorCard: '#ffffff99'
 		},
 		backgroundColors: ['#f7da3987', '#8fdbe9', '#fffef8']
 	},
 	{
-		name: '深夜',
+		nameKey: 'config.presetLateNight',
 		theme: {
 			colorBrand: '#2a48f3',
 			colorPrimary: '#e6e8e8',
@@ -237,6 +239,7 @@ const styles = stylex.create({
 })
 
 export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
+	const { t } = useI18n()
 	const theme = formData.theme ?? {}
 
 	const handleThemeColorChange = (key: keyof typeof DEFAULT_THEME_COLORS, value: string) => {
@@ -316,58 +319,58 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 	return (
 		<div>
 			<div {...stylex.props(styles.sectionGap)}>
-				<label {...stylex.props(styles.label)}>基础颜色</label>
+				<label {...stylex.props(styles.label)}>{t('config.baseColors')}</label>
 				<div {...stylex.props(styles.colorGrid)}>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={formData.theme?.colorBrand ?? '#35bfab'} onChange={handleBrandColorChange} />
-						<span {...stylex.props(styles.hint)}>主题色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorBrand')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker
 							value={theme.colorBrandSecondary ?? DEFAULT_THEME_COLORS.colorBrandSecondary}
 							onChange={value => handleThemeColorChange('colorBrandSecondary', value)}
 						/>
-						<span {...stylex.props(styles.hint)}>次级主题色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorBrandSecondary')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorPrimary ?? DEFAULT_THEME_COLORS.colorPrimary} onChange={value => handleThemeColorChange('colorPrimary', value)} />
-						<span {...stylex.props(styles.hint)}>主色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorPrimary')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker
 							value={theme.colorSecondary ?? DEFAULT_THEME_COLORS.colorSecondary}
 							onChange={value => handleThemeColorChange('colorSecondary', value)}
 						/>
-						<span {...stylex.props(styles.hint)}>次色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorSecondary')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorBg ?? DEFAULT_THEME_COLORS.colorBg} onChange={value => handleThemeColorChange('colorBg', value)} />
-						<span {...stylex.props(styles.hint)}>背景色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorBg')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorBorder ?? DEFAULT_THEME_COLORS.colorBorder} onChange={value => handleThemeColorChange('colorBorder', value)} />
-						<span {...stylex.props(styles.hint)}>边框色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorBorder')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorCard ?? DEFAULT_THEME_COLORS.colorCard} onChange={value => handleThemeColorChange('colorCard', value)} />
-						<span {...stylex.props(styles.hint)}>卡片色</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorCard')}</span>
 					</div>
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorArticle ?? DEFAULT_THEME_COLORS.colorArticle} onChange={value => handleThemeColorChange('colorArticle', value)} />
-						<span {...stylex.props(styles.hint)}>文章背景</span>
+						<span {...stylex.props(styles.hint)}>{t('config.colorArticle')}</span>
 					</div>
 				</div>
 			</div>
 
 			<div {...stylex.props(styles.sectionGap)}>
 				<div {...stylex.props(styles.sectionHeader)}>
-					<label {...stylex.props(styles.labelPlain)}>背景颜色</label>
+					<label {...stylex.props(styles.labelPlain)}>{t('config.backgroundColors')}</label>
 					<div {...stylex.props(styles.headerActions)}>
 						<button onClick={handleRandomizeColors} {...stylex.props(card.hover, styles.ghostSmallButton)}>
-							随机配色
+							{t('config.randomColors')}
 						</button>
 						<button onClick={handleAddColor} {...stylex.props(card.hover, styles.ghostSmallButton)}>
-							+ 添加颜色
+							{t('config.addColor')}
 						</button>
 					</div>
 				</div>
@@ -377,9 +380,7 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 							<div {...stylex.props(styles.swatchWrap, hoverGroup)}>
 								<ColorPicker value={color} onChange={value => handleColorChange(index, value)} />
 								{formData.backgroundColors.length > 1 && (
-									<button
-										onClick={() => handleRemoveColor(index)}
-										{...stylex.props(styles.removeButton)}>
+									<button onClick={() => handleRemoveColor(index)} {...stylex.props(styles.removeButton)}>
 										<XIcon {...stylex.props(styles.removeIcon)} />
 									</button>
 								)}
@@ -391,18 +392,15 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 
 			<div {...stylex.props(styles.presetList)}>
 				{COLOR_PRESETS.map(preset => (
-					<button key={preset.name} onClick={() => handlePresetChange(preset)} {...stylex.props(styles.presetButton)}>
+					<button key={preset.nameKey} onClick={() => handlePresetChange(preset)} {...stylex.props(styles.presetButton)}>
 						<div {...stylex.props(styles.presetSwatches)}>
-							<div
-								{...stylex.props(styles.swatch)}
-								style={{ backgroundColor: preset.theme.colorBrand ?? DEFAULT_THEME_COLORS.colorBrand }}
-							/>
+							<div {...stylex.props(styles.swatch)} style={{ backgroundColor: preset.theme.colorBrand ?? DEFAULT_THEME_COLORS.colorBrand }} />
 							{preset.backgroundColors.map((color, index) => (
 								<div key={index} {...stylex.props(styles.swatch)} style={{ backgroundColor: color }} />
 							))}
 						</div>
 
-						<span {...stylex.props(styles.presetName)}>{preset.name}</span>
+						<span {...stylex.props(styles.presetName)}>{t(preset.nameKey)}</span>
 					</button>
 				))}
 			</div>

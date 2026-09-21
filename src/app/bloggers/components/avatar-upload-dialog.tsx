@@ -8,6 +8,7 @@ import { DialogModal } from '@/components/dialog-modal'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 export type AvatarItem = { type: 'url'; url: string } | { type: 'file'; file: File; previewUrl: string; hash?: string }
 
@@ -174,6 +175,7 @@ const styles = stylex.create({
 })
 
 export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }: AvatarUploadDialogProps) {
+	const { t } = useI18n()
 	const [urlInput, setUrlInput] = useState(currentAvatar || '')
 	const [previewFile, setPreviewFile] = useState<{ file: File; previewUrl: string } | null>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
@@ -183,7 +185,7 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('admin.selectImageFile'))
 			return
 		}
 
@@ -207,7 +209,7 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 				url: urlInput.trim()
 			})
 		} else {
-			toast.error('请上传图片或输入 URL')
+			toast.error(t('admin.uploadOrUrlRequired'))
 			return
 		}
 
@@ -227,21 +229,19 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 
 	return (
 		<DialogModal open onClose={handleClose} style={[card.base, styles.dialogWidth]}>
-			<h2 {...stylex.props(styles.title)}>选择头像</h2>
+			<h2 {...stylex.props(styles.title)}>{t('admin.selectAvatar')}</h2>
 
 			<form onSubmit={handleSubmit}>
 				<div {...stylex.props(styles.uploadSection)}>
-					<label {...stylex.props(styles.label)}>上传图片</label>
+					<label {...stylex.props(styles.label)}>{t('admin.uploadImage')}</label>
 					<input ref={fileInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleFileSelect} />
-					<div
-						onClick={() => fileInputRef.current?.click()}
-						{...stylex.props(styles.uploadBox)}>
+					<div onClick={() => fileInputRef.current?.click()} {...stylex.props(styles.uploadBox)}>
 						{previewFile ? (
 							<img src={previewFile.previewUrl} alt='preview' {...stylex.props(styles.previewImage)} />
 						) : (
 							<div {...stylex.props(styles.uploadHint)}>
 								<Plus {...stylex.props(styles.plusIcon)} />
-								<p {...stylex.props(styles.hintText)}>点击上传图片</p>
+								<p {...stylex.props(styles.hintText)}>{t('admin.clickToUpload')}</p>
 							</div>
 						)}
 					</div>
@@ -252,12 +252,12 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 						<div {...stylex.props(styles.dividerLine)}></div>
 					</div>
 					<div {...stylex.props(styles.dividerLabelWrap)}>
-						<span {...stylex.props(styles.dividerLabel)}>或</span>
+						<span {...stylex.props(styles.dividerLabel)}>{t('admin.orDivider')}</span>
 					</div>
 				</div>
 
 				<div {...stylex.props(styles.urlSection)}>
-					<label {...stylex.props(styles.label)}>图片 URL</label>
+					<label {...stylex.props(styles.label)}>{t('admin.imageUrl')}</label>
 					<input
 						type='url'
 						value={urlInput}
@@ -275,13 +275,10 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 
 				<div {...stylex.props(styles.actions)}>
 					<button type='submit' {...stylex.props(brandBtn.base, styles.confirmButton)}>
-						确认
+						{t('admin.confirm')}
 					</button>
-					<button
-						type='button'
-						onClick={handleClose}
-						{...stylex.props(styles.cancelButton)}>
-						取消
+					<button type='button' onClick={handleClose} {...stylex.props(styles.cancelButton)}>
+						{t('admin.cancel')}
 					</button>
 				</div>
 			</form>

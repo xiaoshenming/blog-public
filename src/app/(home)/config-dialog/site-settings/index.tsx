@@ -2,6 +2,7 @@
 
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 import type { ArtImageUploads, BackgroundImageUploads, FileItem, SocialButtonImageUploads } from './types'
 import { FaviconAvatarUpload } from './favicon-avatar-upload'
@@ -72,6 +73,7 @@ export function SiteSettings({
 	socialButtonImageUploads,
 	setSocialButtonImageUploads
 }: SiteSettingsProps) {
+	const { t } = useI18n()
 	return (
 		<div {...stylex.props(styles.container)}>
 			<FaviconAvatarUpload faviconItem={faviconItem} setFaviconItem={setFaviconItem} avatarItem={avatarItem} setAvatarItem={setAvatarItem} />
@@ -104,7 +106,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, clockShowSeconds: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>时钟显示秒数</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.clockShowSeconds')}</span>
 				</label>
 
 				<label {...stylex.props(styles.checkboxLabel)}>
@@ -114,7 +116,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, summaryInContent: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>摘要放入内容</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.summaryInContent')}</span>
 				</label>
 
 				<label {...stylex.props(styles.checkboxLabel)}>
@@ -124,7 +126,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, hideEditButton: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>隐藏编辑按钮（编辑快捷键 ctrl/cmd + ,）</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.hideEditButton')}</span>
 				</label>
 			</div>
 			<div {...stylex.props(styles.checkboxRow)}>
@@ -135,7 +137,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, isCachePem: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>缓存PEM(已加密，但存在风险)</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.cachePem')}</span>
 				</label>
 				<label {...stylex.props(styles.checkboxLabel)}>
 					<input
@@ -144,7 +146,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, enableCategories: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>启用文章分类</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.enableCategories')}</span>
 				</label>
 				<label {...stylex.props(styles.checkboxLabel)}>
 					<input
@@ -153,7 +155,7 @@ export function SiteSettings({
 						onChange={e => setFormData({ ...formData, enableChristmas: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>开启圣诞节</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.enableChristmas')}</span>
 				</label>
 			</div>
 

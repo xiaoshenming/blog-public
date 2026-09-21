@@ -14,6 +14,7 @@ import { FontConfig } from './font-config'
 import { HomeLayout } from './home-layout'
 import { applyFont } from '@/lib/font'
 import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
+import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -183,6 +184,7 @@ const styles = stylex.create({
 })
 
 export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
+	const { t } = useI18n()
 	const { setPrivateKey, clearAuth } = useAuthStore()
 	const isAuth = hasAnyAuth()
 	const { siteContent, setSiteContent, cardStyles, setCardStyles, regenerateBubbles } = useConfigStore()
@@ -250,7 +252,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			await handleSave()
 		} catch (error) {
 			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
+			toast.error(t('config.readKeyFileFailed'))
 		}
 	}
 
@@ -298,7 +300,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			onClose()
 		} catch (error: any) {
 			console.error('Failed to save:', error)
-			toast.error(`保存失败: ${error?.message || '未知错误'}`)
+			toast.error(t('config.saveFailed', { message: error?.message || t('config.unknownError') }))
 		} finally {
 			setIsSaving(false)
 		}
@@ -386,13 +388,13 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 		onClose()
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
+	const buttonText = isAuth ? t('config.save') : t('config.importKey')
 
 	const tabs: { id: TabType; label: string }[] = [
-		{ id: 'site', label: '网站设置' },
-		{ id: 'color', label: '色彩配置' },
-		{ id: 'font', label: '字体' },
-		{ id: 'layout', label: '首页布局' }
+		{ id: 'site', label: t('config.tabSiteSettings') },
+		{ id: 'color', label: t('config.tabColorConfig') },
+		{ id: 'font', label: t('config.tabFont') },
+		{ id: 'layout', label: t('config.tabHomeLayout') }
 	]
 
 	return (
@@ -424,13 +426,13 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 					</div>
 					<div {...stylex.props(styles.actions)}>
 						<button onClick={handlePreview} {...stylex.props(card.hover, styles.outlineButton)}>
-							预览
+							{t('config.preview')}
 						</button>
 						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.outlineButton)}>
-							取消
+							{t('config.cancel')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(brandBtn.base, card.hover, styles.saveButton)}>
-							{isSaving ? '保存中...' : buttonText}
+							{isSaving ? t('config.saving') : buttonText}
 						</button>
 					</div>
 				</div>
@@ -461,15 +463,15 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				<div {...stylex.props(styles.oauthSection)}>
 					{hasOAuth2Auth() ? (
 						<div {...stylex.props(styles.oauthRow)}>
-							<span {...stylex.props(styles.oauthText)}>已通过 GitHub OAuth2 登录</span>
+							<span {...stylex.props(styles.oauthText)}>{t('config.oauth2LoggedIn')}</span>
 							<button
 								onClick={() => {
 									clearAuth()
 									clearOAuth2Token()
-									toast.success('已退出 OAuth2 登录')
+									toast.success(t('config.oauth2LoggedOut'))
 								}}
 								{...stylex.props(styles.logoutButton)}>
-								退出登录
+								{t('config.logout')}
 							</button>
 						</div>
 					) : (
@@ -477,7 +479,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 							<svg {...stylex.props(styles.githubIcon)} viewBox='0 0 16 16' fill='currentColor'>
 								<path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z' />
 							</svg>
-							使用 GitHub OAuth2 登录
+							{t('config.loginWithGithubOauth2')}
 						</button>
 					)}
 				</div>

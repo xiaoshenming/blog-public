@@ -12,6 +12,7 @@ import { HomeDraggableLayer } from './home-draggable-layer'
 import * as stylex from '@stylexjs/stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { card } from '@/styles/shared/card.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -43,14 +44,17 @@ const sx = stylex.create({
 })
 
 export default function WriteButton() {
+	const { t } = useI18n()
 	const center = useCenterStore()
-	const { styles, hiCardWidth, clockCardStyles, enableChristmas, setConfigDialogOpen } = useConfigStore(useShallow(s => ({
-		styles: s.cardStyles.writeButtons,
-		hiCardWidth: s.cardStyles.hiCard.width,
-		clockCardStyles: s.cardStyles.clockCard,
-		enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
-		setConfigDialogOpen: s.setConfigDialogOpen,
-	})))
+	const { styles, hiCardWidth, clockCardStyles, enableChristmas, setConfigDialogOpen } = useConfigStore(
+		useShallow(s => ({
+			styles: s.cardStyles.writeButtons,
+			hiCardWidth: s.cardStyles.hiCard.width,
+			clockCardStyles: s.cardStyles.clockCard,
+			enableChristmas: (s.siteContent as any).enableChristmas as boolean | undefined,
+			setConfigDialogOpen: s.setConfigDialogOpen
+		}))
+	)
 	const { maxSM } = useSize()
 	const router = useRouter()
 
@@ -89,7 +93,7 @@ export default function WriteButton() {
 					)}
 
 					<PenSVG />
-					<span>写文章</span>
+					<span>{t('admin.writeArticle')}</span>
 				</motion.button>
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}

@@ -5,6 +5,7 @@ import { CheckIcon } from 'lucide-react'
 import * as stylex from '@stylexjs/stylex'
 import { FONT_OPTIONS, getFontOption } from '@/config/fonts'
 import { applyFont, ensureFontCss } from '@/lib/font'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../stores/config-store'
 import { colors } from '@/styles/tokens.stylex'
 
@@ -106,6 +107,7 @@ const styles = stylex.create({
 })
 
 export function FontConfig({ formData, setFormData }: FontConfigProps) {
+	const { t } = useI18n()
 	const currentId = getFontOption(formData.font).id
 
 	// 进入此 tab 就把所有候选字体的样式表挂上，示例文字才能以真实字体渲染
@@ -121,17 +123,13 @@ export function FontConfig({ formData, setFormData }: FontConfigProps) {
 	return (
 		<div>
 			<div>
-				<label {...stylex.props(styles.label)}>全站字体</label>
-				<p {...stylex.props(styles.hint)}>点选后整站立即预览；「保存」提交后对所有访客生效，「取消」则还原为原来的字体。</p>
+				<label {...stylex.props(styles.label)}>{t('config.siteFont')}</label>
+				<p {...stylex.props(styles.hint)}>{t('config.fontHint')}</p>
 				<div {...stylex.props(styles.fontList)}>
 					{FONT_OPTIONS.map(font => {
 						const active = font.id === currentId
 						return (
-							<button
-								key={font.id}
-								type='button'
-								onClick={() => handleSelect(font.id)}
-								{...stylex.props(styles.fontCard, active && styles.fontCardActive)}>
+							<button key={font.id} type='button' onClick={() => handleSelect(font.id)} {...stylex.props(styles.fontCard, active && styles.fontCardActive)}>
 								<div {...stylex.props(styles.cardBody)}>
 									<div {...stylex.props(styles.nameRow)}>
 										<span {...stylex.props(styles.fontName)}>{font.name}</span>

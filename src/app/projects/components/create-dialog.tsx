@@ -11,6 +11,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 interface CreateDialogProps {
 	project: Project | null
@@ -217,6 +218,7 @@ const styles = stylex.create({
 })
 
 export default function CreateDialog({ project, onClose, onSave }: CreateDialogProps) {
+	const { t } = useI18n()
 	const [formData, setFormData] = useState<Project>({
 		name: '',
 		year: new Date().getFullYear(),
@@ -265,18 +267,18 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 
 	const handleSubmit = () => {
 		if (!formData.name.trim() || !formData.image.trim() || !formData.url.trim() || !formData.description.trim()) {
-			toast.error('请填写所有必填项')
+			toast.error(t('dialogs.fillAllRequired'))
 			return
 		}
 
 		if (formData.tags.length === 0) {
-			toast.error('请至少添加一个标签')
+			toast.error(t('dialogs.addAtLeastOneTag'))
 			return
 		}
 
 		onSave(formData)
 		onClose()
-		toast.success(project ? '更新成功' : '添加成功')
+		toast.success(project ? t('dialogs.updateSuccess') : t('dialogs.addSuccess'))
 	}
 
 	return (
@@ -288,7 +290,7 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 							<>
 								<img src={formData.image} alt={formData.name} {...stylex.props(styles.avatar)} />
 								<div {...stylex.props(styles.imageOverlay)}>
-									<span {...stylex.props(styles.overlayText)}>更换</span>
+									<span {...stylex.props(styles.overlayText)}>{t('dialogs.replace')}</span>
 								</div>
 							</>
 						) : (
@@ -302,7 +304,7 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 							type='text'
 							value={formData.name}
 							onChange={e => setFormData({ ...formData, name: e.target.value })}
-							placeholder='项目名称'
+							placeholder={t('dialogs.projectNamePlaceholder')}
 							{...stylex.props(styles.nameInput)}
 						/>
 						<div {...stylex.props(styles.metaRow)}>
@@ -310,7 +312,7 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 								type='number'
 								value={formData.year}
 								onChange={e => setFormData({ ...formData, year: parseInt(e.target.value) || 0 })}
-								placeholder='年份'
+								placeholder={t('dialogs.yearPlaceholder')}
 								{...stylex.props(styles.yearInput)}
 							/>
 							<input
@@ -329,7 +331,7 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 						type='text'
 						value={tagsInput}
 						onChange={e => handleTagsChange(e.target.value)}
-						placeholder='标签，用逗号分隔（如：React, Vue）'
+						placeholder={t('dialogs.projectTagsPlaceholder')}
 						{...stylex.props(styles.fieldInput)}
 					/>
 					<div {...stylex.props(styles.tagsRow)}>
@@ -344,7 +346,7 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 				<textarea
 					value={formData.description}
 					onChange={e => setFormData({ ...formData, description: e.target.value })}
-					placeholder='项目介绍...'
+					placeholder={t('dialogs.projectDescriptionPlaceholder')}
 					{...stylex.props(styles.descriptionInput)}
 					rows={4}
 				/>
@@ -354,14 +356,14 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 						type='url'
 						value={formData.github || ''}
 						onChange={e => setFormData({ ...formData, github: e.target.value || undefined })}
-						placeholder='GitHub URL（可选）'
+						placeholder={t('dialogs.githubUrlOptional')}
 						{...stylex.props(styles.fieldInput)}
 					/>
 					<input
 						type='url'
 						value={formData.npm || ''}
 						onChange={e => setFormData({ ...formData, npm: e.target.value || undefined })}
-						placeholder='NPM URL（可选）'
+						placeholder={t('dialogs.npmUrlOptional')}
 						{...stylex.props(styles.fieldInput)}
 					/>
 				</div>
@@ -369,10 +371,10 @@ export default function CreateDialog({ project, onClose, onSave }: CreateDialogP
 
 			<div {...stylex.props(styles.actions)}>
 				<button onClick={onClose} {...stylex.props(styles.cancelButton)}>
-					取消
+					{t('dialogs.cancel')}
 				</button>
 				<button onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
-					{project ? '保存' : '添加'}
+					{project ? t('dialogs.save') : t('dialogs.add')}
 				</button>
 			</div>
 

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DEFAULT_LOCALE, htmlLang, persistLocale, readStoredLocale, type Locale } from './config'
-import { translate, type TranslationKey, type TranslationParams } from './translate'
+import { setI18nLocale, translate, type TranslationKey, type TranslationParams } from './translate'
 
 type I18nValue = {
 	locale: Locale
@@ -22,6 +22,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		const stored = readStoredLocale()
+		setI18nLocale(stored)
 		if (stored !== DEFAULT_LOCALE) {
 			document.documentElement.lang = htmlLang(stored)
 			setLocaleState(stored)
@@ -29,6 +30,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 	}, [])
 
 	const setLocale = useCallback((next: Locale) => {
+		setI18nLocale(next)
 		setLocaleState(previous => {
 			if (previous === next) return previous
 			persistLocale(next)
@@ -37,8 +39,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 	}, [])
 
 	const toggleLocale = useCallback(() => {
+		// 函数式更新避免闭包捕获过期 locale；副作用幂等（严格模式 updater 可能双调用）
 		setLocaleState(previous => {
 			const next: Locale = previous === 'zh' ? 'en' : 'zh'
+			setI18nLocale(next)
 			persistLocale(next)
 			return next
 		})

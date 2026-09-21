@@ -3,7 +3,8 @@ import { GITHUB_CONFIG } from '@/consts'
 import { useAuthStore } from '@/hooks/use-auth'
 import { getOAuth2Token } from './oauth2-github'
 import { toast } from 'sonner'
-import { decrypt,encrypt } from './aes256-util'
+import { t } from '@/i18n/translate'
+import { decrypt, encrypt } from './aes256-util'
 
 const GITHUB_TOKEN_CACHE_KEY = 'github_token'
 const GITHUB_PEM_CACHE_KEY = 'p_info'
@@ -85,14 +86,14 @@ export async function getAuthToken(): Promise<string> {
 	// 1. 先尝试从缓存获取 token
 	const cachedToken = getTokenFromCache()
 	if (cachedToken) {
-		toast.info('使用缓存的令牌...')
+		toast.info(t('dialogs.usingCachedToken'))
 		return cachedToken
 	}
 
 	// 2. 优先尝试 OAuth2 token
 	const oauth2Token = getOAuth2Token()
 	if (oauth2Token) {
-		toast.info('使用 OAuth2 令牌...')
+		toast.info(t('dialogs.usingOAuth2Token'))
 		saveTokenToCache(oauth2Token)
 		return oauth2Token
 	}
@@ -100,16 +101,16 @@ export async function getAuthToken(): Promise<string> {
 	// 3. 回退到 App 认证
 	const privateKey = useAuthStore.getState().privateKey
 	if (!privateKey) {
-		throw new Error('需要先设置私钥。请使用 useAuth().setPrivateKey()')
+		throw new Error(t('dialogs.privateKeyRequired'))
 	}
 
-	toast.info('正在签发 JWT...')
+	toast.info(t('dialogs.signingJwt'))
 	const jwt = await signAppJwt(GITHUB_CONFIG.APP_ID, privateKey)
 
-	toast.info('正在获取安装信息...')
+	toast.info(t('dialogs.fetchingInstallation'))
 	const installationId = await getInstallationId(jwt, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO)
 
-	toast.info('正在创建安装令牌...')
+	toast.info(t('dialogs.creatingInstallationToken'))
 	const token = await createInstallationToken(jwt, installationId)
 
 	saveTokenToCache(token)

@@ -9,6 +9,7 @@ import * as stylex from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -92,6 +93,7 @@ export function WriteActions() {
 	const { loading, mode, form, loadBlogForEdit, originalSlug, updateForm } = useWriteStore()
 	const { openPreview } = usePreviewStore()
 	const { isAuth, onChoosePrivateKey, onPublish, onDelete } = usePublish()
+	const { t } = useI18n()
 	const [saving, setSaving] = useState(false)
 	const keyInputRef = useRef<HTMLInputElement>(null)
 	const mdInputRef = useRef<HTMLInputElement>(null)
@@ -106,7 +108,7 @@ export function WriteActions() {
 	}
 
 	const handleCancel = () => {
-		if (!window.confirm('放弃本次修改吗？')) {
+		if (!window.confirm(t('write.discardConfirm'))) {
 			return
 		}
 		if (mode === 'edit' && originalSlug) {
@@ -116,14 +118,14 @@ export function WriteActions() {
 		}
 	}
 
-	const buttonText = isAuth ? (mode === 'edit' ? '更新' : '发布') : '导入密钥'
+	const buttonText = isAuth ? (mode === 'edit' ? t('write.update') : t('write.publish')) : t('write.importKey')
 
 	const handleDelete = () => {
 		if (!isAuth) {
-			toast.info('请先导入密钥')
+			toast.info(t('write.importKeyFirst'))
 			return
 		}
-		const confirmMsg = form?.title ? `确定删除《${form.title}》吗？该操作不可恢复。` : '确定删除当前文章吗？该操作不可恢复。'
+		const confirmMsg = form?.title ? t('write.deleteConfirmTitle', { title: form.title }) : t('write.deleteConfirm')
 		if (window.confirm(confirmMsg)) {
 			onDelete()
 		}
@@ -140,9 +142,9 @@ export function WriteActions() {
 		try {
 			const text = await file.text()
 			updateForm({ md: text })
-			toast.success('已导入 Markdown 文件')
+			toast.success(t('write.mdImported'))
 		} catch (error) {
-			toast.error('导入失败，请重试')
+			toast.error(t('write.mdImportFailed'))
 		} finally {
 			if (e.currentTarget) e.currentTarget.value = ''
 		}
@@ -167,7 +169,7 @@ export function WriteActions() {
 				{mode === 'edit' && (
 					<>
 						<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.badgeWrap)}>
-							<div {...stylex.props(styles.modeBadge)}>编辑模式</div>
+							<div {...stylex.props(styles.modeBadge)}>{t('write.editMode')}</div>
 						</motion.div>
 
 						<motion.button
@@ -176,11 +178,11 @@ export function WriteActions() {
 							{...stylex.props(card.hover, styles.deleteBtn)}
 							disabled={loading}
 							onClick={handleDelete}>
-							删除
+							{t('write.delete')}
 						</motion.button>
 
 						<button onClick={handleCancel} disabled={saving} {...stylex.props(card.hover, styles.ghostBtn)}>
-							取消
+							{t('write.cancel')}
 						</button>
 					</>
 				)}
@@ -191,7 +193,7 @@ export function WriteActions() {
 					{...stylex.props(card.hover, styles.ghostBtn)}
 					disabled={loading}
 					onClick={handleImportMd}>
-					导入 MD
+					{t('write.importMd')}
 				</motion.button>
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}
@@ -199,7 +201,7 @@ export function WriteActions() {
 					{...stylex.props(card.hover, styles.ghostBtn, styles.previewBtn)}
 					disabled={loading}
 					onClick={openPreview}>
-					预览
+					{t('write.preview')}
 				</motion.button>
 				<motion.button
 					initial={{ opacity: 0, scale: 0.6 }}

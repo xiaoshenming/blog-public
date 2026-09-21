@@ -9,6 +9,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { util } from '@/styles/shared/util.stylex'
+import { useI18n } from '@/i18n/context'
 
 type ImagesSectionProps = {
 	delay?: number
@@ -163,6 +164,7 @@ const styles = stylex.create({
 export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 	const { images, cover, addUrlImage, addFiles, deleteImage } = useWriteStore()
 	const [urlInput, setUrlInput] = useState<string>('')
+	const { t } = useI18n()
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	const coverId = cover?.id ?? null
@@ -170,20 +172,14 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 	return (
 		<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} {...stylex.props(card.base, styles.section)}>
 			<div {...stylex.props(styles.headerRow)}>
-				<h2 {...stylex.props(styles.heading)}>图片管理</h2>
+				<h2 {...stylex.props(styles.heading)}>{t('write.images')}</h2>
 				<Link href='/image-toolbox' target='_blank' {...stylex.props(styles.toolLink)}>
-					压缩工具
+					{t('write.compressionTool')}
 				</Link>
 			</div>
 
 			<div {...stylex.props(styles.urlRow)}>
-				<input
-					type='text'
-					placeholder='https://...'
-					{...stylex.props(styles.urlInput)}
-					value={urlInput}
-					onChange={e => setUrlInput(e.target.value)}
-				/>
+				<input type='text' placeholder='https://...' {...stylex.props(styles.urlInput)} value={urlInput} onChange={e => setUrlInput(e.target.value)} />
 				<button
 					{...stylex.props(styles.addBtn)}
 					onClick={() => {
@@ -192,7 +188,7 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 						addUrlImage(v)
 						setUrlInput('')
 					}}>
-					添加
+					{t('write.add')}
 				</button>
 			</div>
 
@@ -244,10 +240,10 @@ export function ImagesSection({ delay = 0 }: ImagesSectionProps) {
 									e.dataTransfer.setData('text/markdown', markdown)
 								}}
 							/>
-							{isCover && <div {...stylex.props(styles.coverBadge, util.shadowSoft)}>封面</div>}
+							{isCover && <div {...stylex.props(styles.coverBadge, util.shadowSoft)}>{t('write.cover')}</div>}
 							<div {...stylex.props(styles.deleteWrap)}>
 								<button type='button' {...stylex.props(styles.deleteBtn, util.shadowSoft)} onClick={() => deleteImage(item.id)}>
-									删除
+									{t('write.delete')}
 								</button>
 							</div>
 						</div>

@@ -530,7 +530,7 @@ export default function BlogPage() {
 	}, [displayItems, displayMode, categoryList, locale, t])
 
 	const selectedCount = selectedSlugs.size
-	const buttonText = isAuth ? '保存' : '导入密钥'
+	const buttonText = isAuth ? t('admin.save') : t('admin.importKey')
 
 	const toggleEditMode = useCallback(() => {
 		if (editMode) {
@@ -605,12 +605,12 @@ export default function BlogPage() {
 
 	const handleDeleteSelected = useCallback(() => {
 		if (selectedCount === 0) {
-			toast.info('请选择要删除的文章')
+			toast.info(t('admin.selectArticlesToDelete'))
 			return
 		}
 		setEditableItems(prev => prev.filter(item => !selectedSlugs.has(item.slug)))
 		setSelectedSlugs(new Set())
-	}, [selectedCount, selectedSlugs])
+	}, [selectedCount, selectedSlugs, t])
 
 	const handleAssignCategory = useCallback((slug: string, category?: string) => {
 		setEditableItems(prev =>
@@ -626,12 +626,12 @@ export default function BlogPage() {
 	const handleAddCategory = useCallback(() => {
 		const value = newCategory.trim()
 		if (!value) {
-			toast.info('请输入分类名称')
+			toast.info(t('admin.categoryNameRequired'))
 			return
 		}
 		setCategoryList(prev => (prev.includes(value) ? prev : [...prev, value]))
 		setNewCategory('')
-	}, [newCategory])
+	}, [newCategory, t])
 
 	const handleRemoveCategory = useCallback((category: string) => {
 		setCategoryList(prev => prev.filter(item => item !== category))
@@ -661,7 +661,7 @@ export default function BlogPage() {
 		const hasChanges = removedSlugs.length > 0 || categoryListChanged || categoryAssignmentChanged
 
 		if (!hasChanges) {
-			toast.info('没有需要保存的改动')
+			toast.info(t('admin.noChangesToSave'))
 			return
 		}
 
@@ -673,11 +673,11 @@ export default function BlogPage() {
 			setCategoryModalOpen(false)
 		} catch (error: any) {
 			console.error(error)
-			toast.error(error?.message || '保存失败')
+			toast.error(error?.message || t('admin.saveFailedShort'))
 		} finally {
 			setSaving(false)
 		}
-	}, [items, editableItems, categoryList, categoriesFromServer])
+	}, [items, editableItems, categoryList, categoriesFromServer, t])
 
 	const handleSaveClick = useCallback(() => {
 		if (!isAuth) {
@@ -692,13 +692,13 @@ export default function BlogPage() {
 			try {
 				const pem = await readFileAsText(file)
 				setPrivateKey(pem)
-				toast.success('密钥导入成功，请再次点击保存')
+				toast.success(t('admin.keyImported'))
 			} catch (error) {
 				console.error(error)
-				toast.error('读取密钥失败')
+				toast.error(t('admin.readKeyFailed'))
 			}
 		},
-		[setPrivateKey]
+		[setPrivateKey, t]
 	)
 
 	useEffect(() => {
@@ -774,7 +774,7 @@ export default function BlogPage() {
 											<button
 												onClick={() => handleSelectGroup(groupKey)}
 												{...stylex.props(card.hover, styles.selectGroupBtn, groupAllSelected ? styles.selectGroupOn : styles.selectGroupOff)}>
-												{groupAllSelected ? '取消全选' : '全选该分组'}
+												{groupAllSelected ? t('admin.deselectAll') : t('admin.selectGroup')}
 											</button>
 										)
 									})()}
@@ -851,26 +851,26 @@ export default function BlogPage() {
 					<>
 						{enableCategories && (
 							<button onClick={() => setCategoryModalOpen(true)} disabled={saving} {...stylex.props(card.hover, styles.toolBtn)}>
-								分类
+								{t('admin.category')}
 							</button>
 						)}
 						<button onClick={handleCancel} disabled={saving} {...stylex.props(card.hover, styles.cancelBtn)}>
-							取消
+							{t('admin.cancel')}
 						</button>
 						<button onClick={selectedCount === editableItems.length ? handleDeselectAll : handleSelectAll} {...stylex.props(card.hover, styles.toolBtn)}>
-							{selectedCount === editableItems.length ? '取消全选' : '全选'}
+							{selectedCount === editableItems.length ? t('admin.deselectAll') : t('admin.selectAll')}
 						</button>
 						<button onClick={handleDeleteSelected} disabled={selectedCount === 0} {...stylex.props(card.hover, styles.deleteBtn)}>
-							删除(已选:{selectedCount}篇)
+							{t('admin.deleteSelected', { count: selectedCount })}
 						</button>
 						<button onClick={handleSaveClick} disabled={saving} {...stylex.props(card.hover, brandBtn.base, styles.saveBtn)}>
-							{saving ? '保存中...' : buttonText}
+							{saving ? t('admin.saving') : buttonText}
 						</button>
 					</>
 				) : (
 					!hideEditButton && (
 						<button onClick={toggleEditMode} {...stylex.props(card.hover, styles.editBtn)}>
-							编辑
+							{t('admin.edit')}
 						</button>
 					)
 				)}

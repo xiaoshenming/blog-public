@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type TagInputProps = {
 	tags: string[]
@@ -55,6 +56,7 @@ const styles = stylex.create({
 
 export function TagInput({ tags, onChange }: TagInputProps) {
 	const [tagInput, setTagInput] = useState<string>('')
+	const { t } = useI18n()
 
 	const handleAddTag = () => {
 		if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -83,7 +85,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
 			)}
 			<input
 				type='text'
-				placeholder='添加标签（按回车）'
+				placeholder={t('write.addTagPlaceholder')}
 				{...stylex.props(styles.input)}
 				value={tagInput}
 				onChange={e => setTagInput(e.target.value)}

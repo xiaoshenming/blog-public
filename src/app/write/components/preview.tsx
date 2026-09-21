@@ -5,6 +5,7 @@ import type { PublishForm } from '../types'
 import * as stylex from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -34,6 +35,7 @@ type WritePreviewProps = {
 
 export function WritePreview({ form, coverPreviewUrl, onClose, slug }: WritePreviewProps) {
 	const previewData = useWriteData()
+	const { t } = useI18n()
 	return (
 		<div>
 			<div onClick={e => e.stopPropagation()}>
@@ -47,12 +49,8 @@ export function WritePreview({ form, coverPreviewUrl, onClose, slug }: WritePrev
 					slug={slug}
 				/>
 			</div>
-			<motion.button
-				initial={{ opacity: 0, scale: 0.6 }}
-				animate={{ opacity: 1, scale: 1 }}
-				{...stylex.props(card.hover, styles.closeBtn)}
-				onClick={onClose}>
-				关闭预览
+			<motion.button initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(card.hover, styles.closeBtn)} onClick={onClose}>
+				{t('write.closePreview')}
 			</motion.button>
 		</div>
 	)

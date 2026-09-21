@@ -1,14 +1,11 @@
 // 由 scripts/i18n/dict.ts 生成；可直接手工修正，重跑默认保留已有译文（--force 覆盖）
 export const toolbox = {
-	// 秒表 / 计时器（/clock）
 	stopwatch: 'Stopwatch',
 	timer: 'Timer',
 	hours: 'H',
 	minutes: 'M',
 	seconds: 'S',
 	lap: 'Lap',
-
-	// PNG / JPG 转 WEBP（/image-toolbox）
 	pngJpgToWebp: 'PNG / JPG to WEBP',
 	convertFlowHint: 'Pick images → Adjust quality → Convert & download',
 	clickOrDragToUpload: 'Click or drag images here',
@@ -31,8 +28,6 @@ export const toolbox = {
 	webpWithSize: 'WEBP ({size})',
 	convertFailed: 'Something went wrong during conversion, please try again later',
 	batchConvertFailed: 'Something went wrong during batch conversion, please try again later',
-
-	// 鸣潮 · 抽卡记录分析（/wuthering-waves）
 	gachaAnalysisTitle: 'Wuthering Waves · Gacha Record Analysis',
 	usageTitle: 'How to use:',
 	step1BeforeLink: 'Go to',
@@ -56,11 +51,7 @@ export const toolbox = {
 	parseFailed: 'Failed to parse',
 	notFiveStarYet: '(not 5-star yet)',
 	pullsCount: '{count} pulls',
-
-	// Live2D（/live2d）
 	loadingLive2dModel: 'Loading Live2D model…',
-
-	// GitHub 登录回调（/auth/callback）
 	processingGithubLogin: 'Processing GitHub login...',
 	loginSuccessRedirecting: 'Login successful, redirecting...',
 	autoRedirectHint: 'Redirecting in {seconds}s...',
@@ -69,7 +60,5 @@ export const toolbox = {
 	githubLoginSuccess: 'GitHub OAuth2 login successful',
 	loginFailedRetry: 'Login failed, please try again',
 	loginFailed: 'Login failed',
-
-	// 回到顶部按钮
 	scrollToTop: 'Scroll to top'
 }

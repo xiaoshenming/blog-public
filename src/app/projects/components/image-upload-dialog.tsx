@@ -8,6 +8,7 @@ import { DialogModal } from '@/components/dialog-modal'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 export type ImageItem = { type: 'url'; url: string } | { type: 'file'; file: File; previewUrl: string; hash?: string }
 
@@ -174,6 +175,7 @@ const styles = stylex.create({
 })
 
 export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: ImageUploadDialogProps) {
+	const { t } = useI18n()
 	const [urlInput, setUrlInput] = useState(currentImage || '')
 	const [previewFile, setPreviewFile] = useState<{ file: File; previewUrl: string } | null>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
@@ -183,7 +185,7 @@ export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: I
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('dialogs.selectImageFile'))
 			return
 		}
 
@@ -207,7 +209,7 @@ export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: I
 				url: urlInput.trim()
 			})
 		} else {
-			toast.error('请上传图片或输入 URL')
+			toast.error(t('dialogs.uploadImageOrUrlRequired'))
 			return
 		}
 
@@ -227,20 +229,18 @@ export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: I
 
 	return (
 		<DialogModal open onClose={handleClose} style={[card.base, styles.dialogWidth]}>
-			<h2 {...stylex.props(styles.title)}>选择图片</h2>
+			<h2 {...stylex.props(styles.title)}>{t('dialogs.chooseImageTitle')}</h2>
 			<form onSubmit={handleSubmit}>
 				<div {...stylex.props(styles.uploadSection)}>
-					<label {...stylex.props(styles.label)}>上传图片</label>
+					<label {...stylex.props(styles.label)}>{t('dialogs.uploadImageLabel')}</label>
 					<input ref={fileInputRef} type='file' accept='image/*' {...stylex.props(styles.fileInput)} onChange={handleFileSelect} />
-					<div
-						onClick={() => fileInputRef.current?.click()}
-						{...stylex.props(styles.uploadBox)}>
+					<div onClick={() => fileInputRef.current?.click()} {...stylex.props(styles.uploadBox)}>
 						{previewFile ? (
 							<img src={previewFile.previewUrl} alt='preview' {...stylex.props(styles.previewImage)} />
 						) : (
 							<div {...stylex.props(styles.uploadHint)}>
 								<Plus {...stylex.props(styles.plusIcon)} />
-								<p {...stylex.props(styles.hintText)}>点击上传图片</p>
+								<p {...stylex.props(styles.hintText)}>{t('dialogs.clickToUploadImage')}</p>
 							</div>
 						)}
 					</div>
@@ -251,12 +251,12 @@ export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: I
 						<div {...stylex.props(styles.dividerLine)}></div>
 					</div>
 					<div {...stylex.props(styles.dividerLabelWrap)}>
-						<span {...stylex.props(styles.dividerLabel)}>或</span>
+						<span {...stylex.props(styles.dividerLabel)}>{t('dialogs.or')}</span>
 					</div>
 				</div>
 
 				<div {...stylex.props(styles.urlSection)}>
-					<label {...stylex.props(styles.label)}>图片 URL</label>
+					<label {...stylex.props(styles.label)}>{t('dialogs.imageUrlLabel')}</label>
 					<input
 						type='url'
 						value={urlInput}
@@ -274,13 +274,10 @@ export default function ImageUploadDialog({ currentImage, onClose, onSubmit }: I
 
 				<div {...stylex.props(styles.actions)}>
 					<button type='submit' {...stylex.props(brandBtn.base, styles.confirmButton)}>
-						确认
+						{t('dialogs.confirm')}
 					</button>
-					<button
-						type='button'
-						onClick={handleClose}
-						{...stylex.props(styles.cancelButton)}>
-						取消
+					<button type='button' onClick={handleClose} {...stylex.props(styles.cancelButton)}>
+						{t('dialogs.cancel')}
 					</button>
 				</div>
 			</form>

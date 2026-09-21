@@ -27,6 +27,7 @@ import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const sx = stylex.create({
@@ -113,15 +114,16 @@ export default function Home() {
 	const editing = useLayoutEditStore(state => state.editing)
 	const saveEditing = useLayoutEditStore(state => state.saveEditing)
 	const cancelEditing = useLayoutEditStore(state => state.cancelEditing)
+	const { t } = useI18n()
 
 	const handleSave = () => {
 		saveEditing()
-		toast.success('首页布局偏移已保存（尚未提交到远程配置）')
+		toast.success(t('admin.homeLayoutSaved'))
 	}
 
 	const handleCancel = () => {
 		cancelEditing()
-		toast.info('已取消此次拖拽布局修改')
+		toast.info(t('admin.homeLayoutCancelled'))
 	}
 
 	useEffect(() => {
@@ -145,13 +147,13 @@ export default function Home() {
 			{editing && (
 				<div {...stylex.props(sx.editBarWrap)}>
 					<div {...stylex.props(sx.editBar)}>
-						<span {...stylex.props(sx.editHint)}>正在编辑首页布局，拖拽卡片调整位置</span>
+						<span {...stylex.props(sx.editHint)}>{t('admin.homeLayoutEditingHint')}</span>
 						<div {...stylex.props(sx.editActions)}>
 							<button type='button' onClick={handleCancel} {...stylex.props(card.hover, sx.cancelButton)}>
-								取消
+								{t('admin.cancel')}
 							</button>
 							<button type='button' onClick={handleSave} {...stylex.props(brandBtn.base, card.hover, sx.saveButton)}>
-								保存偏移
+								{t('admin.saveOffsets')}
 							</button>
 						</div>
 					</div>

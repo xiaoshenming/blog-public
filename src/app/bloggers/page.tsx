@@ -14,6 +14,7 @@ import type { AvatarItem } from './components/avatar-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -84,6 +85,7 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
+	const { t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	const handleUpdate = (updatedBlogger: Blogger, oldBlogger: Blogger, avatarItem?: AvatarItem) => {
@@ -118,7 +120,7 @@ export default function Page() {
 	}
 
 	const handleDelete = (blogger: Blogger) => {
-		if (confirm(`确定要删除 ${blogger.name} 吗？`)) {
+		if (confirm(t('admin.deleteConfirm', { name: blogger.name }))) {
 			setBloggers(bloggers.filter(b => b.url !== blogger.url))
 		}
 	}
@@ -131,7 +133,7 @@ export default function Page() {
 			await handleSave()
 		} catch (error) {
 			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
+			toast.error(t('admin.readKeyFileFailed'))
 		}
 	}
 
@@ -156,10 +158,10 @@ export default function Page() {
 			setOriginalBloggers(updatedBloggers)
 			setAvatarItems(new Map())
 			setIsEditMode(false)
-			toast.success('保存成功！')
+			toast.success(t('admin.saveSuccess'))
 		} catch (error: any) {
 			console.error('Failed to save:', error)
-			toast.error(`保存失败: ${error?.message || '未知错误'}`)
+			toast.error(t('admin.saveFailed', { message: error?.message || t('admin.unknownError') }))
 		} finally {
 			setIsSaving(false)
 		}
@@ -171,7 +173,7 @@ export default function Page() {
 		setIsEditMode(false)
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
+	const buttonText = isAuth ? t('admin.save') : t('admin.importKey')
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -206,27 +208,20 @@ export default function Page() {
 			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} {...stylex.props(styles.toolbar)}>
 				{isEditMode ? (
 					<>
-						<button
-							onClick={handleCancel}
-							disabled={isSaving}
-							{...stylex.props(card.hover, styles.ghostButton)}>
-							取消
+						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostButton)}>
+							{t('admin.cancel')}
 						</button>
-						<button
-							onClick={handleAdd}
-							{...stylex.props(card.hover, styles.ghostButton)}>
-							添加
+						<button onClick={handleAdd} {...stylex.props(card.hover, styles.ghostButton)}>
+							{t('admin.add')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
-							{isSaving ? '保存中...' : buttonText}
+							{isSaving ? t('admin.saving') : buttonText}
 						</button>
 					</>
 				) : (
 					!hideEditButton && (
-						<button
-							onClick={() => setIsEditMode(true)}
-							{...stylex.props(card.hover, styles.editButton)}>
-							编辑
+						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editButton)}>
+							{t('admin.edit')}
 						</button>
 					)
 				)}

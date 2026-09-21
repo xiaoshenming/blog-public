@@ -2,6 +2,7 @@
 
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 
 interface HatSectionProps {
@@ -93,6 +94,7 @@ const styles = stylex.create({
 })
 
 export function HatSection({ formData, setFormData }: HatSectionProps) {
+	const { t } = useI18n()
 	const currentHatIndex = formData.currentHatIndex ?? 1
 	const hatCount = 24
 
@@ -105,7 +107,7 @@ export function HatSection({ formData, setFormData }: HatSectionProps) {
 
 	return (
 		<div>
-			<label {...stylex.props(styles.label)}>帽子图片</label>
+			<label {...stylex.props(styles.label)}>{t('config.hatImages')}</label>
 			<div {...stylex.props(styles.grid)}>
 				{Array.from({ length: hatCount }, (_, i) => i + 1).map(index => {
 					const isActive = currentHatIndex === index
@@ -118,9 +120,7 @@ export function HatSection({ formData, setFormData }: HatSectionProps) {
 								{...stylex.props(styles.thumbButton, isActive ? styles.thumbActive : styles.thumbIdle)}>
 								<img src={`/images/hats/${index}.webp`} alt={`hat ${index}`} {...stylex.props(styles.thumbImage)} />
 							</button>
-							{isActive && (
-								<span {...stylex.props(styles.badge)}>当前使用</span>
-							)}
+							{isActive && <span {...stylex.props(styles.badge)}>{t('config.currentlyUsed')}</span>}
 						</div>
 					)
 				})}
@@ -133,7 +133,7 @@ export function HatSection({ formData, setFormData }: HatSectionProps) {
 						onChange={e => setFormData({ ...formData, hatFlipped: e.target.checked })}
 						{...stylex.props(styles.checkbox)}
 					/>
-					<span {...stylex.props(styles.checkboxText)}>左右翻转</span>
+					<span {...stylex.props(styles.checkboxText)}>{t('config.flipHorizontally')}</span>
 				</label>
 			</div>
 		</div>

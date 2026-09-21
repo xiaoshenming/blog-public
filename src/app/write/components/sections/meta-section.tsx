@@ -7,6 +7,7 @@ import { Select } from '@/components/select'
 import * as stylex from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 type MetaSectionProps = {
 	delay?: number
@@ -86,20 +87,21 @@ const styles = stylex.create({
 export function MetaSection({ delay = 0 }: MetaSectionProps) {
 	const { form, updateForm } = useWriteStore()
 	console.log(form.date)
+	const { t } = useI18n()
 
 	const { categories } = useCategories()
 	const { siteContent } = useConfigStore()
 	const enableCategories = siteContent.enableCategories ?? false
 
-	const categoryOptions = [{ value: '', label: '未分类' }, ...categories.map(cat => ({ value: cat, label: cat }))]
+	const categoryOptions = [{ value: '', label: t('write.uncategorized') }, ...categories.map(cat => ({ value: cat, label: cat }))]
 
 	return (
 		<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay }} {...stylex.props(card.base, styles.section)}>
-			<h2 {...stylex.props(styles.heading)}>元信息</h2>
+			<h2 {...stylex.props(styles.heading)}>{t('write.meta')}</h2>
 
 			<div {...stylex.props(styles.fields)}>
 				<textarea
-					placeholder='为这篇文章写一段简短摘要'
+					placeholder={t('write.summaryPlaceholder')}
 					rows={2}
 					{...stylex.props(styles.summaryArea)}
 					value={form.summary}
@@ -112,7 +114,7 @@ export function MetaSection({ delay = 0 }: MetaSectionProps) {
 				)}
 				<input
 					type='datetime-local'
-					placeholder='日期'
+					placeholder={t('write.date')}
 					{...stylex.props(styles.dateInput)}
 					value={form.date}
 					onChange={e => {
@@ -129,7 +131,7 @@ export function MetaSection({ delay = 0 }: MetaSectionProps) {
 						{...stylex.props(styles.checkbox)}
 					/>
 					<label htmlFor='hidden-check' {...stylex.props(styles.checkboxLabel)}>
-						隐藏此文章（仅管理员可见）
+						{t('write.hiddenLabel')}
 					</label>
 				</div>
 			</div>

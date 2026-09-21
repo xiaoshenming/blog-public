@@ -11,7 +11,7 @@ import { multiParagraphUser, singleParagraphUser, uiSystem } from './prompt'
 
 const ZH_DIR = resolve(process.cwd(), 'src/i18n/dictionaries/zh')
 const EN_DIR = resolve(process.cwd(), 'src/i18n/dictionaries/en')
-const DOMAINS = ['collections', 'common', 'nav', 'home', 'blog', 'about', 'music', 'toolbox'] as const
+const DOMAINS = ['collections', 'common', 'nav', 'home', 'blog', 'about', 'music', 'toolbox', 'bloggers', 'write', 'config', 'admin', 'dialogs'] as const
 const force = process.argv.includes('--force')
 
 type Entries = Record<string, string>

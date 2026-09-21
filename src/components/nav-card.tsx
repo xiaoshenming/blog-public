@@ -25,8 +25,6 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { HomeDraggableLayer } from '@/app/(home)/home-draggable-layer'
 import { useI18n } from '@/i18n/context'
-import { localeLabel } from '@/i18n/config'
-import { Languages } from 'lucide-react'
 
 const list = [
 	{
@@ -62,19 +60,6 @@ const list = [
 ] as const
 
 const extraSize = 8
-
-type NavItem = {
-	icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
-	iconActive: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
-	label: string
-	labelKey?: string
-	href?: string
-}
-
-/** 语言切换图标：lucide 组件，尺寸对齐自绘 svg 的 28px 并承接样式 */
-function LanguageIcon(props: { className?: string; style?: React.CSSProperties }) {
-	return <Languages size={28} {...props} />
-}
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物）；const styles 已被配置 store 占用，故取名 sx */
 const sx = stylex.create({
@@ -210,7 +195,7 @@ export default function NavCard() {
 	const [show, setShow] = useState(false)
 	const { maxSM } = useSize()
 	const [hoveredIndex, setHoveredIndex] = useState<number>(0)
-	const { locale, toggleLocale, t } = useI18n()
+	const { t } = useI18n()
 	const { styles, hiCardStyles, enableChristmas, metaTitle } = useConfigStore(
 		useShallow(s => ({
 			styles: s.cardStyles.navCard,
@@ -220,19 +205,7 @@ export default function NavCard() {
 		}))
 	)
 
-	/** 语言切换项挂在导航列表尾部，共享同一套悬停胶囊动画；label 显示目标语言名 */
-	const items = useMemo<NavItem[]>(
-		() => [
-			...list.map(item => ({ ...item, label: t(item.labelKey) })),
-			{
-				icon: LanguageIcon,
-				iconActive: LanguageIcon,
-				label: locale === 'zh' ? localeLabel('en') : localeLabel('zh'),
-				href: undefined
-			}
-		],
-		[locale, t]
-	)
+	const items = useMemo(() => list.map(item => ({ ...item, label: t(item.labelKey) })), [t])
 
 	const activeIndex = useMemo(() => {
 		const index = list.findIndex(item => pathname === item.href)
@@ -365,31 +338,18 @@ export default function NavCard() {
 									style={{ backgroundImage: 'linear-gradient(to right bottom, var(--color-border) 60%, var(--color-card) 100%)' }}
 								/>
 
-								{items.map((item, index) => {
-									const isLanguageItem = !item.href
-									return (
-										<Link
-											key={item.labelKey ?? item.label}
-											href={item.href ?? '#'}
-											{...stylex.props(sx.navLink, form === 'icons' && sx.navLinkIcons, form !== 'icons' && index < items.length - 1 && sx.navItemGap)}
-											onMouseEnter={() => setHoveredIndex(index)}
-											onClick={
-												isLanguageItem
-													? event => {
-															event.preventDefault()
-															toggleLocale()
-														}
-													: undefined
-											}
-											aria-label={isLanguageItem ? t('common.switchTo') : undefined}
-											title={isLanguageItem ? t('common.switchTo') : undefined}>
-											<div {...stylex.props(sx.iconBox)}>
-												{hoveredIndex == index ? <item.iconActive {...stylex.props(sx.icon, sx.iconActive)} /> : <item.icon {...stylex.props(sx.icon)} />}
-											</div>
-											{form !== 'icons' && <span {...stylex.props(index === hoveredIndex && sx.labelActive)}>{item.label}</span>}
-										</Link>
-									)
-								})}
+								{items.map((item, index) => (
+									<Link
+										key={item.href}
+										href={item.href}
+										{...stylex.props(sx.navLink, form === 'icons' && sx.navLinkIcons, form !== 'icons' && index < items.length - 1 && sx.navItemGap)}
+										onMouseEnter={() => setHoveredIndex(index)}>
+										<div {...stylex.props(sx.iconBox)}>
+											{hoveredIndex == index ? <item.iconActive {...stylex.props(sx.icon, sx.iconActive)} /> : <item.icon {...stylex.props(sx.icon)} />}
+										</div>
+										{form !== 'icons' && <span {...stylex.props(index === hoveredIndex && sx.labelActive)}>{item.label}</span>}
+									</Link>
+								))}
 							</div>
 						</>
 					)}

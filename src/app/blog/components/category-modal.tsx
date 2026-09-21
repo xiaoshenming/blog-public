@@ -252,21 +252,26 @@ export function CategoryModal({
 	return (
 		<DialogModal open={open} onClose={onClose} style={[card.base, styles.dialogBox]}>
 			<div {...stylex.props(styles.header)}>
-				<div {...stylex.props(styles.title)}>文章分类</div>
+				<div {...stylex.props(styles.title)}>{t('admin.articleCategories')}</div>
 				<button onClick={onClose} {...stylex.props(styles.closeButton)}>
-					关闭
+					{t('admin.close')}
 				</button>
 			</div>
 			<div>
 				<div {...stylex.props(styles.inputRow)}>
-					<input value={newCategory} onChange={e => onNewCategoryChange(e.target.value)} placeholder='输入分类名称' {...stylex.props(styles.input)} />
+					<input
+						value={newCategory}
+						onChange={e => onNewCategoryChange(e.target.value)}
+						placeholder={t('admin.categoryNamePlaceholder')}
+						{...stylex.props(styles.input)}
+					/>
 					<button onClick={onAddCategory} {...stylex.props(brandBtn.base, styles.addButton)}>
-						新增分类
+						{t('admin.addCategory')}
 					</button>
 				</div>
 				<div {...stylex.props(styles.chipsBox)}>
 					{categoryList.length === 0 ? (
-						<span {...stylex.props(styles.emptyText)}>暂无分类</span>
+						<span {...stylex.props(styles.emptyText)}>{t('admin.noCategories')}</span>
 					) : (
 						categoryList.map((cat, index) => (
 							<span

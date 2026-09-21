@@ -11,6 +11,7 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 interface CreateDialogProps {
 	share: Share | null
@@ -201,6 +202,7 @@ const styles = stylex.create({
 })
 
 export default function CreateDialog({ share, onClose, onSave }: CreateDialogProps) {
+	const { t } = useI18n()
 	const [formData, setFormData] = useState<Share>({
 		name: '',
 		logo: '',
@@ -248,18 +250,18 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 
 	const handleSubmit = () => {
 		if (!formData.name.trim() || !formData.logo.trim() || !formData.url.trim() || !formData.description.trim()) {
-			toast.error('请填写所有必填项')
+			toast.error(t('dialogs.fillAllRequired'))
 			return
 		}
 
 		if (formData.tags.length === 0) {
-			toast.error('请至少添加一个标签')
+			toast.error(t('dialogs.addAtLeastOneTag'))
 			return
 		}
 
 		onSave(formData, logoItem || undefined)
 		onClose()
-		toast.success(share ? '更新成功' : '添加成功')
+		toast.success(share ? t('dialogs.updateSuccess') : t('dialogs.addSuccess'))
 	}
 
 	return (
@@ -272,7 +274,7 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 							<>
 								<img src={formData.logo} alt={formData.name} {...stylex.props(styles.avatar)} />
 								<div {...stylex.props(styles.avatarOverlay)}>
-									<span {...stylex.props(styles.overlayText)}>更换</span>
+									<span {...stylex.props(styles.overlayText)}>{t('dialogs.replace')}</span>
 								</div>
 							</>
 						) : (
@@ -286,7 +288,7 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 							type='text'
 							value={formData.name}
 							onChange={e => setFormData({ ...formData, name: e.target.value })}
-							placeholder='资源名称'
+							placeholder={t('dialogs.resourceNamePlaceholder')}
 							{...stylex.props(styles.nameInput)}
 						/>
 						<input
@@ -316,7 +318,7 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 						type='text'
 						value={tagsInput}
 						onChange={e => handleTagsChange(e.target.value)}
-						placeholder='标签，用逗号分隔（如：图片, 工具）'
+						placeholder={t('dialogs.shareTagsPlaceholder')}
 						{...stylex.props(styles.tagsInput)}
 					/>
 					<div {...stylex.props(styles.tagsRow)}>
@@ -331,7 +333,7 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 				<textarea
 					value={formData.description}
 					onChange={e => setFormData({ ...formData, description: e.target.value })}
-					placeholder='资源介绍...'
+					placeholder={t('dialogs.shareDescriptionPlaceholder')}
 					{...stylex.props(styles.descriptionInput)}
 					rows={4}
 				/>
@@ -340,10 +342,10 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 			{/* 操作按钮 */}
 			<div {...stylex.props(styles.actions)}>
 				<button onClick={onClose} {...stylex.props(styles.cancelButton)}>
-					取消
+					{t('dialogs.cancel')}
 				</button>
 				<button onClick={handleSubmit} {...stylex.props(brandBtn.base, styles.submitButton)}>
-					{share ? '保存' : '添加'}
+					{share ? t('dialogs.save') : t('dialogs.add')}
 				</button>
 			</div>
 

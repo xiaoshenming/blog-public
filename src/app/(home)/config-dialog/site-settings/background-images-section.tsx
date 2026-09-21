@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { hashFileSHA256 } from '@/lib/file-utils'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 import type { BackgroundImageUploads, FileItem } from './types'
 
@@ -178,6 +179,7 @@ const styles = stylex.create({
 })
 
 export function BackgroundImagesSection({ formData, setFormData, backgroundImageUploads, setBackgroundImageUploads }: BackgroundImagesSectionProps) {
+	const { t } = useI18n()
 	const backgroundInputRef = useRef<HTMLInputElement>(null)
 	const [backgroundUrlInput, setBackgroundUrlInput] = useState('')
 
@@ -186,7 +188,7 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 		if (!file) return
 
 		if (!file.type.startsWith('image/')) {
-			toast.error('请选择图片文件')
+			toast.error(t('config.selectImageFile'))
 			return
 		}
 
@@ -218,7 +220,7 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 
 	const handleBackgroundUrlSubmit = () => {
 		if (!backgroundUrlInput.trim()) {
-			toast.error('请输入图片 URL')
+			toast.error(t('config.enterImageUrl'))
 			return
 		}
 
@@ -277,13 +279,10 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 	return (
 		<div>
 			<div {...stylex.props(styles.header)}>
-				<label {...stylex.props(styles.label)}>背景图片</label>
+				<label {...stylex.props(styles.label)}>{t('config.backgroundImages')}</label>
 				{formData.currentBackgroundImageId && formData.currentBackgroundImageId.trim() && (
-					<button
-						type='button'
-						onClick={handleClearBackgroundImage}
-						{...stylex.props(styles.clearButton)}>
-						取消设置
+					<button type='button' onClick={handleClearBackgroundImage} {...stylex.props(styles.clearButton)}>
+						{t('config.unsetCurrent')}
 					</button>
 				)}
 			</div>
@@ -305,23 +304,15 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 									{...stylex.props(styles.thumbButton, isActive ? styles.thumbActive : styles.thumbIdle)}>
 									<img src={src} alt='background preview' {...stylex.props(styles.thumbImage)} />
 								</button>
-								{isActive && (
-									<span {...stylex.props(styles.badge)}>当前使用</span>
-								)}
-								<button
-									type='button'
-									onClick={() => handleRemoveBackgroundImage(item.id)}
-									{...stylex.props(styles.removeButton)}>
-									删除
+								{isActive && <span {...stylex.props(styles.badge)}>{t('config.currentlyUsed')}</span>}
+								<button type='button' onClick={() => handleRemoveBackgroundImage(item.id)} {...stylex.props(styles.removeButton)}>
+									{t('config.delete')}
 								</button>
 							</div>
 						)
 					})}
 				<div {...stylex.props(styles.addCell)}>
-					<button
-						type='button'
-						onClick={() => backgroundInputRef.current?.click()}
-						{...stylex.props(styles.addButton)}>
+					<button type='button' onClick={() => backgroundInputRef.current?.click()} {...stylex.props(styles.addButton)}>
 						+
 					</button>
 				</div>
@@ -337,11 +328,11 @@ export function BackgroundImagesSection({ formData, setFormData, backgroundImage
 							handleBackgroundUrlSubmit()
 						}
 					}}
-					placeholder='输入图片 URL'
+					placeholder={t('config.imageUrlPlaceholder')}
 					{...stylex.props(styles.urlInput)}
 				/>
 				<button type='button' onClick={handleBackgroundUrlSubmit} {...stylex.props(styles.cardButton)}>
-					添加 URL
+					{t('config.addUrl')}
 				</button>
 			</div>
 		</div>

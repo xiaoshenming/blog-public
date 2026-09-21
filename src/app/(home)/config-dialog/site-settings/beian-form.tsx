@@ -2,6 +2,7 @@
 
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 import type { SiteContent } from '../../stores/config-store'
 
 interface BeianFormProps {
@@ -45,22 +46,23 @@ const styles = stylex.create({
 })
 
 export function BeianForm({ formData, setFormData }: BeianFormProps) {
+	const { t } = useI18n()
 	return (
 		<div>
-			<label {...stylex.props(styles.sectionLabel)}>备案信息</label>
+			<label {...stylex.props(styles.sectionLabel)}>{t('config.beianSection')}</label>
 			<div {...stylex.props(styles.grid)}>
 				<div>
-					<label {...stylex.props(styles.fieldLabel)}>备案号</label>
+					<label {...stylex.props(styles.fieldLabel)}>{t('config.beianNumber')}</label>
 					<input
 						type='text'
 						value={formData.beian?.text || ''}
 						onChange={e => setFormData({ ...formData, beian: { ...(formData.beian || { text: '', link: '' }), text: e.target.value } })}
-						placeholder='例如：京ICP备12345678号'
+						placeholder={t('config.beianNumberPlaceholder')}
 						{...stylex.props(styles.input)}
 					/>
 				</div>
 				<div>
-					<label {...stylex.props(styles.fieldLabel)}>备案链接（可选）</label>
+					<label {...stylex.props(styles.fieldLabel)}>{t('config.beianLink')}</label>
 					<input
 						type='url'
 						value={formData.beian?.link || ''}
@@ -73,4 +75,3 @@ export function BeianForm({ formData, setFormData }: BeianFormProps) {
 		</div>
 	)
 }
-

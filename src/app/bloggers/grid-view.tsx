@@ -6,6 +6,7 @@ import * as stylex from '@stylexjs/stylex'
 import { type AvatarItem } from './components/avatar-upload-dialog'
 import { BloggerCard } from './components/blogger-card'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 export type BloggerStatus = 'recent' | 'disconnected'
 
@@ -111,14 +112,14 @@ const styles = stylex.create({
 })
 
 export default function GridView({ bloggers, isEditMode = false, onUpdate, onDelete }: GridViewProps) {
+	const { t } = useI18n()
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedCategory, setSelectedCategory] = useState<BloggerStatus>('recent')
 
 	const filteredBloggers = bloggers.filter(blogger => {
 		const status = blogger.status ?? 'recent'
 		const matchesCategory = status === selectedCategory
-		const matchesSearch =
-			blogger.name.toLowerCase().includes(searchTerm.toLowerCase()) || blogger.description.toLowerCase().includes(searchTerm.toLowerCase())
+		const matchesSearch = blogger.name.toLowerCase().includes(searchTerm.toLowerCase()) || blogger.description.toLowerCase().includes(searchTerm.toLowerCase())
 		return matchesCategory && matchesSearch
 	})
 
@@ -127,7 +128,7 @@ export default function GridView({ bloggers, isEditMode = false, onUpdate, onDel
 			<div {...stylex.props(styles.filters)}>
 				<input
 					type='text'
-					placeholder='搜索博主...'
+					placeholder={t('bloggers.searchPlaceholder')}
 					value={searchTerm}
 					onChange={e => setSearchTerm(e.target.value)}
 					{...stylex.props(styles.searchInput)}
@@ -137,12 +138,12 @@ export default function GridView({ bloggers, isEditMode = false, onUpdate, onDel
 					<button
 						onClick={() => setSelectedCategory('recent')}
 						{...stylex.props(styles.catButton, selectedCategory === 'recent' ? styles.catActive : styles.catIdle)}>
-						近期更新
+						{t('bloggers.recentUpdates')}
 					</button>
 					<button
 						onClick={() => setSelectedCategory('disconnected')}
 						{...stylex.props(styles.catButton, selectedCategory === 'disconnected' ? styles.catActive : styles.catIdle)}>
-						长期失联
+						{t('bloggers.longDisconnected')}
 					</button>
 				</div>
 			</div>
@@ -155,7 +156,7 @@ export default function GridView({ bloggers, isEditMode = false, onUpdate, onDel
 
 			{filteredBloggers.length === 0 && (
 				<div {...stylex.props(styles.empty)}>
-					<p>没有找到相关博主</p>
+					<p>{t('bloggers.noBloggerFound')}</p>
 				</div>
 			)}
 		</div>

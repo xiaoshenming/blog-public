@@ -200,7 +200,7 @@ export default function Page() {
 			await handleSave()
 		} catch (error) {
 			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
+			toast.error(t('admin.readKeyFileFailed'))
 		}
 	}
 
@@ -226,10 +226,10 @@ export default function Page() {
 			setOriginalData(data)
 			setIsEditMode(false)
 			setIsPreviewMode(false)
-			toast.success('保存成功！')
+			toast.success(t('admin.saveSuccess'))
 		} catch (error: any) {
 			console.error('Failed to save:', error)
-			toast.error(`保存失败: ${error?.message || '未知错误'}`)
+			toast.error(t('admin.saveFailed', { message: error?.message || t('admin.unknownError') }))
 		} finally {
 			setIsSaving(false)
 		}
@@ -241,7 +241,7 @@ export default function Page() {
 		setIsPreviewMode(false)
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
+	const buttonText = isAuth ? t('admin.save') : t('admin.importKey')
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -278,12 +278,12 @@ export default function Page() {
 						isPreviewMode ? (
 							<div className={stylex.props(styles.stackLg).className}>
 								<div className={stylex.props(styles.center).className}>
-									<h1 className={stylex.props(styles.title).className}>{data.title || '标题预览'}</h1>
-									<p className={stylex.props(styles.lead).className}>{data.description || '描述预览'}</p>
+									<h1 className={stylex.props(styles.title).className}>{data.title || t('admin.titlePreview')}</h1>
+									<p className={stylex.props(styles.lead).className}>{data.description || t('admin.descriptionPreview')}</p>
 								</div>
 
 								{loading ? (
-									<div className={stylex.props(styles.loading).className}>预览渲染中...</div>
+									<div className={stylex.props(styles.loading).className}>{t('admin.previewRendering')}</div>
 								) : (
 									<div className={stylex.props(card.base, styles.cardRel).className}>
 										<div className='prose prose-sm max-w-none'>{content}</div>
@@ -295,14 +295,14 @@ export default function Page() {
 								<div className={stylex.props(styles.stackSm).className}>
 									<input
 										type='text'
-										placeholder='标题'
+										placeholder={t('admin.titlePlaceholder')}
 										className={stylex.props(styles.titleInput).className}
 										value={data.title}
 										onChange={e => setData({ ...data, title: e.target.value })}
 									/>
 									<input
 										type='text'
-										placeholder='描述'
+										placeholder={t('admin.descriptionPlaceholder')}
 										className={stylex.props(styles.descInput).className}
 										value={data.description}
 										onChange={e => setData({ ...data, description: e.target.value })}
@@ -311,7 +311,7 @@ export default function Page() {
 
 								<div className={stylex.props(card.base, styles.cardRel).className}>
 									<textarea
-										placeholder='Markdown 内容'
+										placeholder={t('admin.markdownPlaceholder')}
 										className={stylex.props(styles.editor).className}
 										value={data.content}
 										onChange={e => setData({ ...data, content: e.target.value })}
@@ -360,19 +360,19 @@ export default function Page() {
 				{isEditMode ? (
 					<>
 						<button onClick={handleCancel} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
-							取消
+							{t('admin.cancel')}
 						</button>
 						<button onClick={() => setIsPreviewMode(prev => !prev)} disabled={isSaving} className={stylex.props(card.hover, styles.toolbarBtn).className}>
-							{isPreviewMode ? '继续编辑' : '预览'}
+							{isPreviewMode ? t('admin.continueEditing') : t('admin.preview')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} className={stylex.props(card.hover, brandBtn.base, styles.saveBtn).className}>
-							{isSaving ? '保存中...' : buttonText}
+							{isSaving ? t('admin.saving') : buttonText}
 						</button>
 					</>
 				) : (
 					!hideEditButton && (
 						<button onClick={handleEnterEditMode} className={stylex.props(card.hover, styles.toolbarBtn, styles.toolbarEdit).className}>
-							编辑
+							{t('admin.edit')}
 						</button>
 					)
 				)}

@@ -1,6 +1,6 @@
 import { en } from './dictionaries/en'
 import { zh, type Dictionary } from './dictionaries/zh'
-import type { Locale } from './config'
+import { DEFAULT_LOCALE, type Locale } from './config'
 
 export type TranslationParams = Record<string, string | number>
 
@@ -9,6 +9,13 @@ type DomainKeys<T> = { [K in keyof T & string]: T[K] extends string ? K : never 
 export type TranslationKey = { [D in keyof Dictionary & string]: `${D}.${DomainKeys<Dictionary[D]>}` }[keyof Dictionary & string]
 
 const dictionaries: Record<Locale, Dictionary> = { zh, en }
+
+/** 非 React 环境的当前语言；由 I18nProvider 在挂载与切换时同步 */
+let activeLocale: Locale = DEFAULT_LOCALE
+
+export function setI18nLocale(locale: Locale) {
+	activeLocale = locale
+}
 
 function resolve(dict: Dictionary, key: string): string | undefined {
 	let value: unknown = dict
@@ -31,4 +38,9 @@ export function translate(locale: Locale, key: TranslationKey, params?: Translat
 	}
 	if (!params) return raw
 	return raw.replace(/\{(\w+)\}/g, (match, name: string) => (name in params ? String(params[name]) : match))
+}
+
+/** 供组件外使用（push 服务的 toast、纯函数等）：跟随最近一次语言切换 */
+export function t(key: TranslationKey, params?: TranslationParams): string {
+	return translate(activeLocale, key, params)
 }

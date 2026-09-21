@@ -9,6 +9,7 @@ import ImageUploadDialog, { type ImageItem } from './image-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 export interface Project {
 	name: string
@@ -261,6 +262,7 @@ const styles = stylex.create({
 export function ProjectCard({ project, isEditMode = false, onUpdate, onDelete }: ProjectCardProps) {
 	const [isEditing, setIsEditing] = useState(false)
 	const { maxSM } = useSize()
+	const { t } = useI18n()
 	const [localProject, setLocalProject] = useState(project)
 	const [showImageDialog, setShowImageDialog] = useState(false)
 	const [imageItem, setImageItem] = useState<ImageItem | null>(null)
@@ -305,19 +307,19 @@ export function ProjectCard({ project, isEditMode = false, onUpdate, onDelete }:
 					{isEditing ? (
 						<>
 							<button onClick={handleCancel} {...stylex.props(styles.actionButton, styles.actionCancel)}>
-								取消
+								{t('dialogs.cancel')}
 							</button>
 							<button onClick={() => setIsEditing(false)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								完成
+								{t('dialogs.done')}
 							</button>
 						</>
 					) : (
 						<>
 							<button onClick={() => setIsEditing(true)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								编辑
+								{t('dialogs.edit')}
 							</button>
 							<button onClick={onDelete} {...stylex.props(styles.actionButton, styles.actionDelete)}>
-								删除
+								{t('dialogs.delete')}
 							</button>
 						</>
 					)}
@@ -334,7 +336,7 @@ export function ProjectCard({ project, isEditMode = false, onUpdate, onDelete }:
 					/>
 					{canEdit && (
 						<div {...stylex.props(styles.avatarOverlay)}>
-							<span {...stylex.props(styles.overlayText)}>更换</span>
+							<span {...stylex.props(styles.overlayText)}>{t('dialogs.replace')}</span>
 						</div>
 					)}
 				</div>
@@ -364,7 +366,7 @@ export function ProjectCard({ project, isEditMode = false, onUpdate, onDelete }:
 								type='text'
 								value={localProject.tags.join(', ')}
 								onChange={e => handleTagsChange(e.target.value)}
-								placeholder='标签，用逗号分隔'
+								placeholder={t('dialogs.tagsCommaPlaceholder')}
 								{...stylex.props(styles.tagsInput)}
 							/>
 						) : (
@@ -393,48 +395,36 @@ export function ProjectCard({ project, isEditMode = false, onUpdate, onDelete }:
 							type='url'
 							value={localProject.url}
 							onChange={e => handleFieldChange('url', e.target.value)}
-							placeholder='网站 URL'
+							placeholder={t('dialogs.websiteUrlPlaceholder')}
 							{...stylex.props(styles.editInput)}
 						/>
 						<input
 							type='url'
 							value={localProject.github || ''}
 							onChange={e => handleFieldChange('github', e.target.value || undefined)}
-							placeholder='GitHub URL（可选）'
+							placeholder={t('dialogs.githubUrlOptional')}
 							{...stylex.props(styles.editInput)}
 						/>
 						<input
 							type='url'
 							value={localProject.npm || ''}
 							onChange={e => handleFieldChange('npm', e.target.value || undefined)}
-							placeholder='NPM URL（可选）'
+							placeholder={t('dialogs.npmUrlOptional')}
 							{...stylex.props(styles.editInput)}
 						/>
 					</>
 				) : (
 					<>
-						<Link
-							href={localProject.url}
-							target='_blank'
-							rel='noopener noreferrer'
-							{...stylex.props(styles.linkButton)}>
+						<Link href={localProject.url} target='_blank' rel='noopener noreferrer' {...stylex.props(styles.linkButton)}>
 							Website
 						</Link>
 						{localProject.github && (
-							<Link
-								href={localProject.github}
-								target='_blank'
-								rel='noopener noreferrer'
-								{...stylex.props(styles.linkButton)}>
+							<Link href={localProject.github} target='_blank' rel='noopener noreferrer' {...stylex.props(styles.linkButton)}>
 								GitHub
 							</Link>
 						)}
 						{localProject.npm && (
-							<Link
-								href={localProject.npm}
-								target='_blank'
-								rel='noopener noreferrer'
-								{...stylex.props(styles.linkButton)}>
+							<Link href={localProject.npm} target='_blank' rel='noopener noreferrer' {...stylex.props(styles.linkButton)}>
 								NPM
 							</Link>
 						)}

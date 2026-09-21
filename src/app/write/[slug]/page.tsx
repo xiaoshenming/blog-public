@@ -10,6 +10,7 @@ import { WriteActions } from '../components/actions'
 import { WritePreview } from '../components/preview'
 import * as stylex from '@stylexjs/stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -45,6 +46,7 @@ const styles = stylex.create({
 export default function EditBlogPage() {
 	const params = useParams() as { slug?: string }
 	const slug = params?.slug || ''
+	const { t } = useI18n()
 
 	const { form, cover } = useWriteStore()
 	const { isPreview, closePreview } = usePreviewStore()
@@ -53,11 +55,11 @@ export default function EditBlogPage() {
 	const coverPreviewUrl = cover ? (cover.type === 'url' ? cover.url : cover.previewUrl) : null
 
 	if (loading) {
-		return <div {...stylex.props(styles.statusBox, styles.statusMuted)}>加载中...</div>
+		return <div {...stylex.props(styles.statusBox, styles.statusMuted)}>{t('write.loading')}</div>
 	}
 
 	if (!slug) {
-		return <div {...stylex.props(styles.statusBox, styles.statusError)}>无效的博客 ID</div>
+		return <div {...stylex.props(styles.statusBox, styles.statusError)}>{t('write.invalidId')}</div>
 	}
 
 	return isPreview ? (

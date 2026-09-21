@@ -10,6 +10,7 @@ import LogoUploadDialog, { type LogoItem } from './logo-upload-dialog'
 import { card } from '@/styles/shared/card.stylex'
 import { hoverGroup } from '@/styles/shared/markers.stylex'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 export interface Share {
 	name: string
@@ -237,6 +238,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 	const [expanded, setExpanded] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const { maxSM } = useSize()
+	const { t } = useI18n()
 	const [localShare, setLocalShare] = useState(share)
 	const [showLogoDialog, setShowLogoDialog] = useState(false)
 	const [logoItem, setLogoItem] = useState<LogoItem | null>(null)
@@ -281,19 +283,19 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 					{isEditing ? (
 						<>
 							<button onClick={handleCancel} {...stylex.props(styles.actionButton, styles.actionCancel)}>
-								取消
+								{t('dialogs.cancel')}
 							</button>
 							<button onClick={() => setIsEditing(false)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								完成
+								{t('dialogs.done')}
 							</button>
 						</>
 					) : (
 						<>
 							<button onClick={() => setIsEditing(true)} {...stylex.props(styles.actionButton, styles.actionBlue)}>
-								编辑
+								{t('dialogs.edit')}
 							</button>
 							<button onClick={onDelete} {...stylex.props(styles.actionButton, styles.actionDelete)}>
-								删除
+								{t('dialogs.delete')}
 							</button>
 						</>
 					)}
@@ -311,7 +313,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 						/>
 						{canEdit && (
 							<div {...stylex.props(styles.avatarOverlay)}>
-								<span {...stylex.props(styles.overlayText)}>更换</span>
+								<span {...stylex.props(styles.overlayText)}>{t('dialogs.replace')}</span>
 							</div>
 						)}
 					</div>
@@ -332,11 +334,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 								{localShare.url}
 							</div>
 						) : (
-							<a
-								href={localShare.url}
-								target='_blank'
-								rel='noopener noreferrer'
-								{...stylex.props(styles.url, styles.urlLink)}>
+							<a href={localShare.url} target='_blank' rel='noopener noreferrer' {...stylex.props(styles.url, styles.urlLink)}>
 								{localShare.url}
 							</a>
 						)}
@@ -355,7 +353,7 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 							type='text'
 							value={localShare.tags.join(', ')}
 							onChange={e => handleTagsChange(e.target.value)}
-							placeholder='标签，用逗号分隔'
+							placeholder={t('dialogs.tagsCommaPlaceholder')}
 							{...stylex.props(styles.tagsInput)}
 						/>
 					) : (
@@ -377,7 +375,11 @@ export function ShareCard({ share, isEditMode = false, onUpdate, onDelete }: Sha
 							setExpanded(!expanded)
 						}
 					}}
-					{...stylex.props(styles.description, canEdit ? styles.cursorText : styles.cursorPointer, !canEdit && (expanded ? styles.clampExpanded : styles.clampThumb))}>
+					{...stylex.props(
+						styles.description,
+						canEdit ? styles.cursorText : styles.cursorPointer,
+						!canEdit && (expanded ? styles.clampExpanded : styles.clampThumb)
+					)}>
 					{localShare.description}
 				</p>
 			</div>

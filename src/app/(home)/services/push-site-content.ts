@@ -2,6 +2,7 @@ import { toBase64Utf8, getRef, createTree, createCommit, updateRef, createBlob, 
 import { getAuthToken } from '@/lib/auth'
 import { GITHUB_CONFIG } from '@/consts'
 import { toast } from 'sonner'
+import { t } from '@/i18n/translate'
 import { fileToBase64NoPrefix } from '@/lib/file-utils'
 import type { SiteContent, CardStyles } from '../stores/config-store'
 import type { FileItem, ArtImageUploads, SocialButtonImageUploads, BackgroundImageUploads } from '../config-dialog/site-settings'
@@ -22,19 +23,19 @@ export async function pushSiteContent(
 ): Promise<void> {
 	const token = await getAuthToken()
 
-	toast.info('正在获取分支信息...')
+	toast.info(t('dialogs.fetchingBranch'))
 	const refData = await getRef(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, `heads/${GITHUB_CONFIG.BRANCH}`)
 	const latestCommitSha = refData.sha
 
-	const commitMessage = `更新站点配置`
+	const commitMessage = t('dialogs.commitSiteContent')
 
-	toast.info('正在准备文件...')
+	toast.info(t('dialogs.preparingFiles'))
 
 	const treeItems: TreeItem[] = []
 
 	// Handle favicon upload
 	if (faviconItem?.type === 'file') {
-		toast.info('正在上传 Favicon...')
+		toast.info(t('dialogs.uploadingFavicon'))
 		const contentBase64 = await fileToBase64NoPrefix(faviconItem.file)
 		const blobData = await createBlob(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, contentBase64, 'base64')
 		treeItems.push({
@@ -47,7 +48,7 @@ export async function pushSiteContent(
 
 	// Handle avatar upload
 	if (avatarItem?.type === 'file') {
-		toast.info('正在上传 Avatar...')
+		toast.info(t('dialogs.uploadingAvatar'))
 		const contentBase64 = await fileToBase64NoPrefix(avatarItem.file)
 		const blobData = await createBlob(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, contentBase64, 'base64')
 		treeItems.push({
@@ -71,7 +72,7 @@ export async function pushSiteContent(
 			const path = `public${normalizedUrlPath}`
 			if (!path) continue
 
-			toast.info(`正在上传 Art 图片 ${id}...`)
+			toast.info(t('dialogs.uploadingArtImage', { id }))
 			const contentBase64 = await fileToBase64NoPrefix(item.file)
 			const blobData = await createBlob(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, contentBase64, 'base64')
 			treeItems.push({
@@ -112,7 +113,7 @@ export async function pushSiteContent(
 			const path = `public${normalizedUrlPath}`
 			if (!path) continue
 
-			toast.info(`正在上传背景图片 ${id}...`)
+			toast.info(t('dialogs.uploadingBackgroundImage', { id }))
 			const contentBase64 = await fileToBase64NoPrefix(item.file)
 			const blobData = await createBlob(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, contentBase64, 'base64')
 			treeItems.push({
@@ -156,7 +157,7 @@ export async function pushSiteContent(
 			const path = `public${normalizedUrlPath}`
 			if (!path) continue
 
-			toast.info(`正在上传社交按钮图片 ${buttonId}...`)
+			toast.info(t('dialogs.uploadingSocialButtonImage', { id: buttonId }))
 			const contentBase64 = await fileToBase64NoPrefix(item.file)
 			const blobData = await createBlob(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, contentBase64, 'base64')
 			treeItems.push({
@@ -188,14 +189,14 @@ export async function pushSiteContent(
 		sha: cardStylesBlob.sha
 	})
 
-	toast.info('正在创建文件树...')
+	toast.info(t('dialogs.creatingTree'))
 	const treeData = await createTree(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, treeItems, latestCommitSha)
 
-	toast.info('正在创建提交...')
+	toast.info(t('dialogs.creatingCommit'))
 	const commitData = await createCommit(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, commitMessage, treeData.sha, [latestCommitSha])
 
-	toast.info('正在更新分支...')
+	toast.info(t('dialogs.updatingBranch'))
 	await updateRef(token, GITHUB_CONFIG.OWNER, GITHUB_CONFIG.REPO, `heads/${GITHUB_CONFIG.BRANCH}`, commitData.sha)
 
-	toast.success('保存成功！')
+	toast.success(t('dialogs.saveSuccess'))
 }

@@ -9,6 +9,7 @@ import { useSize, useSizeInit } from '@/hooks/use-size'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { ScrollTopButton } from '@/components/scroll-top-button'
+import LanguageToggle from '@/components/language-toggle'
 import { usePathname } from 'next/navigation'
 import * as stylex from '@stylexjs/stylex'
 import { util } from '@/styles/shared/util.stylex'
@@ -94,10 +95,10 @@ export default function Layout({ children }: PropsWithChildren) {
 				<NavCard />
 			</main>
 
+			<LanguageToggle />
+
 			{maxSM && init && (
-				<ScrollTopButton
-					style={pathname === '/' ? [styles.scrollTopBase, styles.scrollTopHome] : [styles.scrollTopBase, styles.scrollTopDefault]}
-				/>
+				<ScrollTopButton style={pathname === '/' ? [styles.scrollTopBase, styles.scrollTopHome] : [styles.scrollTopBase, styles.scrollTopDefault]} />
 			)}
 		</>
 	)
