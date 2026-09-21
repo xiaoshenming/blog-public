@@ -1,0 +1,84 @@
+[
+	{
+		"name": "OpenArcade · 午夜街机",
+		"year": 2026,
+		"description": "彼女のために建てられ、全員に開放されたプラグイン可能なミニゲームホール。ポータブル機能、ホスト戦略、ゲームカードの仕組みは完全に分離されており、新しいゲームはSDKを通じて接続され、ホストの状態には影響を与えません。すでに30種類のカードがリリースされており、すべてが確実な生成、再再生可能、構造的かつ解決可能です。",
+		"image": "/images/project/openarcade.svg",
+		"url": "https://game.zmark.top/",
+		"tags": [
+			"React 19",
+			"TypeScript",
+			"ゲーム",
+			"SDK"
+		],
+		"github": "https://github.com/xiaoshenming/OpenArcade"
+	},
+	{
+		"name": "pptx-storyboard · 分镜成片",
+		"year": 2026,
+		"description": "PowerPointの元動画を解説付きの動画に変換：各ページの動画タイムスタンプを解析し、自動的に映像分割、解説文の生成、声紋付きの音声合成を行い、最終的に字幕付きの1080p動画をレンダリングする。全過程をローカルで実行し、19ページの教材を使用した実験では7分で動画が完成した。",
+		"image": "/images/project/pptx-storyboard.svg",
+		"url": "https://github.com/xiaoshenming/pptx-storyboard",
+		"tags": [
+			"PowerPoint",
+			"動画",
+			"神経音声",
+			"GPU"
+		],
+		"github": "https://github.com/xiaoshenming/pptx-storyboard"
+	},
+	{
+		"name": "dsh-session-surgeon",
+		"year": 2026,
+		"description": "DeepSeek Harness 会話緊急対処プラグイン：修復できない会話ファイル（seqの断絶、zstdの破損、孤立した代理対話）の場合でも、会話IDを新しい会話にコピーして続き話せる。これも私が初めてstarを獲得したプロジェクトです。",
+		"image": "/images/project/dsh-session-surgeon.svg",
+		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
+		"tags": [
+			"DeepSeek",
+			"DSHプラグイン",
+			"会話の修復"
+		],
+		"github": "https://github.com/xiaoshenming/dsh-session-surgeon"
+	},
+	{
+		"name": "CC Switch Auth Converter",
+		"year": 2026,
+		"description": "静的単一ページツールで、index.htmlファイルのみ、依存関係はなく、ビルドも不要です。ブラウザのローカル環境で任意のCodexやChatGPT認証JSONをCC Switchでインポート可能なauth.jsonに変換でき、トークンは端末に保存されません。",
+		"image": "/images/project/ccswitch-auth-converter.svg",
+		"url": "https://ccswitch.zmark.top/",
+		"tags": [
+			"純粋な静的処理",
+			"ゼロ依存性",
+			"CC切替え",
+			"ローカル優先"
+		],
+		"github": "https://github.com/xiaoshenming/ccswitch-auth-converter"
+	},
+	{
+		"name": "我的博客",
+		"year": 2025,
+		"description": "現在ご覧になっているこのウェブサイトは、オープンソースのブログプロジェクト2025-blogを基に構築されています。フロントエンドがバックエンドの役割を果たしており、コードを書かなくても記事の執筆やコンテンツの管理が可能です。フロントエンド開発、探求、およびメモを記録する場所です。",
+		"image": "https://blog.zmark.top/favicon.png",
+		"url": "https://blog.zmark.top",
+		"tags": [
+			"Next.js 16",
+			"React 19",
+			"Tailwind 4"
+		],
+		"github": "https://github.com/xiaoshenming/blog-public"
+	},
+	{
+		"name": "multi-tool",
+		"year": 2026,
+		"description": "niri + noctalia-shellを基にしたLinuxデスクトップ用多機能小工具、QMLで作成。",
+		"image": "/images/project/multi-tool.svg",
+		"url": "https://github.com/xiaoshenming/multi-tool",
+		"tags": [
+			"QML",
+			"Wayland",
+			"niri",
+			"Linux"
+		],
+		"github": "https://github.com/xiaoshenming/multi-tool"
+	}
+]

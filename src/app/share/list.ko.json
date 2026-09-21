@@ -1,0 +1,236 @@
+[
+	{
+		"name": "iLoveIMG",
+		"url": "https://www.iloveimg.com/zh-cn",
+		"logo": "/images/share/7e91e93e3cdd586b.svg",
+		"description": "무료 이미지 처리 웹사이트로, 저는 이미지를 압축할 때 자주 사용합니다. 압축 효과는 Tinypng보다 더 좋습니다. 연쇄 처리 기능도 매우 유용합니다.",
+		"tags": [
+			"이미지"
+		],
+		"stars": 4
+	},
+	{
+		"name": "TinyPNG",
+		"url": "https://tinypng.com/",
+		"logo": "https://tinypng.com/static/images/george-anim/large_george_x2.webp",
+		"description": "국제적으로 유명한 이미지 압축 도구로, 과거의 책에서 알려진 이 웹사이트는 있지만 이미지 크기와 수량에 제한이 있습니다. 꽤 좋은 이미지 압축 대체품입니다.",
+		"tags": [
+			"이미지"
+		],
+		"stars": 3
+	},
+	{
+		"name": "removebg",
+		"url": "https://www.remove.bg/zh",
+		"logo": "/images/share/859bfb2ef1c6a503.svg",
+		"description": "AI 이미지 추출 도구는 인터페이스가 간단하고 Windows에 내장된 배경 제거 기능보다 효과가 더 좋습니다. 단점은 무료 버전이 있지만 내보내기 시 크기 제한이 있다는 점입니다.",
+		"tags": [
+			"이미지",
+			"AI"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Neumorphism",
+		"url": "https://neumorphism.io/",
+		"logo": "https://neumorphism.io/apple-touch-icon.png",
+		"description": "네우모피즘은 독특한 디자인 스타일로, 초보자들에게 항상 놀라움을 선사합니다. 하지만 활용도는 넓지 않으며, 실제 개발 시에도 많은 단점이 있습니다. 주로 추억을 남기는 의미에서 사용됩니다.",
+		"tags": [
+			"CSS",
+			"Github"
+		],
+		"stars": 2
+	},
+	{
+		"name": "Nucleo",
+		"url": "https://nucleoapp.com/app/?library=core",
+		"logo": "/images/share/7e720f35557fa9de.svg",
+		"description": "아이콘 라이브러리는 웹사이트 전체가 매우 깔끔합니다. 특별한 점은 픽셀 스타일의 아이콘이 있다는 것입니다, 매우 흥미롭습니다. 또한 많은 아이콘도 있으며, 그라스 스타일의 아이콘도 있습니다.",
+		"tags": [
+			"Icons"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Loadership",
+		"url": "https://www.loadership.com/",
+		"logo": "https://www.loadership.com/loadership_logo_round.svg",
+		"description": "13가지 로더 스타일이 있어 온라인에서 조정할 수 있습니다. AI 시대에서는 그 의미가 훨씬 작아질 수 있습니다.",
+		"tags": [
+			"CSS",
+			"Github"
+		],
+		"stars": 3
+	},
+	{
+		"name": "CSS Buttons",
+		"url": "https://cssbuttons.io/",
+		"logo": "/images/share/2b8118a3645967ee.svg",
+		"description": "많은 버튼 스타일이 있습니다. Neumorphism과 관련이 있습니다.",
+		"tags": [
+			"CSS"
+		],
+		"stars": 2
+	},
+	{
+		"name": "Uiverse",
+		"url": "https://uiverse.io/",
+		"logo": "/images/share/5e7b29cb1a84be80.png",
+		"description": "잊을 수 없는 참고 자료로, 인터랙션 효과가 많으며 인기 있는 Button, Loader 디자인 등이 포함되어 있고 내용도 풍부하며 계속 업데이트되고 있습니다.",
+		"tags": [
+			"CSS"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Magic UI",
+		"url": "https://magicui.design/",
+		"logo": "https://magicui.design/favicon.ico",
+		"description": "shadcn/ui 부수적 라이브러리에는 많은 실용적인 디자인이 있습니다. 사용도 매우 편리하며, 독립적인 코드를 직접 복사할 수 있습니다.",
+		"tags": [
+			"컴포넌트",
+			"Github"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Ai lman",
+		"url": "https://aliimam.in/docs/backgrounds/shader-rgb",
+		"logo": "https://aliimam.in/_next/image?url=%2Fai-logo-black.png&w=128&q=75",
+		"description": "Magic UI와 같은 형태이지만, 그만큼의 효과는 아쉽습니다. Magic을 본 후에도 더 보고 싶을 때 가볍게 즐길 수 있는 용도로 사용하기 좋습니다.",
+		"tags": [
+			"컴포넌트"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Awwwards",
+		"url": "https://www.awwwards.com/",
+		"logo": "https://assets.awwwards.com/assets/images/favicon.svg",
+		"description": "웹사이트를 평가하는 웹사이트, 여기서 항상 놀라운 웹사이트를 발견할 수 있습니다",
+		"tags": [
+			"웹사이트 모음"
+		],
+		"stars": 3
+	},
+	{
+		"name": "CSS Design Awards",
+		"url": "https://www.cssdesignawards.com/",
+		"logo": "/images/share/aaae2bf4f74c8eb1.svg",
+		"description": "웹사이트 평가 웹사이트로, Awwwards와 유사하여 매호에 선정된 우수 웹사이트를 볼 수 있습니다. 인상은 더 좋습니다.",
+		"tags": [
+			"웹사이트 모음"
+		],
+		"stars": 3
+	},
+	{
+		"name": "404s.design",
+		"logo": "/images/share/5c9a8b7deb717c5f.svg",
+		"url": "https://www.404s.design/",
+		"description": "404 디자인된 웹사이트들을 모아놨어요, 지루할 때 볼 수 있습니다.",
+		"tags": [
+			"웹사이트 모음"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Igloo Inc.",
+		"logo": "https://www.igloo.inc/assets/favicon32-af94112f.png",
+		"url": "https://www.igloo.inc/",
+		"description": "아베토 작품, 매우 멋지다",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "abeto 官网",
+		"logo": "https://abeto.co/assets/favicon32-11fb90a3.png",
+		"url": "https://abeto.co/",
+		"description": "무한하게 펼쳐진 꽃, 흩날리는 나뭇잎, 복고풍 스타일",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Messenger",
+		"logo": "https://messenger.abeto.co/assets/favicon32-BC0QIL61.png",
+		"url": "https://messenger.abeto.co/",
+		"description": "Abeto 작품, 캐릭터 배송원이 지구 마을에서 달리고 있어요. 온라인 플레이 가능하며, 의상 변경도 가능합니다",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Summer Afternoon",
+		"logo": "https://summer-afternoon.vlucendo.com/assets/favicon32-e817b074.png",
+		"url": "https://summer-afternoon.vlucendo.com/",
+		"description": "여름 오후에 어린아이가 시골 도로에서 놀고 있다",
+		"tags": [
+			"3D"
+		],
+		"stars": 4
+	},
+	{
+		"name": "The Monolith Project",
+		"logo": "https://themonolithproject.net/assets/images-next/nose_logo.webp",
+		"url": "https://themonolithproject.net/",
+		"description": "판타스틱 우주의 애니메이션이 영화를 보는 듯한 경험을 선사한다. \"여러 별을 넘을 때, 조용한 거대 비석이 조용히 깨어난다.\" \"거대 비석 프로젝트\": 모든 접촉이 현실을 다시 쓰는 기회가 된다.",
+		"tags": [
+			"3D"
+		],
+		"stars": 5
+	},
+	{
+		"name": "Making Software",
+		"logo": "https://www.makingsoftware.com/favicon.ico",
+		"url": "https://www.makingsoftware.com/",
+		"description": "소프트웨어 디자인 및 개발자를 위한 참고 매뉴얼. 훌륭한 학습 웹사이트 스타일입니다.",
+		"tags": [
+			"공부하기"
+		],
+		"stars": 4
+	},
+	{
+		"name": "Ease 函数参考",
+		"logo": "https://easings.net/96.8aa68ac4.png",
+		"url": "https://easings.net/",
+		"description": "애니메이션의 템포를 조정할 때, 이 ease 표는 ease가 만들어내는 효과를 직관적으로 느낄 수 있도록 도와줍니다",
+		"tags": [
+			"Github"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Isocons",
+		"logo": "/images/share/97859f1c57799dd2.png",
+		"url": "https://www.isocons.app/",
+		"description": "3D 아이콘 웹사이트, 멋지고 무료입니다.",
+		"tags": [
+			"Icons"
+		],
+		"stars": 3
+	},
+	{
+		"name": "Webp 转换压缩",
+		"logo": "https://www.yysuni.com/images/avatar.png",
+		"url": "https://www.yysuni.com/image-toolbox",
+		"description": "무한한 압축으로 빠르고 편리하여 효과를 직접 비교할 수 있습니다.",
+		"tags": [
+			"이미지"
+		],
+		"stars": 3
+	},
+	{
+		"name": "WoraWork",
+		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
+		"url": "https://worawork.vercel.app/",
+		"description": "격자 모양 세계의 Web3D, 시각화가 매우 훌륭하여 체험할 가치가 있습니다",
+		"tags": [
+			"3D"
+		],
+		"stars": 3
+	}
+]

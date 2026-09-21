@@ -1,0 +1,14 @@
+{
+	"title": "Tailwind을 분리: 133개 파일의 스타일을 대대적으로 이동시키고 CSS를 38% 줄였습니다.",
+	"tags": [
+		"StyleX",
+		"Tailwind",
+		"CSS",
+		"리팩팅"
+	],
+	"date": "2026-09-19T02:45",
+	"summary": "전체 블로그의 스타일 체계를 Tailwind에서 StyleX로 바꿨습니다: 21개의 라우트, 133개의 파일, 19번의 커밍. 메인 스타일 시트는 38% 줄어들었으며, 다섯 가지 큰 문제를 해결하고, \"원본 상태에서는 작동하지 않는\" 몇 가지 하이퍼링크 효과도 처리했습니다. 이것이 전체 리뷰입니다.",
+	"cover": "/blogs/tailwind-to-stylex-migration/cover.png",
+	"hidden": false,
+	"category": "코드 구현"
+}

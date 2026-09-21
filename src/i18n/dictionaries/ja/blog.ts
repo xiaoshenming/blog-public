@@ -1,0 +1,28 @@
+// 由 scripts/i18n/dict.ts 生成；可直接手工修正，重跑默认保留已有译文（--force 覆盖）
+export const blog = {
+	category: '分類',
+	categoryTimeline: '分類と時間軌跡',
+	timeDay: '日',
+	timeWeek: '週',
+	timeMonth: '月',
+	timeYear: '年',
+	loading: '読み込み中です...',
+	invalidLink: '無効なリンク',
+	notFound: '記事が存在しない',
+	loadFailed: '読み込みに失敗しました',
+	uncategorized: '分類されていない',
+	articlesCount: '{count} 件の記事',
+	weekOf: '第 {week} 週',
+	weekOfYear: '{year} 年第 {week} 週',
+	monthOfYear: '{year} 年{month} 月',
+	yearOf: '{year} 年',
+	tableOfContents: '目次',
+	tocEmpty: '未提供',
+	developingDesc: 'この機能は現在開発中であり、楽しみにしておいてください！',
+	summary: '要約',
+	readTag: '読了',
+	loadMore: 'その他',
+	noArticles: '現在のところ記事がありません',
+	rendering: 'レンダリング中です...',
+	likeLimited: 'ありがとう😘、今日はもういいねできません💕'
+}

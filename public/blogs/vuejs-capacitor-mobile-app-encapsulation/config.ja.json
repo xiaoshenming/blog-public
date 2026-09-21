@@ -1,0 +1,11 @@
+{
+	"title": "Vue.jsのモバイル向けコールドエンディングには6ステップが必要：パッケージのインストール→設定→コンパイル→初期化→プラットフォームの追加→同期",
+	"tags": [
+		"フロントエンド開発",
+		"Vue"
+	],
+	"date": "2025-12-11T16:35",
+	"summary": "フロントエンドプロジェクトのアプリを迅速にパッケージ化する機能があります！",
+	"cover": "/blogs/vuejs-capacitor-mobile-app-encapsulation/2e3d72a33d9dc100.webp",
+	"hidden": false
+}

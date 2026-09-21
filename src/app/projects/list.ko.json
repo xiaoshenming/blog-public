@@ -1,0 +1,84 @@
+[
+	{
+		"name": "OpenArcade · 午夜街机",
+		"year": 2026,
+		"description": "그녀를 위해 만들어진, 모든 사람에게 개방된 플러그인형 미게임장. 포털, 호스트 전략 및 게임 카트리지가 완전히 분리되어 있으며, 새로운 게임은 SDK를 통해 호스트 상태와 접촉하지 않고 연결됩니다. 30개의 카트리지가 출시되었으며, 모두 확실한 생성, 재생 가능, 구조적 해결 가능합니다.",
+		"image": "/images/project/openarcade.svg",
+		"url": "https://game.zmark.top/",
+		"tags": [
+			"React 19",
+			"TypeScript",
+			"게임",
+			"SDK"
+		],
+		"github": "https://github.com/xiaoshenming/OpenArcade"
+	},
+	{
+		"name": "pptx-storyboard · 分镜成片",
+		"year": 2026,
+		"description": "PowerPoint 원본 애니메이션을 설명이 포함된 비디오로 변환: 각 페이지의 애니메이션 타임스탬프를 분석하고, 자동으로 장면을 분할하며, 설명문을 생성하고, 신경 음성 녹음을 진행한 후, 자막이 포함된 1080p 영상으로 렌더링합니다. 전체 과정이 로컬 환경에서 실행되며, 19페이지의 교과서를 사용한 실험 결과 7분이 소요되었습니다.",
+		"image": "/images/project/pptx-storyboard.svg",
+		"url": "https://github.com/xiaoshenming/pptx-storyboard",
+		"tags": [
+			"PowerPoint",
+			"비디오",
+			"신경 음성",
+			"GPU"
+		],
+		"github": "https://github.com/xiaoshenming/pptx-storyboard"
+	},
+	{
+		"name": "dsh-session-surgeon",
+		"year": 2026,
+		"description": "DeepSeek Harness 대화 응급 처리 플러그인: 열리지 않는 대화 파일(seq 단절, zstd 손상, 고립된 에이전트 쌍)을 수리할 수 있으며, 대화 ID를 새로운 대화로 복사하여 계속 대화를 이어갈 수 있습니다. 이는 제가 첫 번째로 star를 받은 프로젝트이기도 합니다.",
+		"image": "/images/project/dsh-session-surgeon.svg",
+		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
+		"tags": [
+			"DeepSeek",
+			"DSH 플러그인",
+			"대화 복구"
+		],
+		"github": "https://github.com/xiaoshenming/dsh-session-surgeon"
+	},
+	{
+		"name": "CC Switch Auth Converter",
+		"year": 2026,
+		"description": "순수한 정적 단일 페이지 도구로, index.html 파일 하나만 필요하며 의존성도 없고 빌드도 필요 없습니다. 브라우저에서 Codex 또는 ChatGPT 인증 JSON을 CC Switch에서 가입 가능한 auth.json으로 변환할 수 있으며, 토큰은 기기에서 출력되지 않습니다.",
+		"image": "/images/project/ccswitch-auth-converter.svg",
+		"url": "https://ccswitch.zmark.top/",
+		"tags": [
+			"순수 정적 환경",
+			"아무 의존성도 없음",
+			"CC 스위치",
+			"현지 우선"
+		],
+		"github": "https://github.com/xiaoshenming/ccswitch-auth-converter"
+	},
+	{
+		"name": "我的博客",
+		"year": 2025,
+		"description": "지금 당신이 보고 있는 이 웹사이트는 오픈소스 블로그 프로젝트 2025-blog를 기반으로 만들어졌으며, 프론트엔드가 백엔드 역할을 합니다. 코드를 작성하지 않아도 글을 쓰고 콘텐츠를 관리할 수 있습니다. 프론트엔드 개발, 탐색 및 노트에 관한 기록을 담고 있습니다.",
+		"image": "https://blog.zmark.top/favicon.png",
+		"url": "https://blog.zmark.top",
+		"tags": [
+			"Next.js 16",
+			"React 19",
+			"Tailwind 4"
+		],
+		"github": "https://github.com/xiaoshenming/blog-public"
+	},
+	{
+		"name": "multi-tool",
+		"year": 2026,
+		"description": "niri + noctalia-shell 기반의 Linux 데스크톱 다기능 소형 도구에 QML로 작성됨.",
+		"image": "/images/project/multi-tool.svg",
+		"url": "https://github.com/xiaoshenming/multi-tool",
+		"tags": [
+			"QML",
+			"Wayland",
+			"niri",
+			"Linux"
+		],
+		"github": "https://github.com/xiaoshenming/multi-tool"
+	}
+]

@@ -1,0 +1,28 @@
+// 由 scripts/i18n/dict.ts 生成；可直接手工修正，重跑默认保留已有译文（--force 覆盖）
+export const blog = {
+	category: '분류',
+	categoryTimeline: '분류 및 타임라인',
+	timeDay: '일',
+	timeWeek: '주',
+	timeMonth: '월',
+	timeYear: '년',
+	developingDesc: '이 기능은 현재 개발 중이며, 기대해 주세요!',
+	loading: '로드 중...',
+	invalidLink: '유효하지 않은 링크',
+	notFound: '글이 존재하지 않음',
+	loadFailed: '로드 실패',
+	uncategorized: '분류되지 않음',
+	articlesCount: '{count}개의 글',
+	weekOf: '{week} 주차',
+	weekOfYear: '{year} 년 {week} 주',
+	monthOfYear: '{year} 년 {month} 월',
+	yearOf: '{year} 년',
+	tableOfContents: '목차',
+	tocEmpty: '아직 없습니다',
+	summary: '요약',
+	readTag: '읽음',
+	loadMore: '더 보기',
+	noArticles: '아직 글이 없습니다',
+	rendering: '렌더링 중...',
+	likeLimited: '감사합니다😘, 오늘은 더 이상 좋아요 할 수 없습니다💕'
+}

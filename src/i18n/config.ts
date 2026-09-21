@@ -1,4 +1,4 @@
-export const LOCALES = ['zh', 'en'] as const
+export const LOCALES = ['zh', 'en', 'ja', 'ko'] as const
 
 export type Locale = (typeof LOCALES)[number]
 
@@ -8,7 +8,9 @@ export const LOCALE_STORAGE_KEY = 'blog-locale'
 
 const LOCALE_LABELS: Record<Locale, string> = {
 	zh: '中文',
-	en: 'English'
+	en: 'English',
+	ja: '日本語',
+	ko: '한국어'
 }
 
 export function localeLabel(locale: Locale): string {

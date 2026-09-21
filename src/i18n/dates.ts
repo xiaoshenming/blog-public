@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/en'
+import 'dayjs/locale/ja'
+import 'dayjs/locale/ko'
 import 'dayjs/locale/zh-cn'
 import { DEFAULT_LOCALE, type Locale } from './config'
 
@@ -8,7 +10,9 @@ type DateVariant = 'long' | 'short'
 /** 各语言的日期格式；新语言在 locales.ts 注册后在这里补两项即可，缺失回落默认语言格式 */
 const FORMATS: Partial<Record<Locale, Record<DateVariant, string>>> = {
 	zh: { long: 'YYYY年M月D日', short: 'YYYY/M/D' },
-	en: { long: 'MMM D, YYYY', short: 'MMM D, YYYY' }
+	en: { long: 'MMM D, YYYY', short: 'MMM D, YYYY' },
+	ja: { long: 'YYYY年M月D日', short: 'YYYY/M/D' },
+	ko: { long: 'YYYY년 M월 D일', short: 'YYYY/M/D' }
 }
 
 /** dayjs 的 locale 包名与语言码基本一致，中文例外（zh-cn） */

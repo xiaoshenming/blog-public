@@ -1,0 +1,11 @@
+{
+	"title": "Vue.js 모바일 환경 구축에는 6단계만 필요합니다: 패키지 설치 → 설정 → 컴파일 → 초기화 → 플랫폼 추가 → 동기화",
+	"tags": [
+		"프론트엔드 개발",
+		"Vue"
+	],
+	"date": "2025-12-11T16:35",
+	"summary": "프론트엔드 프로젝트를 가지고 있어 앱을 빠르게 패키지화할 수 있습니다!",
+	"cover": "/blogs/vuejs-capacitor-mobile-app-encapsulation/2e3d72a33d9dc100.webp",
+	"hidden": false
+}

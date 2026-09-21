@@ -10,7 +10,11 @@ import type { Locale } from './config'
  * 注意：这里不校验 Dictionary 结构——zh 新增文案后其他语言允许滞后，缺 key 运行时回落中文。
  */
 import { en } from './dictionaries/en'
+import { ja } from './dictionaries/ja'
+import { ko } from './dictionaries/ko'
 
 export const dictionaries: Partial<Record<Locale, unknown>> = {
-	en
+	en,
+	ja,
+	ko
 }
