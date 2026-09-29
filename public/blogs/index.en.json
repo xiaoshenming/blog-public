@@ -1,5 +1,18 @@
 [
 	{
+		"slug": "four-languages-local-llm",
+		"title": "Shipping a Four-Language Blog with a Local 1.8B Translation Model",
+		"summary": "A Chinese-only blog felt limiting, so I added English, Japanese and Korean in one go: 464 UI strings and 39 article translations, all produced by a local 1.8B translation model. Notes on architecture trade-offs, building the pipeline, and bugs you only hit after going live.",
+		"tags": [
+			"Internationalization",
+			"i18n",
+			"Local large model",
+			"Translation pipeline",
+			"Next.js"
+		],
+		"category": "Code implementation"
+	},
+	{
 		"slug": "tailwind-to-stylex-migration",
 		"title": "Remove Tailwind: A major move of styles in 133 files, CSS reduced by 38%",
 		"summary": "The style system of the entire blog has been changed from Tailwind to StyleX: 21 routes, 133 files, and 19 commits. The main stylesheet has been trimmed by 38%, and several major issues were addressed, along with removing several \"broken out of the original\" hover effects. This is a complete review.",

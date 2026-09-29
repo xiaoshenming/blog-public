@@ -86,12 +86,26 @@ async function translateBlogsIndex() {
 		console.log(`- 跳过已有: blogs/index.${t}.json`)
 	} else {
 		const list: Array<Record<string, unknown>> = JSON.parse(await readFile(resolve(BLOGS_DIR, 'index.json'), 'utf8'))
-		const translated = await mapWithConcurrency(list, translateConfig.concurrency, item =>
+		// 增量合并：语言版索引里已有的条目保留（校对成果不丢），只翻新增 slug
+		let existing: Array<Record<string, unknown>> = []
+		if (existsSync(localizedIndexPath)) {
+			try {
+				existing = JSON.parse(await readFile(localizedIndexPath, 'utf8'))
+			} catch {
+				existing = []
+			}
+		}
+		const existingBySlug = new Map(existing.filter(item => item?.slug).map(item => [item.slug, item]))
+		const toTranslate = list.filter(item => !existingBySlug.has(item.slug))
+		const translated = await mapWithConcurrency(toTranslate, translateConfig.concurrency, item =>
 			translateFields(item, { text: ['title', 'summary', 'category'], list: ['tags'] })
 		)
-		// 语言版索引只保留文本字段，date/cover/slug/hidden 以中文索引为准
-		const stripped = translated.map(item => {
-			const { slug, title, summary, tags, category } = item
+		const translatedBySlug = new Map(translated.map(item => [item.slug, item]))
+		// 语言版索引只保留文本字段，date/cover/slug/hidden 以中文索引为准；沿用中文索引的条目顺序
+		const stripped = list.map(item => {
+			const source = translatedBySlug.get(item.slug) ?? existingBySlug.get(item.slug)
+			if (!source) return { slug: item.slug }
+			const { slug, title, summary, tags, category } = source
 			return {
 				slug,
 				...(title !== undefined && { title }),
@@ -101,7 +115,7 @@ async function translateBlogsIndex() {
 			}
 		})
 		await writeFile(localizedIndexPath, JSON.stringify(stripped, null, '\t'), 'utf8')
-		console.log(`✓ blogs/index.${t}.json（${stripped.length} 条）`)
+		console.log(`✓ blogs/index.${t}.json（${stripped.length} 条，本次翻译 ${toTranslate.length}）`)
 	}
 
 	const categoriesPath = resolve(BLOGS_DIR, 'categories.json')

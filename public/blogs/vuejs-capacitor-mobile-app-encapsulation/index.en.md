@@ -1,12 +1,12 @@
-# Just 6 steps to encapsulate Vue.js for mobile: Package → Configuration → Compilation → Initialization → Add platforms → Sync
+# Just 6 steps to wrap up Vue.js for mobile: Package → Configuration → Compilation → Initialization → Add platforms → Sync
 
 ## Preface
 
 As a Vue.js developer who values efficiency, I have been searching for the fastest mobile solution. Learn Java/Kotlin? Set up Android Studio? Write Gradle configurations? The time costs are too high!
 
-It wasn’t until I encountered Capacitor that I realized mobile encapsulation can be as simple as it gets.
+It wasn’t until I encountered Capacitor that I realized mobile packaging can be incredibly simple.
 
-Today I’d like to share my real experience: how to encapsulate a complete Vue.js price tag management system into an Android app using just 6 steps, with almost no code written throughout the process.
+Today I’d like to share my real experience: how to encapsulate a complete Vue.js price tag management system into an Android app using only 6 steps, with almost no code written throughout the process.
 
 ## Project Background
 
@@ -16,7 +16,7 @@ My project is a price tag management system based on Vue.js 2.6.12 + Element UI,
 - Store and product management
 - Data statistics and reports
 
-This is a typical enterprise-level management system that works well on the web. However, as the business grows, customers increasingly prefer operating it on mobile devices, especially as on-site managers need to check device status and update price information at any time.
+This is a typical enterprise-level management system that works well on the web. However, as the business grows, customers prefer using it on mobile devices, especially as on-site managers need to check device status and update price information at any time.
 
 The traditional approach means rewriting the entire application or learning complex native development. But Capacitor offers a third option.
 ![](/blogs/vuejs-capacitor-mobile-app-encapsulation/2e3d72a33d9dc100.webp)
@@ -25,10 +25,10 @@ The traditional approach means rewriting the entire application or learning comp
 When selecting a technology, I compared several mainstream options:
 
 ### uni-app
-It requires adapting to Vue syntax, and Element UI needs to be replaced with uni-ui, which is equivalent to refactoring the project. PASS.
+It requires adapting to Vue syntax, and Element UI needs to be replaced with uni-ui, which involves refactoring the project. PASS.
 
 ### Cordova
-A traditional approach, but with complex configuration, average performance, and declining community activity. PASS.
+A classic approach, but with complex configuration, average performance, and declining community activity. PASS.
 
 ### PWA
 A pure web solution, but lacks access to hardware features such as Bluetooth and cameras, making it unsuitable for ESL systems. PASS.
@@ -43,13 +43,13 @@ A pure web solution, but lacks access to hardware features such as Bluetooth and
 
 ## Complete 6-step encapsulation process
 
-### Step 1: Install Capacitor package
+### Step 1: Install Capacitor packages
 
 ```bash
 npm install @capacitor/core @capacitor/cli
 npm install @capacitor/android @capacitor/ios
 ```
-It’s just simple, installing a few packages via npm. If you can’t even use npm, this article might not be very suitable for you 😅.
+It’s just simple npm installation of a few packages. If you can’t even use npm, this article might not be very suitable for you 😅.
 
 ### Step 2: Write a JSON configuration file
 
@@ -58,12 +58,12 @@ This is the only part in the process that requires some thought. Create `capacit
 
 
 Explanation of this configuration:
-- `appId`: Unique identifier for the app, similar to a package name
+- `appId`: Unique identifier for the app, similar to the package name
 - `appName`: Display name of the app
-- `webDir`: The directory where the Vue project is built, usually `dist`
+- `webDir`: The directory where the Vue project was built, usually `dist`
 - `plugins`: Configures required native plugins and permissions
 
-**Key point: I basically copied this from the official template and changed a few parameters!**
+**Key point: I basically copied this from the official template, with just a few parameter changes!**
 
 ### Step 3: Compiling the Vue project
 
@@ -73,14 +73,14 @@ npm run build:prod
 
 This command is what you were supposed to run, right? Capacitor doesn’t require you to modify any Vue code; you can simply use the existing build process.
 
-After the build is complete, the `dist` directory will contain your web application, and Capacitor will package them into a native application.
+After the build is complete, the `dist` directory will contain your Web application, and Capacitor will package them into a native application.
 
 ### Step 4: Initialize Capacitor project
 
-For the first use, you need to initialize the Capacitor project:
+When using it for the first time, you need to initialize the Capacitor project:
 
 ```bash
-npx cap init "Your App Name" "com.yourapp.id"
+npx cap init "Your Application Name" "com.yourapp.id"
 ```
 
 ### Step 5: Add platform support
@@ -107,9 +107,9 @@ Finally, open Android Studio to perform packaging:
 CAPACITOR_ANDROID_STUDIO_PATH=/path/studio.sh npm run android:open
 ```
 
-**That’s it! Your Vue application has now become an Android application!**
+**That’s it! Your Vue application has now turned into an Android application!**
 
-## The magical automated process
+## The magical automation process
 
 Let me tell you what Capacitor has actually done for you:
 
@@ -145,19 +145,19 @@ The configuration file specifies the permissions, and Capacitor automatically ha
 Capacitor includes built-inWebView optimization and compatibility handling.
 
 ### No performance issues
-An optimizedWebView is used, and performance is close to that of a native app.
+OptimizedWebView is used, and performance is similar to that of native apps.
 
 ### No debugging issues
 Supports remote debugging with Chrome DevTools, just as convenient as Web development.
 
-**This is the joy of being ready out of the box! I didn’t even know what problems I would face, because I didn’t encounter any!**
+**This is the joy of being ready out of the box! I didn’t even know what problems might arise, because none did!**
 
 ## Comparison with traditional mobile development
 
 Let me use a table to show the differences:
 
 | Aspect | Traditional Android Development | Capacitor Solution |
-|--------|----------------------------------|---------------------|
+|--------|----------------------------------|--------------------|
 | Learning Cost | Requires learning Java/Kotlin and Android SDK | 0, Vue developers can start immediately |
 | Development Time | 2-3 months for refactoring | 2 hours for completion |
 | Code Reuse | 0%, needs rewriting | 100%, can use existing code |
@@ -168,7 +168,7 @@ Let me use a table to show the differences:
 
 ## My package.json script
 
-For better convenience, I added several scripts to package.json:
+For better convenience, I added several scripts in package.json:
 
 ```json
 {
@@ -187,7 +187,7 @@ My current workflow is as follows:
 1. Modify the Vue code
 2. `npm run build:mobile`
 3. `npm run android:open`
-4. Click build in Android Studio
+4. Click to build in Android Studio
 
 **It’s that simple!**
 
@@ -211,9 +211,9 @@ If you have concerns, you can begin with small projects to build confidence.
 
 Mobile development can indeed be so simple!
 
-Through Capacitor, I encapsulated the complete Vue.js management system into an Android app in just 6 steps: 1. **Packaging** - npm install several packages; 2. **Configuration** - writing a JSON file; 3. **Compilation** - running existing build commands; 4. **Initialization** - npx cap init to initialize the project; 5. **Add Platform** - npx cap add android/ios; 6. **Synchronization** - a single command generates the Android project.
+Through Capacitor, I encapsulated the complete Vue.js management system into an Android app in just 6 steps: 1. **Packaging** - npm install several packages; 2. **Configuration** - writing a JSON file; 3. **Compilation** - running existing build commands; 4. **Initialization** - npx cap init to set up the project; 5. **Add Platform** - npx cap add android/ios; 6. **Synchronization** - a single command generates the Android project.
 
-The entire process didn’t require writing a single line of native code, encountered no technical challenges, and didn’t require additional time to learn new technologies.
+The entire process didn’t require writing a single line of native code, encountered no technical challenges, and didn’t require extra time learning new technologies.
 
 **This is the mobile solution I want! Simple, fast, and efficient!**
 

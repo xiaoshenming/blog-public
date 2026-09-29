@@ -2,7 +2,7 @@
 	{
 		"name": "OpenArcade · 午夜街机",
 		"year": 2026,
-		"description": "彼女のために建てられ、全員に開放されたプラグイン可能なミニゲームホール。ポータブル機能、ホスト戦略、ゲームカードの仕組みは完全に分離されており、新しいゲームはSDKを通じて接続され、ホストの状態には影響を与えません。すでに30種類のカードがリリースされており、すべてが確実な生成、再再生可能、構造的かつ解決可能です。",
+		"description": "彼女のために建てられ、全員に開かれたプラグイン可能なミクロゲームホール。ポータブル機能、ホスト戦略、ゲームカードの仕組みは完全に分離されており、新しいゲームはSDKを通じて接続され、ホストの状態には影響を与えません。すでに30種類のカードがリリースされており、すべてが確定的に生成され、再再生可能で、構造的に解決可能です。",
 		"image": "/images/project/openarcade.svg",
 		"url": "https://game.zmark.top/",
 		"tags": [
@@ -16,7 +16,7 @@
 	{
 		"name": "pptx-storyboard · 分镜成片",
 		"year": 2026,
-		"description": "PowerPointの元動画を解説付きの動画に変換：各ページの動画タイムスタンプを解析し、自動的に映像分割、解説文の生成、声紋付きの音声合成を行い、最終的に字幕付きの1080p動画をレンダリングする。全過程をローカルで実行し、19ページの教材を使用した実験では7分で動画が完成した。",
+		"description": "PowerPointの元動画を解説付きの動画に変換：各ページの動画タイムスタンプを解析し、自動的に映像分割、解説文の生成、声優によるナレーション、最後に字幕付きの1080p動画をレンダーする。全工程をローカルで実行し、19ページの教材を実際にテストした結果、7分で動画が完成した。",
 		"image": "/images/project/pptx-storyboard.svg",
 		"url": "https://github.com/xiaoshenming/pptx-storyboard",
 		"tags": [
@@ -30,7 +30,7 @@
 	{
 		"name": "dsh-session-surgeon",
 		"year": 2026,
-		"description": "DeepSeek Harness 会話緊急対処プラグイン：修復できない会話ファイル（seqの断絶、zstdの破損、孤立した代理対話）の場合でも、会話IDを新しい会話にコピーして続き話せる。これも私が初めてstarを獲得したプロジェクトです。",
+		"description": "DeepSeek Harness 会話緊急対処ツール：修復できない会話ファイル（seqの断絶、zstdの破損、孤立した代理対話）を対処し、会話IDを新しい会話にコピーして続き話せる。これも私が初めてstarを獲得したプロジェクトです。",
 		"image": "/images/project/dsh-session-surgeon.svg",
 		"url": "https://github.com/xiaoshenming/dsh-session-surgeon",
 		"tags": [
@@ -43,12 +43,12 @@
 	{
 		"name": "CC Switch Auth Converter",
 		"year": 2026,
-		"description": "静的単一ページツールで、index.htmlファイルのみ、依存関係はなく、ビルドも不要です。ブラウザのローカル環境で任意のCodexやChatGPT認証JSONをCC Switchでインポート可能なauth.jsonに変換でき、トークンは端末に保存されません。",
+		"description": "静的単ページツールで、index.htmlファイルのみ、依存関係はゼロ、ビルドも不要。ブラウザのローカル環境で任意のCodexまたはChatGPT認証JSONをCC Switchでインポート可能なauth.jsonに変換でき、トークンは端末から漏れません。",
 		"image": "/images/project/ccswitch-auth-converter.svg",
 		"url": "https://ccswitch.zmark.top/",
 		"tags": [
 			"純粋な静的処理",
-			"ゼロ依存性",
+			"ゼロ依存",
 			"CC切替え",
 			"ローカル優先"
 		],

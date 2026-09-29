@@ -7,7 +7,7 @@
 		"Refactoring"
 	],
 	"date": "2026-09-19T02:45",
-	"summary": "The style system of the entire blog has been changed from Tailwind to StyleX: 21 routes, 133 files, and 19 commits. The main stylesheet has been trimmed by 38%, and several major issues were addressed, along with removing several \"broken as is\" hover effects. This is a complete review.",
+	"summary": "Replaced the entire blog's style system from Tailwind with StyleX: 21 routes, 133 files, 19 commits. The main style sheet has been trimmed by 38%, avoiding five major issues while also removing several \"broken as is\" hover effects. This is a complete review.",
 	"cover": "/blogs/tailwind-to-stylex-migration/cover.png",
 	"hidden": false,
 	"category": "Code implementation"

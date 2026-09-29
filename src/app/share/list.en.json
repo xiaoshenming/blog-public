@@ -3,7 +3,7 @@
 		"name": "iLoveIMG",
 		"url": "https://www.iloveimg.com/zh-cn",
 		"logo": "/images/share/7e91e93e3cdd586b.svg",
-		"description": "A free image processing website I often use to compress images, with better compression results than Tinypng. The chained processing feature is very useful.",
+		"description": "A free image processing website I often use to compress images, with better compression results than Tinypng. The chain processing feature is very useful.",
 		"tags": [
 			"Image"
 		],
@@ -23,7 +23,7 @@
 		"name": "removebg",
 		"url": "https://www.remove.bg/zh",
 		"logo": "/images/share/859bfb2ef1c6a503.svg",
-		"description": "AI image extraction tools feature a simple interface, with results that are better than those provided by Windows' built-in background removal feature. The downside is that while they are free, there are size limitations on exports.",
+		"description": "AI image extraction tools feature a simple interface, with results that are better than those provided by Windows' built-in background removal feature. The downside is that there is a free version with size limitations for exports.",
 		"tags": [
 			"Image",
 			"AI"
@@ -34,7 +34,7 @@
 		"name": "Neumorphism",
 		"url": "https://neumorphism.io/",
 		"logo": "https://neumorphism.io/apple-touch-icon.png",
-		"description": "Neumorphism is a distinctive design style that always impresses newcomers. However, its application is not widespread, and there are many drawbacks in actual development. It is more of a keepsake.",
+		"description": "Neumorphism is a distinctive design style that always inspires awe in newcomers. However, its application is not widespread, and there are many drawbacks in actual development. It is more of a keepsake.",
 		"tags": [
 			"CSS",
 			"Github"
@@ -55,7 +55,7 @@
 		"name": "Loadership",
 		"url": "https://www.loadership.com/",
 		"logo": "https://www.loadership.com/loadership_logo_round.svg",
-		"description": "13 styles of Loader, adjustable online. This may mean much less in the AI era.",
+		"description": "13 styles of loaders for online adjustment use. This may mean much less in the era of AI.",
 		"tags": [
 			"CSS",
 			"Github"
@@ -76,7 +76,7 @@
 		"name": "Uiverse",
 		"url": "https://uiverse.io/",
 		"logo": "/images/share/5e7b29cb1a84be80.png",
-		"description": "An indispensable reference library with many interactive effects, including popular Button and Loader designs, rich content, and ongoing updates.",
+		"description": "An indispensable reference library with many interactive elements, including popular Button and Loader designs, rich content, and ongoing updates.",
 		"tags": [
 			"CSS"
 		],
@@ -97,7 +97,7 @@
 		"name": "Ai lman",
 		"url": "https://aliimam.in/docs/backgrounds/shader-rgb",
 		"logo": "https://aliimam.in/_next/image?url=%2Fai-logo-black.png&w=128&q=75",
-		"description": "A class of Magic UI, but it feels a bit lacking. It can be used as a casual option after enjoying Magic.",
+		"description": "A kind of Magic UI, but it feels lacking. It can be used as a casual option after enjoying Magic.",
 		"tags": [
 			"Component"
 		],
@@ -107,7 +107,7 @@
 		"name": "Awwwards",
 		"url": "https://www.awwwards.com/",
 		"logo": "https://assets.awwwards.com/assets/images/favicon.svg",
-		"description": "A website selects other websites, and you can always find stunning websites here",
+		"description": "A website selects other websites, and you can always find amazing websites here",
 		"tags": [
 			"Website collection"
 		],
@@ -117,7 +117,7 @@
 		"name": "CSS Design Awards",
 		"url": "https://www.cssdesignawards.com/",
 		"logo": "/images/share/aaae2bf4f74c8eb1.svg",
-		"description": "A website that selects other websites, similar to Awwwards, allowing you to see the top websites each time. It feels better in terms of experience.",
+		"description": "A website that selects other websites, similar to Awwwards, allowing you to see the top websites each time. The experience is better.",
 		"tags": [
 			"Website collection"
 		],
@@ -127,7 +127,7 @@
 		"name": "404s.design",
 		"logo": "/images/share/5c9a8b7deb717c5f.svg",
 		"url": "https://www.404s.design/",
-		"description": "Collect websites designed by 404, you can check it when you feel bored.",
+		"description": "Collect websites designed by 404, you can check them when you feel bored.",
 		"tags": [
 			"Website collection"
 		],
@@ -137,7 +137,7 @@
 		"name": "Igloo Inc.",
 		"logo": "https://www.igloo.inc/assets/favicon32-af94112f.png",
 		"url": "https://www.igloo.inc/",
-		"description": "Abeito works are incredibly cool",
+		"description": "Abeto works are incredibly cool",
 		"tags": [
 			"3D"
 		],
@@ -147,7 +147,7 @@
 		"name": "abeto 官网",
 		"logo": "https://abeto.co/assets/favicon32-11fb90a3.png",
 		"url": "https://abeto.co/",
-		"description": "Infinite blossoms, drifting leaves, vintage style",
+		"description": "Infinite unfolding flowers, drifting leaves, vintage style",
 		"tags": [
 			"3D"
 		],
@@ -187,7 +187,7 @@
 		"name": "Making Software",
 		"logo": "https://www.makingsoftware.com/favicon.ico",
 		"url": "https://www.makingsoftware.com/",
-		"description": "Reference manual for software designers and developers. A great learning website with its style.",
+		"description": "Reference manual for software designers and developers. An excellent learning website with its style.",
 		"tags": [
 			"Study"
 		],
@@ -197,7 +197,7 @@
 		"name": "Ease 函数参考",
 		"logo": "https://easings.net/96.8aa68ac4.png",
 		"url": "https://easings.net/",
-		"description": "When adjusting the animation rhythm, this ease table helps you intuitively understand the effects produced by ease.",
+		"description": "When adjusting the animation rhythm, this ease table helps you intuitively understand the effects produced by ease functions.",
 		"tags": [
 			"Github"
 		],
@@ -227,7 +227,7 @@
 		"name": "WoraWork",
 		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
 		"url": "https://worawork.vercel.app/",
-		"description": "Web3D in Grid World has amazing scene rendering, highly worth experiencing",
+		"description": "Web3D in Grid World has exceptional scene rendering, highly worth experiencing",
 		"tags": [
 			"3D"
 		],

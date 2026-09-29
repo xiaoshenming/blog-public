@@ -1,5 +1,20 @@
 [
   {
+    "slug": "four-languages-local-llm",
+    "title": "四语博客上线记：让本地 1.8B 小模型当翻译官",
+    "tags": [
+      "国际化",
+      "i18n",
+      "本地大模型",
+      "翻译管线",
+      "Next.js"
+    ],
+    "date": "2026-09-29",
+    "summary": "只有中文的博客总差点意思。这次一口气上了英日韩三语：464 条 UI 文案、39 篇文章译文，全部出自本地一个 1.8B 的翻译小模型。聊聊架构取舍、翻译管线的搭法，和几个只有上线才会踩到的坑。",
+    "hidden": false,
+    "category": "代码实现"
+  },
+  {
     "slug": "tailwind-to-stylex-migration",
     "title": "拆掉 Tailwind：133 个文件的样式大搬家，CSS 瘦身 38%",
     "tags": [

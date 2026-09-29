@@ -3,7 +3,7 @@
 		"name": "iLoveIMG",
 		"url": "https://www.iloveimg.com/zh-cn",
 		"logo": "/images/share/7e91e93e3cdd586b.svg",
-		"description": "無料の画像処理サイトで、よく画像を圧縮するために利用しています。圧縮効果はTinypngよりも優れています。連鎖処理機能が非常に便利です。",
+		"description": "無料の画像処理サイトで、私はよく画像を圧縮するために利用しています。圧縮効果はTinypngよりも優れています。連鎖処理機能は非常に便利です。",
 		"tags": [
 			"画像"
 		],
@@ -13,7 +13,7 @@
 		"name": "TinyPNG",
 		"url": "https://tinypng.com/",
 		"logo": "https://tinypng.com/static/images/george-anim/large_george_x2.webp",
-		"description": "国際的に有名な画像圧縮ツールで、以前の書籍で知られていたこのウェブサイトですが、画像のサイズに制限があり、件数にも制限があります。非常に優れた画像圧縮の代替ツールです。",
+		"description": "国際的に有名な画像圧縮ツールで、以前の書籍で知られていたこのウェブサイトですが、画像のサイズに制限があり、件数にも制限があります。優れた画像圧縮の代替ツールです。",
 		"tags": [
 			"画像"
 		],
@@ -23,7 +23,7 @@
 		"name": "removebg",
 		"url": "https://www.remove.bg/zh",
 		"logo": "/images/share/859bfb2ef1c6a503.svg",
-		"description": "AIの背景除去ツールは、インターフェースがシンプルで、Windows搭載版の背景除去機能よりも効果が良い点が特徴です。ただし、無料版があるものの、エクスポート時のサイズ制限があります。",
+		"description": "AIの背景除去ツールは、インターフェースがシンプルで、Windows搭載版の背景除去機能よりも効果が良い点が特徴です。ただし、無料版がある一方で、出力ファイルのサイズに制限があるという欠点もあります。",
 		"tags": [
 			"画像",
 			"AI"
@@ -34,7 +34,7 @@
 		"name": "Neumorphism",
 		"url": "https://neumorphism.io/",
 		"logo": "https://neumorphism.io/apple-touch-icon.png",
-		"description": "ネウモーフィズムは非常に特徴的なデザインスタイルであり、新入社員に驚きを与えることができる。しかし、実用性は低く、実際の開発には多くの問題もある。それは主に記念のために存在している。",
+		"description": "ネウモーフィズムは非常に特徴的なデザインスタイルであり、新入社員に驚きを与えることができます。しかし、実際の応用は広くないため、実際の開発には多くの問題もあります。それよりは記念としての意味が強いです。",
 		"tags": [
 			"CSS",
 			"Github"
@@ -45,7 +45,7 @@
 		"name": "Nucleo",
 		"url": "https://nucleoapp.com/app/?library=core",
 		"logo": "/images/share/7e720f35557fa9de.svg",
-		"description": "アイコンライブラリは、ウェブサイト全体がとてもスマートです。特徴的なのは、ピクセルスタイルのアイコンがある点で、非常に面白いです。アイコンもたくさんあり、グラススタイルのものもあります。",
+		"description": "アイコンライブラリは、ウェブサイト全体がとても清潔です。特徴は、ピクセルスタイルのアイコンがある点で、非常に面白いです。アイコンも多く、グラススタイルのものもあります。",
 		"tags": [
 			"Icons"
 		],
@@ -55,7 +55,7 @@
 		"name": "Loadership",
 		"url": "https://www.loadership.com/",
 		"logo": "https://www.loadership.com/loadership_logo_round.svg",
-		"description": "13種類のローダースタイルをオンラインで調整可能。AI時代においてはその意義はかなり低くなるかもしれない。",
+		"description": "13種類のローダースタイルをオンラインで調整可能。AI時代においてはその意義ははるかに小さくなるかもしれない。",
 		"tags": [
 			"CSS",
 			"Github"
@@ -66,7 +66,7 @@
 		"name": "CSS Buttons",
 		"url": "https://cssbuttons.io/",
 		"logo": "/images/share/2b8118a3645967ee.svg",
-		"description": "多くのボタンスタイルがあります。Neumorphismと何らかの関係があります。",
+		"description": "多くのボタンスタイルがあります。Neumorphismとある程度関係があります。",
 		"tags": [
 			"CSS"
 		],
@@ -86,7 +86,7 @@
 		"name": "Magic UI",
 		"url": "https://magicui.design/",
 		"logo": "https://magicui.design/favicon.ico",
-		"description": "shadcn/ui 伴生库には多くの実用的なデザインが含まれており、利用も非常に便利で、独自のコードをコピーすることが可能です。",
+		"description": "shadcn/ui は付随的なライブラリで、多くの実用的なデザインが含まれています。利用も非常に便利で、独自のコードをコピーして使用することが可能です。",
 		"tags": [
 			"コンポーネント",
 			"Github"
@@ -97,7 +97,7 @@
 		"name": "Ai lman",
 		"url": "https://aliimam.in/docs/backgrounds/shader-rgb",
 		"logo": "https://aliimam.in/_next/image?url=%2Fai-logo-black.png&w=128&q=75",
-		"description": "Magic UIのようなものですが、まだ物足りない感じです。Magicを見終わった後に気になる時の暇ついた閲看としても使えます。",
+		"description": "Magic UIのようなものですが、まだ物足りない感じです。Magicを見終わってもまだ満足できない時の暇ついた閲覧用としても使えます。",
 		"tags": [
 			"コンポーネント"
 		],
@@ -117,7 +117,7 @@
 		"name": "CSS Design Awards",
 		"url": "https://www.cssdesignawards.com/",
 		"logo": "/images/share/aaae2bf4f74c8eb1.svg",
-		"description": "ウェブサイト評価サイトで、Awwwardsと同様に、各号で優秀なウェブサイトを確認できます。感じ方は良いです。",
+		"description": "ウェブサイト評価サイトで、Awwwardsと同様に、各号の優秀ウェブサイトを見ることができます。感じ方は良いです。",
 		"tags": [
 			"ウェブサイト集"
 		],
@@ -137,7 +137,7 @@
 		"name": "Igloo Inc.",
 		"logo": "https://www.igloo.inc/assets/favicon32-af94112f.png",
 		"url": "https://www.igloo.inc/",
-		"description": "アベトO作品、非常にクールです",
+		"description": "アベトオ作品、非常にクールです",
 		"tags": [
 			"3D"
 		],
@@ -157,7 +157,7 @@
 		"name": "Messenger",
 		"logo": "https://messenger.abeto.co/assets/favicon32-BC0QIL61.png",
 		"url": "https://messenger.abeto.co/",
-		"description": "アベトO作品、キャラクターの配達員が地球の小さな町を走り回る、オンライン対戦可能、装備変更可能",
+		"description": "アベトO作品、キャラクターの配達員が地球の小さな町を走り回る、オンライン対応、衣装変更可能",
 		"tags": [
 			"3D"
 		],
@@ -167,7 +167,7 @@
 		"name": "Summer Afternoon",
 		"logo": "https://summer-afternoon.vlucendo.com/assets/favicon32-e817b074.png",
 		"url": "https://summer-afternoon.vlucendo.com/",
-		"description": "夏の午後、小さな男の子が田園道路で遊んでいる",
+		"description": "夏の午後、小さな男の子が田舎道を遊び回っている",
 		"tags": [
 			"3D"
 		],
@@ -177,7 +177,7 @@
 		"name": "The Monolith Project",
 		"logo": "https://themonolithproject.net/assets/images-next/nose_logo.webp",
 		"url": "https://themonolithproject.net/",
-		"description": "ファンタスティックで宇宙的なアニメーションが展開され、まるで映画を見るような感覚。「多星を横切る際、静寂の巨大な石碑が静かに目覚める。『巨大石碑計画』：触れるたびに、現実を書き換えることができる。」",
+		"description": "ファンタスティックで宇宙的なアニメーションが、映画を見るような感覚を提供する。「多星を横切る際、静寂の巨大な石碑が静かに目覚める。『巨大石碑計画』：触れるたびに、現実を書き換えることができる。」",
 		"tags": [
 			"3D"
 		],
@@ -197,7 +197,7 @@
 		"name": "Ease 函数参考",
 		"logo": "https://easings.net/96.8aa68ac4.png",
 		"url": "https://easings.net/",
-		"description": "アニメーションのリズムを調整しているとき、このEase表はEaseが生み出す効果を直感的に理解するのに役立つ",
+		"description": "アニメーションのリズムを調整しているとき、このEase表はEaseが示す効果を直感的に理解するのに役立つ",
 		"tags": [
 			"Github"
 		],
@@ -207,7 +207,7 @@
 		"name": "Isocons",
 		"logo": "/images/share/97859f1c57799dd2.png",
 		"url": "https://www.isocons.app/",
-		"description": "3Dアイコンのウェブサイト、クールで、無料です。",
+		"description": "3Dアイコンサイト、クールで、無料です。",
 		"tags": [
 			"Icons"
 		],
@@ -217,7 +217,7 @@
 		"name": "Webp 转换压缩",
 		"logo": "https://www.yysuni.com/images/avatar.png",
 		"url": "https://www.yysuni.com/image-toolbox",
-		"description": "無限圧縮、迅速かつ便利で、効果を直接比較できます",
+		"description": "無限圧縮、速くて便利で、効果を直接比較できます",
 		"tags": [
 			"画像"
 		],
@@ -227,7 +227,7 @@
 		"name": "WoraWork",
 		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
 		"url": "https://worawork.vercel.app/",
-		"description": "格子状世界のWeb3D、シーンレンダーリングが非常に優れており、体験する価値があります",
+		"description": "格子状世界のWeb3D、シーンレンダーリングが非常に優れており、ぜひ体験する価値がある",
 		"tags": [
 			"3D"
 		],

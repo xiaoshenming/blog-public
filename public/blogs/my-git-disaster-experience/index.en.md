@@ -1,18 +1,18 @@
-## Introduction: An awkward mistake
+## Introduction: An awkward failure scenario
 
-Today I encountered a very awkward Git operation accident that made me scratch my toes in embarrassment...
+Today I experienced an extremely awkward Git operation accident that made me scratch my toes in embarrassment...
 
-I was developing the GitHub OAuth2 login feature. I thought I only needed to submit a few newly created files, but accidentally committed all changes to 180 files to the PR branch. When I saw the commit record being criticized in the group... wow! It feels like the sky is falling!
+I was developing the GitHub OAuth2 login feature. I originally only wanted to submit a few newly created files, but accidentally committed all changes to 180 files to the PR branch. When I saw the commit record being criticized in the group... wow! It's like the sky is falling!
 ![](/blogs/my-git-disaster-experience/466a0826fa92843b.png)
 ```bash
-# Should have only had these few file commits
+# Should only have these few file commits
 src/consts.ts
 src/lib/oauth2-github.ts
 src/components/oauth2-login-button.tsx
 src/hooks/use-auth.ts
 src/app/(home)/config-dialog/site-settings/index.tsx
 
-# But instead, it turned out like this...
+# But instead, it turned out like this horrifying scene...
 modified:   src/app/(home)/config-dialog/index.tsx
 modified:   src/app/about/page.tsx
 modified:   src/app/blog/page.tsx
@@ -20,7 +20,7 @@ modified:   src/app/bloggers/page.tsx
 modified:   src/app/pictures/page.tsx
 modified:   src/app/projects/page.tsx
 modified:   src/app/share/page.tsx
-... (and over 170 more files)
+... (and over 170 other files)
 ```
 
 ## Root cause of the mistake: Wrong branch pull
@@ -38,41 +38,29 @@ This results in a feature branch created on a version that is not the latest, wh
 3. Only submit files related to OAuth2
 4. Create a PR
 
-### My mistake workflow:
+### My Mistake Process:
 
 1. Create a feature branch from my `main` branch ❌
 2. My `main` already contains all previous changes ❌
 3. This causes the new branch to include all changes ❌
-4. 180 files being committed... 😱
+4. A commit for 180 files... 😱
 
-## Emergency rescue: Please save us
+## Emergency Recovery: Please save the project
 First, delete the PR, then follow the instructions below
 
-```bash
-# 1. Fetch the latest code from upstream
-git fetch upstream
 
-# 2. Create a clean branch based on upstream/main
-git checkout -b clean-oauth2-final upstream/main
-
-# 3. Extract only the required files from the chaotic original branch
-git checkout --theirs <required file>
-
-# Or a simpler method:
-git checkout <original branch> -- <specific file path>
-```
 
 By using this method, I successfully extracted only the files containing OAuth2 functionality:
 
-- `src/consts.ts` - OAuth2 configuration
-- `src/lib/oauth2-github.ts` - Core logic of OAuth2
-- `src/components/oauth2-login-button.tsx` - Login component
-- `src/hooks/use-auth.ts` - Authentication state management
-- `src/app/(home)/config-dialog/site-settings/index.tsx` - Settings integration
+- `src/consts.ts` – OAuth2 configuration
+- `src/lib/oauth2-github.ts` – Core logic of OAuth2
+- `src/components/oauth2-login-button.tsx` – Login component
+- `src/hooks/use-auth.ts` – Authentication state management
+- `src/app/(home)/config-dialog/site-settings/index.tsx` – Settings integration
 
 ## New understanding of branch management
 
-Tsk, tsk, let's assume this is another learning of git usage...
+Tsk, tsk, let's just assume I've learned how to use git again...
 
 AI comment:
 ### 1. Understanding the relationship between fork and upstream
@@ -89,9 +77,7 @@ upstream        https://github.com/originalauthor/project-name.git (push)
 ```
 
 - `origin`: The repository I forked
-- `upstream`: The original author's source repository
-
-**Markdown posts**: Keep Markdown syntax intact (headings, lists, bold/italic, tables, blockquotes), never translate URLs, image paths, code spans (`...`) and fenced code blocks; keep a leading # / - / > marker at line starts.
+- `upstream`: The source repository of the original author
 
 ### 2. Correct workflow for creating branches
 
@@ -117,23 +103,23 @@ git push origin feature/new-feature
 
 ### 3. Creating a deployment test branch
 
-To test the compatibility of merging a PR branch with the main branch, I use the PR branch to merge a new branch with the main branch for deployment on vercel:
+To test the compatibility of merging the PR branch with the main branch, I use the PR branch to merge a new branch with the main branch for deployment on vercel:
 
 ```bash
-# 1. Create a test branch based on the PR branch and main branch merge
+# 1. Create a test branch based on the merge of PR branch and main branch
 git checkout -b test-merge main
 git merge feature/new-feature
 
 # 2. Push the test branch to Vercel for testing deployment
 git push origin test-merge
 ```
-## I don’t want to write it, let the AI summarize:
+## I don't want to write it, let the AI summarize:
 ## Experience Summary
 
 ### Lessons Learned:
 
 1. **Always create feature branches based on the latest code from the upstream**
-   - Do not create feature branches directly on your main branch
+   - Do not create feature branches based on your own main branch
    - Regularly synchronize upstream code with your local branch
 
 2. **Be clear about the scope of file changes**
@@ -166,11 +152,11 @@ git push origin deploy-test           # Push for testing deployment
 
 ## Future developments
 
-Fortunately, everything was resolved in the end:
+Thankfully, everything was resolved in the end:
 
 1. ✅ Created a clean `clean-oauth2-final` branch with only 7 OAuth2-related files
 2. ✅ Created `feature/oauth2-auth` branch for the official PR
-3. ✅ Created `oauth2-merged` test branch for verifying merge compatibility
+3. ✅ Created `oauth2-merged` test branch to verify merge compatibility
 4. ✅ All branches have been successfully pushed
 
 ## Conclusion
@@ -179,4 +165,4 @@ Too lazy to write, completely humbled by myself. Although it was still rejected 
 
 
 
-*P.S. If you've also experienced a similar Git failure, feel free to share in the comment section (under development), so I know I’m not alone 😅*
+*P.S. If you have also experienced a similar Git failure, feel free to share in the comment section (under development), so I know I’m not alone 😅*

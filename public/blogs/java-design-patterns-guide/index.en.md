@@ -1,21 +1,21 @@
-# 🎯 Design Pattern Practical Guide: Say goodbye to messy code, write elegant architectures
+# 🎯 Design Pattern Practical Guide: Say goodbye to spaghetti code, write elegant architectures
 
-> A real design pattern guide for programmers, no fluff, just practical advice.
+> A real design pattern guide for programmers, no fluff, only practical advice.
 
 Hello everyone, I am programmer Xiao Ming.
 
 ## 🤔 Why do we need design patterns?
 
-Are you also facing such troubles:
+Are you also facing such challenges:
 
-- Adding a new feature, but still can’t run after modifying several files
+- Adding a new feature, but still can't run after modifying many files
 - The code is full of if-else statements, and with a new colleague joining, no one dares to touch it
-- Looking at a senior’s source code feels like reading a sacred text
-- AI-written code uses design patterns, but you can’t understand them
+- Looking at a senior's source code feels like reading a sacred text
+- AI-written code uses design patterns, but you can't understand them
 
 **Design patterns are exactly for solving these problems!**
 
-You can think of design patterns as **game strategies**—when facing the same type of Boss, you know how to position yourself and use skills. They are **universal solutions** derived from the experiences of predecessors, which can help you:
+You can think of design patterns as **game guides**—when facing the same type of Boss, you know how to position yourself and use skills. They are **universal solutions** derived from the experiences of predecessors, which can help you:
 
 ✅ **Reduce bad code**, making project maintenance easier  
 ✅ **Team collaboration more efficient**, avoiding accidental conflicts  
@@ -32,7 +32,7 @@ Before formally studying design patterns, we need to clarify several core object
 
 ### 📡 Interface (Interface)
 
-**An interface is like a "contract" or "standard" that defines what needs to be done, but not how it is done.**
+**An interface is like a "contract" or "specification" that defines what needs to be done, but not how it is done.**
 
 ```java
 // Define a standard: All payment methods must implement this interface
@@ -55,7 +55,7 @@ class WechatPay implements Payment {
 
 ### 🏗️ Abstract Class
 
-**An abstract class is a "semi-finished product"**—it has already done some work, but certain aspects are left for subclasses to complete.
+**An abstract class is a "semi-finished product"**—it has already completed some work, but certain aspects are left for subclasses to complete.
 
 ```java
 // Semi-finished product: Defines the basic process of payment, but specific payment methods are left to subclasses
@@ -81,7 +81,7 @@ abstract class AbstractPayment {
 
 **Differences from interfaces:**  
 - Can have instance variables and regular methods  
-- Can have constructor methods  
+- Can have constructors  
 - Can provide some default implementations
 
 ### 🔄 Inheritance
@@ -108,19 +108,27 @@ class VipUser extends BaseUser {
 
 Remember: Java does not support multiple inheritance (just one parent is enough), but multiple interfaces can be implemented (multiple "masters" can be worshipped).
 
-### 🎭 Polymorphism (Polymorphism)
+### 🎭 Polymorphism
 
 **Polymorphism is the core essence of object-oriented programming**—the same operation yields different behaviors for different objects.
 
-```java // Multiple payment methods, calling the same method, with different outcomes Payment wechat = new WechatPay(); Payment alipay = new AlipayPay(); // Both call the pay method, but execute their respective implementations wechat.pay(100);  // Executes WeChat payment alipay.pay(100);  // Executes Alipay payment```
+```java
+// Multiple payment methods, calling the same method, showing different results
+Payment wechat = new WechatPay();
+Payment alipay = new AlipayPay();
 
-The core value of polymorphism: programming against the parent class, where specific behaviors are determined at runtime. This is the foundation for design patterns to achieve "extensibility".
+// Similarly, the pay method is called, but each executes its specific implementation
+wechat.pay(100);  // Executes WeChat payment
+alipay.pay(100);  // Executes Alipay payment
+```
+
+The core value of polymorphism: programming against a parent class, with specific behaviors determined at runtime. This is the foundation for design patterns to achieve "extensibility".
 
 ---
 
 ## 🎯 Core idea of design patterns: Why this design?
 
-Learning design patterns cannot be memorized mechanically; we need to understand the underlying design principles. These principles are the accumulated experiences of countless developers who have avoided common pitfalls.
+Learning design patterns should not be rote memorization; we need to understand the underlying design principles. These principles are the experiences compiled by countless developers after making mistakes.
 
 ### 🎪 Single Responsibility Principle (SRP)
 
@@ -148,12 +156,12 @@ Open for extension, closed for modification.
 Add a new feature? **Write new code**, don’t touch the old code!
 
 ```java
-// ❌ Every new payment method adds complexity to this class
+// ❌ Every new payment method requires modifying this class
 class PaymentProcessor {
     void process(String type) {
         if ("wechat".equals(type)) { /* ... */ }
         else if ("alipay".equals(type)) { /* ... */ }
-        else if ("bank".equals(type)) { /* Need to modify here! */ }
+        else if ("bank".equals(type)) { /* New addition, need to modify here! */ }
     }
 }
 
@@ -168,14 +176,14 @@ class BankPay implements Payment { public void pay() { /* ... */ } }  // New add
 The subclass must be able to replace the parent class, and the program behavior remains unchanged.
 
 ```java
-// ❌ The subclass breaks the parent class's conventions
+// ❌ The subclass breaks the conventions of the parent class
 class Bird {
     void fly() { /* Flies */ }
 }
 class Penguin extends Bird {
     @Override
     void fly() {
-        throw new RuntimeException("Penguins don't fly!");  // This breaks the program!
+        throw new RuntimeException("Penguins cannot fly!");  // This breaks the program!
     }
 }
 
@@ -183,7 +191,7 @@ class Penguin extends Bird {
 class Bird { void makeSound() { /* Crows */ } }
 class Penguin extends Bird {
     @Override
-    void makeSound() { /* Penguin's call */ }  // Perfect replacement
+    void makeSound() { /* The sound of a penguin */ }  // Perfect replacement
 }
 ```
 
@@ -192,7 +200,7 @@ class Penguin extends Bird {
 **High-level modules do not depend on low-level modules; they all depend on abstractions.**
 
 ```java
-// ❌ Direct dependency on specific implementation
+// ❌ Direct dependency on implementation
 class OrderService {
     private WechatPay wechatPay = new WechatPay();  // Hardcoded dependency
     void createOrder() { wechatPay.pay(); }
@@ -227,7 +235,7 @@ interface ReportService { void exportReport(); }
 interface DataService { void backupData(); }
 ```
 
-### 🤫 The Law of Demeter (Principle of Least Knowledge)
+### 🤫 The Neighbor Rule (The Law of Least Knowledge)
 
 **Don’t pry into others’ privacy; only talk with good friends.**
 
@@ -243,7 +251,7 @@ class Client {
     }
 }
 
-// ✅ Only interacting with a facade
+// ✅ Only interacting with the facade
 class Client {
     void doSomething() {
         ComputerFacade computer = new ComputerFacade();
@@ -269,14 +277,14 @@ class Client {
 ### ✅ How to do it
 
 1. **Understand first, then implement**: Knowing why you do it is more important than memorizing how to do it
-2. **Write more code**: Implement each pattern manually; don’t just read
+2. **Write more code**: Implement each pattern manually, don’t just read
 3. **Combine with source code**: See how Spring and MyBatis use them
-4. **Study independently**: Each pattern is independent, you can focus on the key points first
+4. **Study independently**: Each pattern is independent, you can focus on key points first
 
-### ❌ Don’t learn like this
+### ❌ Don’t learn this way
 
-1. **Memorize rigidly**: This is useless! Interviewers will catch you immediately when they ask about details
-2. **Overuse**: Not all places require design patterns; don’t use them just for the sake of using them
+1. **Memorize rigidly**: This doesn’t work! Interviewers will expose your lack of knowledge when asked about details
+2. **Overuse**: Not all places require design patterns, don’t use them just for the sake of using them
 3. **Hurry up**: Design patterns require understanding and practice; you can’t achieve everything in one go
 
 ### 📈 Recommended Learning Order
@@ -301,9 +309,9 @@ Arranged by practical frequency and interview importance:
 11. Builder Pattern
 12. Facade Pattern
 
-#### 📚 Learn (can be studied later)
+#### 📚 Understanding (can be studied later)
 
-You can study the remaining patterns as needed rather than trying to master all of them at once.
+You can learn the remaining patterns as needed, without needing to master all at once.
 
 ---
 
@@ -317,7 +325,7 @@ You can study the remaining patterns as needed rather than trying to master all 
 ### Step 2: Hands-on Practice (2-3 weeks)
 - Write the code for each pattern independently
 - Try implementing them in different languages
-- Compare the differences between various implementation methods
+- Compare the differences between various implementations
 
 ### Step 3: Project Application (Continuous)
 - **Consciously use** it in real projects
@@ -334,18 +342,18 @@ You can study the remaining patterns as needed rather than trying to master all 
 ## 🎯 Recommended Learning Resources
 
 - **Book**: "Design Patterns: Elements of Reusable Object-Oriented Software"
-- **Online Resources**: [Refactoring.Guru](https://refactoring.guru/)
-- **Source Code Learning**: Spring Framework, MyBatis, JDK source code
+- **Online resources**: [Refactoring.Guru](https://refactoring.guru/)
+- **Source code learning**: Spring Framework, MyBatis, JDK source code
 
 ---
 
-## 💡 Final Tips
+## 💡 Final advice
 
 > **Design patterns are not a silver bullet—they are a toolbox.**
 
 Just like a craftsman’s hammer or screwdriver, knowing when to use which tool is more important than having a large collection of tools.
 
-Remember: **Code is written for people to read, and to make machines execute it. A good design makes code easier to read, maintain, and extend.**
+Remember: **Code is written for people to read, and to enable machines to execute it.** Good design makes code easier to read, maintain, and extend.
 
 ---
 

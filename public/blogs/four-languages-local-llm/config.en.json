@@ -1,0 +1,14 @@
+{
+	"title": "Shipping a Four-Language Blog with a Local 1.8B Translation Model",
+	"tags": [
+		"Internationalization",
+		"i18n",
+		"Local large model",
+		"Translation pipeline",
+		"Next.js"
+	],
+	"date": "2026-09-29",
+	"summary": "A Chinese-only blog felt limiting, so I added English, Japanese and Korean in one go: 464 UI strings and 39 article translations, all produced by a local 1.8B translation model. Notes on architecture trade-offs, building the pipeline, and bugs you only hit after going live.",
+	"hidden": false,
+	"category": "Code implementation"
+}
