@@ -4,6 +4,7 @@ export const music = {
 	previous: '前曲',
 	next: '次曲',
 	volume: '音量',
+	progress: '再生位置',
 	modeListLoop: 'リスト循環',
 	modeOneLoop: 'シングル循環',
 	modeRandom: 'ランダム再生',

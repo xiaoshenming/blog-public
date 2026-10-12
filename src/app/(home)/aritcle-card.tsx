@@ -77,7 +77,7 @@ const sx = stylex.create({
 		flexShrink: 0,
 		placeItems: 'center',
 		borderRadius: 12,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		color: colors.secondary
 	},
 	/** 占满剩余宽度 */

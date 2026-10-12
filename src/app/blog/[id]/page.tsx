@@ -52,7 +52,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -64,7 +64,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		},
 		'@media (width < 40rem)': {
@@ -182,7 +182,7 @@ export default function Page() {
 				animate={{ opacity: 1, scale: 1 }}
 				onClick={handleEdit}
 				{...stylex.props(card.hover, styles.editButton)}>
-				编辑
+				{t('admin.edit')}
 			</motion.button>
 
 			{slug === 'liquid-grass' && <LiquidGrass />}

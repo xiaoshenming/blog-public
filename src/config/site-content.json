@@ -12,9 +12,16 @@
 		"colorBg": "#eeeeee",
 		"colorBorder": "#ffffff",
 		"colorCard": "#ffffff66",
-		"colorArticle": "#ffffffcc"
+		"colorArticle": "#ffffffcc",
+		"colorInk": "#4E3F42",
+		"colorMuted": "#7b888e",
+		"colorLine": "#d1d5dc",
+		"colorSurface": "#ffffff99",
+		"colorSurfaceStrong": "#ffffffcc",
+		"colorSubtle": "#f9fafb"
 	},
 	"font": "huiwenmincho",
+	"skin": "default",
 	"backgroundColors": [
 		"#FCC841",
 		"#DFEFFC",
@@ -42,6 +49,26 @@
 		{
 			"id": "61f1810af7ef89a8",
 			"url": "/images/background/61f1810af7ef89a8.png"
+		},
+		{
+			"id": "ink-mist",
+			"url": "/images/background/mist.webp"
+		},
+		{
+			"id": "ink-ridges",
+			"url": "/images/background/ridges.webp"
+		},
+		{
+			"id": "ink-bamboo",
+			"url": "/images/background/bamboo.webp"
+		},
+		{
+			"id": "ink-pine-moon",
+			"url": "/images/background/pine-moon.webp"
+		},
+		{
+			"id": "ink-rain",
+			"url": "/images/background/rain.webp"
 		}
 	],
 	"currentBackgroundImageId": "",

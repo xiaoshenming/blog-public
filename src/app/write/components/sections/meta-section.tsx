@@ -73,13 +73,13 @@ const styles = stylex.create({
 		width: 16,
 		height: 16,
 		borderRadius: 4,
-		borderColor: '#d1d5dc'
+		borderColor: colors.line
 	},
 	checkboxLabel: {
 		cursor: 'pointer',
 		fontSize: 14,
 		lineHeight: '20px',
-		color: '#4a5565',
+		color: colors.ink,
 		userSelect: 'none'
 	}
 })

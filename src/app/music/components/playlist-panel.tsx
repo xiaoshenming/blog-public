@@ -51,7 +51,7 @@ const styles = stylex.create({
 	rowIdle: {
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 50%)'
+				backgroundColor: colors.surface
 			}
 		}
 	},

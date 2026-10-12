@@ -82,7 +82,7 @@ const styles = stylex.create({
 		'@media (hover: hover)': {
 			':hover': {
 				color: colors.brand,
-				backgroundColor: 'rgb(255 255 255 / 60%)'
+				backgroundColor: colors.surface
 			}
 		}
 	},
@@ -150,12 +150,12 @@ const styles = stylex.create({
 	/** 分组全选按钮·未全选（悬停出品牌描边与浅底） */
 	selectGroupOff: {
 		borderColor: 'transparent',
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		color: colors.secondary,
 		'@media (hover: hover)': {
 			':hover': {
 				borderColor: 'color-mix(in oklab, var(--color-brand) 40%, transparent)',
-				backgroundColor: 'rgb(255 255 255 / 80%)',
+				backgroundColor: colors.surfaceStrong,
 				color: colors.brand
 			}
 		}
@@ -190,7 +190,7 @@ const styles = stylex.create({
 		'@media (hover: hover)': {
 			':hover': {
 				borderColor: 'color-mix(in oklab, var(--color-brand) 40%, transparent)',
-				backgroundColor: 'rgb(255 255 255 / 60%)'
+				backgroundColor: colors.surface
 			}
 		}
 	},
@@ -352,7 +352,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 16,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -363,7 +363,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	},
@@ -373,7 +373,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -421,7 +421,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	}

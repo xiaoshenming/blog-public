@@ -5,6 +5,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useMusicStore } from '../music-store'
 import { formatMusicTime } from '../music-utils'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -27,6 +28,7 @@ const styles = stylex.create({
 })
 
 export default function MusicProgress() {
+	const { t } = useI18n()
 	const { progress, currentTime, duration, seek } = useMusicStore(
 		useShallow(s => ({
 			progress: s.progress,
@@ -44,7 +46,7 @@ export default function MusicProgress() {
 				max='100'
 				step='0.1'
 				value={progress}
-				aria-label='播放进度'
+				aria-label={t('music.progress')}
 				onChange={event => seek(Number(event.target.value))}
 				{...stylex.props(styles.range)}
 			/>

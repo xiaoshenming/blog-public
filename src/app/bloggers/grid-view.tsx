@@ -50,7 +50,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		paddingInline: 16,
 		paddingBlock: 8,
 		marginBottom: 16,
@@ -83,11 +83,11 @@ const styles = stylex.create({
 		color: colors.white
 	},
 	catIdle: {
-		backgroundColor: '#e5e7eb',
-		color: '#364153',
+		backgroundColor: colors.line,
+		color: colors.ink,
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#d1d5dc'
+				backgroundColor: colors.line
 			}
 		}
 	},
@@ -107,7 +107,7 @@ const styles = stylex.create({
 	empty: {
 		marginTop: 48,
 		textAlign: 'center',
-		color: '#6a7282'
+		color: colors.muted
 	}
 })
 

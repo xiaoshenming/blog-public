@@ -111,7 +111,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 16,
 		paddingBlock: 12,
 		textAlign: 'center',
@@ -120,7 +120,7 @@ const styles = stylex.create({
 		fontWeight: 700,
 		backdropFilter: 'blur(8px)',
 		':focus': {
-			backgroundColor: 'rgb(255 255 255 / 80%)'
+			backgroundColor: colors.surfaceStrong
 		}
 	},
 	/** 输入行分隔冒号 */
@@ -149,14 +149,14 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		backdropFilter: 'blur(8px)',
 		transitionProperty: 'all',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		},
 		':disabled': {

@@ -6,6 +6,8 @@ import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
 import initialList from './list.json'
 import initialListEn from './list.en.json'
+import initialListJa from './list.ja.json'
+import initialListKo from './list.ko.json'
 import { RandomLayout } from './components/random-layout'
 import UploadDialog from './components/upload-dialog'
 import { pushPictures } from './services/push-pictures'
@@ -14,7 +16,7 @@ import { useConfigStore } from '@/app/(home)/stores/config-store'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
 import { useRouter } from 'next/navigation'
 import { useI18n } from '@/i18n/context'
-import { DEFAULT_LOCALE } from '@/i18n/config'
+import { localizedContent } from '@/i18n/content'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
@@ -26,6 +28,9 @@ export interface Picture {
 	image?: string
 	images?: string[]
 }
+
+/** 各语言的内容变体表；新增语言时在此补一项（缺项/空文件由 localizedContent 回落中文） */
+const LOCALIZED_PICTURES = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Picture[]>>
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物；卡片/品牌按钮复用共享定义） */
 const styles = stylex.create({
@@ -74,7 +79,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -90,7 +95,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -102,7 +107,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	}
@@ -124,7 +129,7 @@ export default function Page() {
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
-	const displayPictures = !isEditMode && locale !== DEFAULT_LOCALE ? (initialListEn as Picture[]) : pictures
+	const displayPictures = localizedContent(pictures, LOCALIZED_PICTURES, locale, isEditMode)
 
 	const handleUploadSubmit = ({ images, description }: { images: ImageItem[]; description: string }) => {
 		const now = new Date().toISOString()
@@ -331,13 +336,13 @@ export default function Page() {
 				{isEditMode ? (
 					<>
 						<button onClick={() => router.push('/image-toolbox')} {...stylex.props(card.hover, styles.compressButton)}>
-							压缩工具
+							{t('write.compressionTool')}
 						</button>
 						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostButton)}>
-							取消
+							{t('admin.cancel')}
 						</button>
 						<button onClick={() => setIsUploadDialogOpen(true)} {...stylex.props(card.hover, styles.ghostButton)}>
-							上传
+							{t('config.upload')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
 							{isSaving ? '保存中...' : buttonText}
@@ -346,7 +351,7 @@ export default function Page() {
 				) : (
 					!hideEditButton && (
 						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editButton)}>
-							编辑
+							{t('admin.edit')}
 						</button>
 					)
 				)}

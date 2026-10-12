@@ -11,13 +11,18 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import initialListEn from './list.en.json'
+import initialListJa from './list.ja.json'
+import initialListKo from './list.ko.json'
 import type { Share } from './components/share-card'
 import type { LogoItem } from './components/logo-upload-dialog'
 import { useI18n } from '@/i18n/context'
-import { DEFAULT_LOCALE } from '@/i18n/config'
+import { localizedContent } from '@/i18n/content'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+
+/** 各语言的内容变体表；新增语言时在此补一项（缺项/空文件由 localizedContent 回落中文） */
+const LOCALIZED_SHARES = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Share[]>>
 
 /** 样式：右上角编辑工具栏（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -88,11 +93,11 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
-	const { locale } = useI18n()
+	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
-	const displayShares = !isEditMode && locale !== DEFAULT_LOCALE ? (initialListEn as Share[]) : shares
+	const displayShares = localizedContent(shares, LOCALIZED_SHARES, locale, isEditMode)
 
 	const handleUpdate = (updatedShare: Share, oldShare: Share, logoItem?: LogoItem) => {
 		setShares(prev => prev.map(s => (s.url === oldShare.url ? updatedShare : s)))
@@ -215,10 +220,10 @@ export default function Page() {
 				{isEditMode ? (
 					<>
 						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostBtn)}>
-							取消
+							{t('admin.cancel')}
 						</button>
 						<button onClick={handleAdd} {...stylex.props(card.hover, styles.ghostBtn)}>
-							添加
+							{t('admin.add')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveBtn)}>
 							{isSaving ? '保存中...' : buttonText}
@@ -227,7 +232,7 @@ export default function Page() {
 				) : (
 					!hideEditButton && (
 						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editBtn)}>
-							编辑
+							{t('admin.edit')}
 						</button>
 					)
 				)}

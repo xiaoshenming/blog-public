@@ -50,7 +50,7 @@ const sx = stylex.create({
 		alignItems: 'center',
 		gap: 12,
 		borderRadius: 16,
-		backgroundColor: 'rgb(255 255 255 / 80%)',
+		backgroundColor: colors.surfaceStrong,
 		paddingInline: 16,
 		paddingBlock: 8,
 		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)',
@@ -60,7 +60,7 @@ const sx = stylex.create({
 	editHint: {
 		fontSize: 12,
 		lineHeight: '16px',
-		color: '#4a5565'
+		color: colors.ink
 	},
 	/** 按钮组：横向排列、间距 8 */
 	editActions: {
@@ -79,7 +79,7 @@ const sx = stylex.create({
 		fontSize: 12,
 		lineHeight: '16px',
 		fontWeight: 500,
-		color: '#364153'
+		color: colors.ink
 	},
 	/** 保存按钮附加：小号内边距与文字（覆盖品牌按钮默认尺寸） */
 	saveButton: {

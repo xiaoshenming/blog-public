@@ -9,10 +9,11 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import initialListEn from './list.en.json'
+import initialListJa from './list.ja.json'
+import initialListKo from './list.ko.json'
 import { pushSnippets } from './services/push-snippets'
 import * as stylex from '@stylexjs/stylex'
 import { useI18n } from '@/i18n/context'
-import { DEFAULT_LOCALE } from '@/i18n/config'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { util } from '@/styles/shared/util.stylex'
@@ -71,7 +72,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -87,7 +88,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	},
@@ -113,8 +114,8 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#e5e7eb',
-		backgroundColor: '#f9fafb',
+		borderColor: colors.line,
+		backgroundColor: colors.subtle,
 		paddingInline: 12,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -162,7 +163,7 @@ const styles = stylex.create({
 	},
 	/** 删除按钮：悬停转红 */
 	removeBtn: {
-		color: '#99a1af',
+		color: colors.muted,
 		transitionProperty:
 			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
@@ -185,7 +186,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 16,
 		paddingBlock: 8,
@@ -197,7 +198,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	},
@@ -224,11 +225,15 @@ export default function Page() {
 	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
-	/** 英文随机句只在挂载时抽取一次，避免每次渲染变化 */
-	const enSnippet = useMemo(() => getRandomSnippet(initialListEn as string[]), [])
-
-	/** 访客态英文展示英文句子；编辑态固定中文（中文为管理端数据源） */
-	const displaySnippet = !isEditMode && locale !== DEFAULT_LOCALE ? enSnippet || currentSnippet : currentSnippet
+	/** 当前语言的随机句：随语言切换重抽；缺失回落中文源（编辑态固定中文，中文为管理端数据源） */
+	const localizedSnippets = useMemo(() => {
+		if (isEditMode) return null
+		const byLocale = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, string[]>>
+		const list = byLocale[locale]
+		return list && list.length > 0 ? list : null
+	}, [locale, isEditMode])
+	const localizedSnippet = useMemo(() => (localizedSnippets ? getRandomSnippet(localizedSnippets) : null), [localizedSnippets])
+	const displaySnippet = localizedSnippet || currentSnippet
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {

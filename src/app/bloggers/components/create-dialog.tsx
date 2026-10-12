@@ -81,12 +81,12 @@ const styles = stylex.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		borderRadius: 9999,
-		backgroundColor: '#e5e7eb'
+		backgroundColor: colors.line
 	},
 	plusIcon: {
 		width: 24,
 		height: 24,
-		color: '#6a7282'
+		color: colors.muted
 	},
 	info: {
 		flex: '1'
@@ -126,7 +126,7 @@ const styles = stylex.create({
 		fill: '#fac800'
 	},
 	starOff: {
-		fill: '#d1d5dc'
+		fill: colors.line
 	},
 	descriptionInput: {
 		marginTop: 12,
@@ -149,7 +149,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 16,
 		paddingBlock: 8,
@@ -161,7 +161,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	},

@@ -4,5 +4,10 @@ export const common = {
 	developing: '開発中',
 	offline: 'オフライン',
 	language: '言語',
-	switchTo: '言語を切り替え'
+	switchTo: '言語を切り替え',
+	skin: 'スキン',
+	switchSkin: 'スキンを切り替え',
+	followSite: 'サイト設定に従う',
+	font: 'フォント',
+	switchFont: 'フォントを切り替え'
 }

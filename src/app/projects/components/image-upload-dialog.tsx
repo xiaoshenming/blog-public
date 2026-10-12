@@ -57,7 +57,7 @@ const styles = stylex.create({
 		borderRadius: 12,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: 'color-mix(in oklab, var(--color-secondary) 10%, transparent)',
 		transitionProperty:
 			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
@@ -65,7 +65,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#e5e7eb'
+				backgroundColor: colors.line
 			}
 		}
 	},
@@ -105,7 +105,7 @@ const styles = stylex.create({
 		width: '100%',
 		borderTopWidth: 1,
 		borderTopStyle: 'solid',
-		borderTopColor: '#d1d5dc'
+		borderTopColor: colors.line
 	},
 	dividerLabelWrap: {
 		position: 'relative',
@@ -131,8 +131,8 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
-		backgroundColor: '#e5e7eb',
+		borderColor: colors.line,
+		backgroundColor: colors.line,
 		paddingInline: 16,
 		paddingBlock: 8,
 		':focus': {
@@ -158,7 +158,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 24,
 		paddingBlock: 10,
@@ -168,7 +168,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	}

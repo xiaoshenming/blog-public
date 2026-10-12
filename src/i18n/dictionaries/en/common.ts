@@ -4,5 +4,10 @@ export const common = {
 	developing: 'Developing',
 	offline: 'Offline',
 	language: 'Language',
-	switchTo: 'Switch language'
+	switchTo: 'Switch language',
+	skin: 'Skin',
+	switchSkin: 'Switch skin',
+	followSite: 'Follow site setting',
+	font: 'Font',
+	switchFont: 'Switch font'
 }

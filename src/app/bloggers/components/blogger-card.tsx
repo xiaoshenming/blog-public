@@ -51,10 +51,10 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
 	},
 	actionCancel: {
-		color: '#99a1af',
+		color: colors.muted,
 		'@media (hover: hover)': {
 			':hover': {
-				color: '#4a5565'
+				color: colors.ink
 			}
 		}
 	},
@@ -184,11 +184,11 @@ const styles = stylex.create({
 		color: colors.white
 	},
 	statusIdle: {
-		backgroundColor: '#e5e7eb',
-		color: '#4a5565',
+		backgroundColor: colors.line,
+		color: colors.ink,
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#d1d5dc'
+				backgroundColor: colors.line
 			}
 		}
 	},
@@ -197,7 +197,7 @@ const styles = stylex.create({
 		marginTop: 12,
 		fontSize: 14,
 		lineHeight: 1.625,
-		color: '#4a5565',
+		color: colors.ink,
 		transitionProperty: 'all',
 		transitionDuration: '300ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',

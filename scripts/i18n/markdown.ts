@@ -53,6 +53,77 @@ export function splitMarkdown(markdown: string): Segment[] {
 	return segments
 }
 
+/**
+ * 行首标记：标题、引用（可多层）、无序/有序列表，以及行首的图片/链接开头符。
+ * 这些字符决定块级结构，模型容易改写或丢弃，必须剥离后原样贴回。
+ */
+const LINE_MARKER_RE = /^(?:#{1,6} |>+ ?|[-*+] |\d+\. |!?\[)+/
+
+/** 链接/图片目标 `](url)`（可含 title）：整段换成占位符，URL 不交给模型 */
+const LINK_TARGET_RE = /\]\([^)\n]+\)/g
+
+/** URL 占位符：纯 ASCII、无意义但显眼；不含 %%，避免与批分隔符混淆 */
+function urlToken(index: number): string {
+	return `@@URL${index}@@`
+}
+
+const URL_TOKEN_RE = /@@URL\d+@@/g
+
+/** 含中文的段才做“整段回显”检测：模型偶发照抄原文不翻译（结构完好但正文没翻） */
+const CJK_RE = /[一-鿿]/
+
+type ProtectedSegment = {
+	/** 发给模型的文本：行首标记已剥离、链接目标已换成占位符 */
+	payload: string
+	/** 还原译文并校验；行数 / 行首标记 / URL 占位符不符、或整段回显原文时返回 null */
+	restore: (translated: string) => string | null
+}
+
+/** 抽出一段 markdown 的结构（行首标记、链接目标），只把纯正文交给模型 */
+function protectSegment(source: string): ProtectedSegment {
+	const lines = source.split('\n')
+	const markers = lines.map(line => line.match(LINE_MARKER_RE)?.[0] ?? '')
+	const targets: string[] = []
+	const payloadLines = lines.map((line, index) => {
+		const rest = line.slice(markers[index].length)
+		return rest.replace(LINK_TARGET_RE, match => {
+			targets.push(match)
+			return urlToken(targets.length - 1)
+		})
+	})
+	const expectedTokens = targets.map((_, index) => urlToken(index))
+
+	return {
+		payload: payloadLines.join('\n'),
+		restore(translated: string): string | null {
+			const outLines = translated.split('\n')
+			if (outLines.length !== lines.length) return null
+			// URL 集合校验：占位符的编号与数量必须与原文完全一致
+			const found = translated.match(URL_TOKEN_RE) ?? []
+			if (found.length !== expectedTokens.length) return null
+			if (expectedTokens.some(token => found.filter(item => item === token).length !== 1)) return null
+
+			const restoredLines: string[] = []
+			for (let i = 0; i < outLines.length; i++) {
+				// 原文有正文却译出空行 → 视为内容丢失
+				if (payloadLines[i].trim() !== '' && outLines[i].trim() === '') return null
+				let text = outLines[i]
+				expectedTokens.forEach((token, k) => {
+					text = text.split(token).join(targets[k])
+				})
+				const restored = markers[i] + text
+				// 行首标记序列校验：模型自行补的标记会让序列与原文不一致
+				if ((restored.match(LINE_MARKER_RE)?.[0] ?? '') !== markers[i]) return null
+				restoredLines.push(restored)
+			}
+			const restored = restoredLines.join('\n')
+			// 整段回显检测：含中文的段译出来与原文一字不差，说明模型没翻 → 视为失败交给上层重试
+			if (CJK_RE.test(source) && restored === source) return null
+			return restored
+		}
+	}
+}
+
 /** 相邻可翻段凑批：段数与字符数双重上限（小模型易缺段，批越小越稳） */
 function batchIndexes(segments: Segment[]): number[][] {
 	const batches: number[][] = []
@@ -81,38 +152,55 @@ function splitBySeparator(output: string, count: number): string[] | null {
 	return null
 }
 
-/** 翻译整篇 markdown，输出与原文段结构一致的译文 */
+/** 单段翻译：只发送受保护正文，还原校验失败返回 null */
+async function translateSegment(segment: ProtectedSegment): Promise<string | null> {
+	try {
+		const output = (await chat(markdownSystem, singleParagraphUser(segment.payload))).trim()
+		return segment.restore(output)
+	} catch {
+		return null
+	}
+}
+
+/**
+ * 翻译整篇 markdown：结构标记不进模型，翻完按「行首标记序列 + URL 集合」校验，
+ * 不符（含模型整段回显原文不翻译）则重试一次，仍不符保留原文（宁可留中文，不产出坏结构）。
+ */
 export async function translateMarkdown(markdown: string): Promise<string> {
 	const segments = splitMarkdown(markdown)
 	const batches = batchIndexes(segments)
 
 	for (const batch of batches) {
 		const sources = batch.map(index => segments[index].text)
-		let outputs: string[] | null = null
+		const protectedSegments = sources.map(protectSegment)
+		const payloads = protectedSegments.map(segment => segment.payload)
+		const results: Array<string | null> = payloads.map(() => null)
+
 		try {
-			if (sources.length === 1) {
-				outputs = [(await chat(markdownSystem, singleParagraphUser(sources[0]))).trim()]
+			if (payloads.length === 1) {
+				results[0] = await translateSegment(protectedSegments[0])
 			} else {
-				const raw = await chat(markdownSystem, multiParagraphUser(sources))
-				outputs = splitBySeparator(raw, sources.length)
-			}
-		} catch {
-			outputs = null
-		}
-		// 批翻译失败或段数错位 → 逐段降级，保证结构对齐
-		if (!outputs) {
-			outputs = []
-			for (const source of sources) {
-				try {
-					outputs.push((await chat(markdownSystem, singleParagraphUser(source))).trim())
-				} catch {
-					outputs.push(source)
+				const raw = await chat(markdownSystem, multiParagraphUser(payloads))
+				const outputs = splitBySeparator(raw, payloads.length)
+				if (outputs) {
+					outputs.forEach((output, i) => {
+						results[i] = protectedSegments[i].restore(output)
+					})
 				}
 			}
+		} catch {
+			// 请求失败 → 交给下面逐段降级
 		}
-		batch.forEach((segmentIndex, i) => {
-			segments[segmentIndex].text = outputs?.[i] ?? sources[i]
-		})
+
+		// 批翻译失败或结构校验不过 → 逐段重试一次；仍失败保留原文
+		for (let i = 0; i < batch.length; i++) {
+			if (payloads[i].trim() === '') {
+				segments[batch[i]].text = sources[i] // 纯结构段没有正文，原样保留
+				continue
+			}
+			if (results[i] === null) results[i] = await translateSegment(protectedSegments[i])
+			segments[batch[i]].text = results[i] ?? sources[i]
+		}
 	}
 	return segments.map(segment => segment.text).join('\n')
 }

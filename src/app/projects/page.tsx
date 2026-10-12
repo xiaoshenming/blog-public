@@ -11,12 +11,17 @@ import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import initialList from './list.json'
 import initialListEn from './list.en.json'
+import initialListJa from './list.ja.json'
+import initialListKo from './list.ko.json'
 import type { ImageItem } from './components/image-upload-dialog'
 import { useI18n } from '@/i18n/context'
-import { DEFAULT_LOCALE } from '@/i18n/config'
+import { localizedContent } from '@/i18n/content'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
+
+/** 各语言的内容变体表；新增语言时在此补一项（缺项/空文件由 localizedContent 回落中文） */
+const LOCALIZED_PROJECTS = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Project[]>>
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -62,7 +67,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -90,7 +95,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	}
@@ -108,11 +113,11 @@ export default function Page() {
 
 	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
-	const { locale } = useI18n()
+	const { locale, t } = useI18n()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	/** 访客态按语言展示对应内容数据；编辑态固定中文（中文为管理端数据源） */
-	const displayProjects = !isEditMode && locale !== DEFAULT_LOCALE ? (initialListEn as Project[]) : projects
+	const displayProjects = localizedContent(projects, LOCALIZED_PROJECTS, locale, isEditMode)
 
 	const handleUpdate = (updatedProject: Project, oldProject: Project, imageItem?: ImageItem) => {
 		setProjects(prev => prev.map(p => (p.url === oldProject.url ? updatedProject : p)))
@@ -239,10 +244,10 @@ export default function Page() {
 				{isEditMode ? (
 					<>
 						<button onClick={handleCancel} disabled={isSaving} {...stylex.props(card.hover, styles.ghostButton)}>
-							取消
+							{t('admin.cancel')}
 						</button>
 						<button onClick={handleAdd} {...stylex.props(card.hover, styles.ghostButton)}>
-							添加
+							{t('admin.add')}
 						</button>
 						<button onClick={handleSaveClick} disabled={isSaving} {...stylex.props(card.hover, brandBtn.base, styles.saveButton)}>
 							{isSaving ? '保存中...' : buttonText}
@@ -251,7 +256,7 @@ export default function Page() {
 				) : (
 					!hideEditButton && (
 						<button onClick={() => setIsEditMode(true)} {...stylex.props(card.hover, styles.editButton)}>
-							编辑
+							{t('admin.edit')}
 						</button>
 					)
 				)}

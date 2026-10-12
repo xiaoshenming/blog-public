@@ -1,0 +1,107 @@
+/**
+ * 皮肤专属样式（水墨）
+ *
+ * 为什么是普通 CSS：StyleX 表达不了 [data-skin='shuimo'] 这类属性选择器，
+ * 皮肤私有样式只能落在这里，由 globals.css 在 article.css 之后 @import 引入。
+ *
+ * 覆盖能力（已核对）：
+ * - StyleX 原子类位于 @layer priority1-9 / utilities（postcss.config 的 useCSSLayers: true），
+ *   本文件不带 @layer；按级联规则「无层样式优先于一切层」，可稳定覆盖原子类。
+ * - article.css 的 .prose 同样无层，本文件在其后引入，且选择器统一带
+ *   [data-skin='shuimo'] 前缀（多一个属性选择器权重），可稳定覆盖。
+ *
+ * 颜色一律走 --color-* 令牌，站长在配置里微调色值后皮肤样式仍跟随。
+ */
+
+/* ── 页面底色：宣纸纹理 ─────────────────────────────────────────
+   铺在 <html>：根元素背景会传播到整个画布（含滚动溢出区），天然位于
+   BlurredBubbles（fixed z-0）与内容 main（z-10）之下，不会盖住任何东西。
+
+   混合模式用 luminosity 而非 multiply（按 W3C 公式离线合成对比过）：
+   paper.webp 是中性灰纸纹（亮度均值 230，底色 #e8e2d5 为 226）——
+   - multiply 会把整页压暗到约 210 并洗掉暖调，等于回退 preset 特意提亮的宣纸调；
+   - luminosity 取 --color-bg 的色相/饱和度 + 纸纹的明度纹理，
+     合成后亮度均值约 229、暖调与 preset 一致，纤维纹理清晰可见。 */
+html[data-skin='shuimo'] {
+	background-image: url('/skins/shuimo/paper.webp');
+	background-repeat: repeat;
+	background-blend-mode: luminosity;
+}
+
+/* 卡片为何没铺纸纹：
+   card.base 的卡片是 StyleX 哈希类、没有稳定挂点；即便挂上 <article>
+   （全站唯一的博客正文卡片），paper.webp 的亮度（230）也远低于卡片底色
+   （#fdfbf6 ≈ 250）——任何混合模式都会把卡片压暗到约 235，与页面底色（229）
+   几乎贴平，preset 精心拉开的卡片/页面色阶就没了。
+   现有方案：卡片保持 preset 的半透明（#fbf7ee99 / #fdfbf6e6），
+   页面纸纹从卡片底下自然透出，是不破坏色阶的唯一纸感做法。
+   若将来一定要卡片自带纸纹，需要一张亮度接近卡片的纹理素材。 */
+
+/* ── 文章正文：墨色与墨韵（不改排版结构，只调可读性相关的字色/行距/线）── */
+[data-skin='shuimo'] .prose {
+	color: var(--color-ink);
+	/* 汇文明朝体为衬线，行距比默认 1.8 略放宽 */
+	line-height: 1.95;
+	letter-spacing: 0.04em;
+}
+
+/* 一二级标题下压一条向右渐隐的淡墨细线（云母色） */
+[data-skin='shuimo'] .prose h1,
+[data-skin='shuimo'] .prose h2 {
+	padding-bottom: 0.35em;
+	background-image: linear-gradient(90deg, color-mix(in srgb, var(--color-line) 90%, transparent), transparent 78%);
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	background-size: 100% 1px;
+}
+
+/* 链接改用青雀头黛，去掉默认蓝在宣纸上的突兀感 */
+[data-skin='shuimo'] .prose a {
+	color: var(--color-brand-secondary);
+}
+
+/* 正文内原为纯黑系的描边（代码块/图片/分隔线/表格）改为淡墨色，融进纸感 */
+[data-skin='shuimo'] .prose hr,
+[data-skin='shuimo'] .prose pre,
+[data-skin='shuimo'] .prose code,
+[data-skin='shuimo'] .prose img,
+[data-skin='shuimo'] .prose iframe {
+	border-color: color-mix(in srgb, var(--color-ink) 14%, transparent);
+}
+[data-skin='shuimo'] .prose th,
+[data-skin='shuimo'] .prose td {
+	border-bottom-color: color-mix(in srgb, var(--color-ink) 14%, transparent);
+}
+
+/* 引用块底纹由冷灰改为淡墨纸色 */
+[data-skin='shuimo'] .prose blockquote {
+	background: color-mix(in srgb, var(--color-subtle) 60%, transparent);
+}
+
+/* 选中文字以朱砂晕染 */
+[data-skin='shuimo'] ::selection {
+	background-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+}
+
+/* ── 墨框按钮（可选挂点，按需接线）─────────────────────────────
+   用法：给按钮加 className='skin-decor-ink-btn'。
+   把 brush-frame.webp（156×45 墨笔触方框）经 border-image 铺成按钮边框。
+   注意：
+   - border-image 不跟随 border-radius，必须方形（radius 归零），这也是它不适合卡片的原因；
+   - 边框从 1.5px 加宽到 7px，同步回调内边距，适配 brandBtn 尺寸的按钮整体不变形。
+   未默认挂在任何按钮上：全站主按钮（brandBtn）没有稳定的选择器挂点，
+   用一个宽泛的 button 选择器会误伤图标按钮，故留作显式挂点。 */
+[data-skin='shuimo'] .skin-decor-ink-btn {
+	border: 7px solid transparent;
+	border-image: url('/skins/shuimo/brush-frame.webp') 8 / 7px stretch;
+	border-radius: 0;
+	padding-inline: 10px;
+	padding-block: 3px;
+}
+
+/* ── 光标：毛笔 ────────────────────────────────────────────────
+   覆盖 theme.css 的 --skin-cursor。热点 (3 3) 对准笔锋尖端。
+   交互元素上的 pointer/text 等语义光标不受影响（它们各自声明 cursor）。 */
+html[data-skin='shuimo'] {
+	--skin-cursor: url('/skins/shuimo/cursor.svg') 3 3, auto;
+}

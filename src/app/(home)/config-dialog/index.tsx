@@ -11,8 +11,10 @@ import type { SiteContent, CardStyles } from '../stores/config-store'
 import { SiteSettings, type FileItem, type ArtImageUploads, type BackgroundImageUploads, type SocialButtonImageUploads } from './site-settings'
 import { ColorConfig } from './color-config'
 import { FontConfig } from './font-config'
+import { SkinConfig } from './skin-config'
 import { HomeLayout } from './home-layout'
 import { applyFont } from '@/lib/font'
+import { applyBackgroundImage, applySkin, applyTheme } from '@/lib/skin'
 import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
 import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
@@ -24,7 +26,7 @@ interface ConfigDialogProps {
 	onClose: () => void
 }
 
-type TabType = 'site' | 'color' | 'font' | 'layout'
+type TabType = 'site' | 'color' | 'font' | 'skin' | 'layout'
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -290,8 +292,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			)
 			setSiteContent(formData)
 			setCardStyles(cardStylesData)
-			updateThemeVariables(formData.theme)
-			applyFont(formData.font)
+			applyAppearance(formData)
 			setFaviconItem(null)
 			setAvatarItem(null)
 			setArtImageUploads({})
@@ -341,8 +342,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				metaDescription.setAttribute('content', originalData.meta.description)
 			}
 		}
-		updateThemeVariables(originalData.theme)
-		applyFont(originalData.font)
+		applyAppearance(originalData)
 		setFaviconItem(null)
 		setAvatarItem(null)
 		setArtImageUploads({})
@@ -351,21 +351,13 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 		onClose()
 	}
 
-	const updateThemeVariables = (theme?: SiteContent['theme']) => {
-		if (typeof document === 'undefined' || !theme) return
-
-		const { colorBrand, colorBrandSecondary, colorPrimary, colorSecondary, colorBg, colorBorder, colorCard, colorArticle } = theme
-
-		const root = document.documentElement
-
-		if (colorBrand) root.style.setProperty('--color-brand', colorBrand)
-		if (colorBrandSecondary) root.style.setProperty('--color-brand-secondary', colorBrandSecondary)
-		if (colorPrimary) root.style.setProperty('--color-primary', colorPrimary)
-		if (colorSecondary) root.style.setProperty('--color-secondary', colorSecondary)
-		if (colorBg) root.style.setProperty('--color-bg', colorBg)
-		if (colorBorder) root.style.setProperty('--color-border', colorBorder)
-		if (colorCard) root.style.setProperty('--color-card', colorCard)
-		if (colorArticle) root.style.setProperty('--color-article', colorArticle)
+	/** 预览与还原都走 lib/skin 的统一入口，避免这里漏掉新增的令牌 */
+	const applyAppearance = (content: SiteContent) => {
+		applyTheme(content.theme)
+		applySkin(content.skin)
+		applyFont(content.font)
+		const images = (content as { backgroundImages?: Array<{ id: string; url: string }> }).backgroundImages ?? []
+		applyBackgroundImage(images.find(item => item.id === content.currentBackgroundImageId)?.url ?? null)
 	}
 
 	const handlePreview = () => {
@@ -382,8 +374,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				metaDescription.setAttribute('content', formData.meta.description)
 			}
 		}
-		updateThemeVariables(formData.theme)
-		applyFont(formData.font)
+		applyAppearance(formData)
 
 		onClose()
 	}
@@ -394,6 +385,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 		{ id: 'site', label: t('config.tabSiteSettings') },
 		{ id: 'color', label: t('config.tabColorConfig') },
 		{ id: 'font', label: t('config.tabFont') },
+		{ id: 'skin', label: t('config.tabSkin') },
 		{ id: 'layout', label: t('config.tabHomeLayout') }
 	]
 
@@ -456,6 +448,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 					)}
 					{activeTab === 'color' && <ColorConfig formData={formData} setFormData={setFormData} />}
 					{activeTab === 'font' && <FontConfig formData={formData} setFormData={setFormData} />}
+					{activeTab === 'skin' && <SkinConfig formData={formData} setFormData={setFormData} />}
 					{activeTab === 'layout' && <HomeLayout cardStylesData={cardStylesData} setCardStylesData={setCardStylesData} onClose={onClose} />}
 				</div>
 

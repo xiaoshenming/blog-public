@@ -359,6 +359,46 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 						<ColorPicker value={theme.colorArticle ?? DEFAULT_THEME_COLORS.colorArticle} onChange={value => handleThemeColorChange('colorArticle', value)} />
 						<span {...stylex.props(styles.hint)}>{t('config.colorArticle')}</span>
 					</div>
+					{/* 皮肤令牌：13 个 theme 字段中的后 5 个，与 skins.ts 的 SkinTheme 同构；说明见 title 悬停 */}
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker value={theme.colorInk ?? DEFAULT_THEME_COLORS.colorInk} onChange={value => handleThemeColorChange('colorInk', value)} />
+						<span {...stylex.props(styles.hint)} title={t('config.colorInkHint')}>
+							{t('config.colorInk')}
+						</span>
+					</div>
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker value={theme.colorMuted ?? DEFAULT_THEME_COLORS.colorMuted} onChange={value => handleThemeColorChange('colorMuted', value)} />
+						<span {...stylex.props(styles.hint)} title={t('config.colorMutedHint')}>
+							{t('config.colorMuted')}
+						</span>
+					</div>
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker value={theme.colorLine ?? DEFAULT_THEME_COLORS.colorLine} onChange={value => handleThemeColorChange('colorLine', value)} />
+						<span {...stylex.props(styles.hint)} title={t('config.colorLineHint')}>
+							{t('config.colorLine')}
+						</span>
+					</div>
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker value={theme.colorSurface ?? DEFAULT_THEME_COLORS.colorSurface} onChange={value => handleThemeColorChange('colorSurface', value)} />
+						<span {...stylex.props(styles.hint)} title={t('config.colorSurfaceHint')}>
+							{t('config.colorSurface')}
+						</span>
+					</div>
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker
+							value={theme.colorSurfaceStrong ?? DEFAULT_THEME_COLORS.colorSurfaceStrong}
+							onChange={value => handleThemeColorChange('colorSurfaceStrong', value)}
+						/>
+						<span {...stylex.props(styles.hint)} title={t('config.colorSurfaceStrongHint')}>
+							{t('config.colorSurfaceStrong')}
+						</span>
+					</div>
+					<div {...stylex.props(styles.colorRow)}>
+						<ColorPicker value={theme.colorSubtle ?? DEFAULT_THEME_COLORS.colorSubtle} onChange={value => handleThemeColorChange('colorSubtle', value)} />
+						<span {...stylex.props(styles.hint)} title={t('config.colorSubtleHint')}>
+							{t('config.colorSubtle')}
+						</span>
+					</div>
 				</div>
 			</div>
 

@@ -60,10 +60,10 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
 	},
 	actionCancel: {
-		color: '#99a1af',
+		color: colors.muted,
 		'@media (hover: hover)': {
 			':hover': {
-				color: '#4a5565'
+				color: colors.ink
 			}
 		}
 	},

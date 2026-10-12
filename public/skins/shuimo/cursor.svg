@@ -1,0 +1,16 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 水墨皮肤光标：斜持毛笔，笔锋尖端即热点（3 3）。
+       配色对齐水墨令牌：笔杆烟墨 #5C4F55、笔箍青雀头黛 #354E6B、笔锋青黛 #45465E。 -->
+  <g>
+    <!-- 笔杆 -->
+    <path d="M26.6 26.6 L16.2 16.2" stroke="#5C4F55" stroke-width="3.1" stroke-linecap="round" />
+    <!-- 笔杆高光 -->
+    <path d="M25.6 25.6 L17 17" stroke="#8B8378" stroke-width="0.9" stroke-linecap="round" opacity="0.55" />
+    <!-- 笔箍 -->
+    <path d="M16.6 16.6 L13.6 13.6" stroke="#354E6B" stroke-width="3.8" stroke-linecap="round" />
+    <!-- 笔锋：由笔肚向左上收尖，尖端落在热点 -->
+    <path d="M13.4 13.4 C 10.6 11.4 6.6 7.6 3 3 C 4.4 7.4 8.6 11.6 13.4 13.4 Z" fill="#45465E" />
+    <!-- 笔尖处一点墨晕 -->
+    <circle cx="4.1" cy="4.1" r="1.15" fill="#45465E" opacity="0.9" />
+  </g>
+</svg>

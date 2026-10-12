@@ -15,6 +15,7 @@ export const music = {
 	previous: '上一首',
 	next: '下一首',
 	volume: '音量',
+	progress: '播放进度',
 	modeListLoop: '列表循环',
 	modeOneLoop: '单曲循环',
 	modeRandom: '随机播放',

@@ -150,7 +150,7 @@ const styles = stylex.create({
 	},
 	deleteBtn: {
 		borderRadius: 6,
-		backgroundColor: 'rgb(255 255 255 / 80%)',
+		backgroundColor: colors.surfaceStrong,
 		paddingInline: 6,
 		paddingBlock: 2,
 		'@media (hover: hover)': {

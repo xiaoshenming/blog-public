@@ -9,6 +9,24 @@
 	--color-card: #ffffff66;
 	--color-article: #ffffffcc;
 
+	/* 中性色令牌（皮肤预设与配置面板都会覆盖，见 src/skins/） */
+	--color-ink: #364153;
+	--color-muted: #6a7282;
+	--color-line: #d1d5dc;
+	--color-surface: #ffffff99;
+	--color-surface-strong: #ffffffcc;
+	--color-subtle: #f9fafb;
+
+	/* 卡片质感：由 applySkin 在运行时写入，这里是「无 JS / 首屏前」的兜底（等同默认皮肤） */
+	--skin-card-radius: 40px;
+	--skin-card-radius-lg: 64px;
+	--skin-card-blur: blur(4px);
+	--skin-card-shadow: 0 40px 50px -32px rgb(0 0 0 / 5%), inset 0 0 20px rgb(255 255 255 / 25%);
+	--skin-card-border-width: 1px;
+
+	/* 光标：皮肤可整体替换（水墨为毛笔）。数值为热点偏移 */
+	--skin-cursor: url(/images/cursor.svg) 2 1, auto;
+
 	/* Averia 只有拉丁字形，中文回退到站点当前字体（--font-sans），这样切换字体时标题里的汉字也会跟着变 */
 	--font-averia: var(--font-averia-next, 'Averia Gruesa Libre'), var(--font-sans);
 	--font-sans:

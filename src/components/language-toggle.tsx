@@ -10,19 +10,10 @@ import { useI18n } from '@/i18n/context'
 import { LOCALES, localeLabel } from '@/i18n/config'
 import { useSize } from '@/hooks/use-size'
 
-/** 常驻左下角的低调语言切换；多语言为向上弹出菜单，移动端整体上移避开底部 mini 播放条 */
+/** 常驻左下角的低调语言切换；多语言为向上弹出菜单。定位由布局层的共享 fixed 容器统一负责（与 SkinToggle 并排），wrap 仅作 relative 供菜单锚定 */
 const styles = stylex.create({
 	wrap: {
-		position: 'fixed',
-		left: 24,
-		zIndex: 40
-	},
-	bottomDesktop: {
-		bottom: 24
-	},
-	/** 移动端 mini 播放条占 bottom-3 通栏，上移一层 */
-	bottomMobile: {
-		bottom: 80
+		position: 'relative'
 	},
 	toggle: {
 		/** card.base 是给绝对定位卡片用的，按钮必须显式回到文档流，否则被零宽 wrap 压缩换行、溢出屏幕 */
@@ -41,11 +32,12 @@ const styles = stylex.create({
 		width: 20,
 		height: 20
 	},
+	/** 菜单向右侧展开：按钮竖排在左下角，向上弹会压住上面那个按钮 */
 	menu: {
 		position: 'absolute',
-		bottom: '100%',
-		left: 0,
-		marginBottom: 8,
+		left: '100%',
+		bottom: 0,
+		marginLeft: 8,
 		display: 'flex',
 		flexDirection: 'column',
 		minWidth: 140,
@@ -96,7 +88,7 @@ export default function LanguageToggle() {
 	}, [open])
 
 	return (
-		<div ref={wrapRef} {...stylex.props(styles.wrap, maxSM ? styles.bottomMobile : styles.bottomDesktop)}>
+		<div ref={wrapRef} {...stylex.props(styles.wrap)}>
 			<motion.button
 				type='button'
 				initial={{ opacity: 0, scale: 0.6 }}

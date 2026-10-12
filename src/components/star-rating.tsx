@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex'
+import { colors } from '@/styles/tokens.stylex'
 
 /** 原 Tailwind：容器 flex items-center gap-0.5；星形 filled→fill-yellow-400、empty→fill-gray-300 */
 const styles = stylex.create({
@@ -10,8 +11,9 @@ const styles = stylex.create({
 	filled: {
 		fill: 'oklch(85.2% 0.199 91.936)'
 	},
+	/** 空星：gray-300 等价色 → 中性线色令牌（oklch 形式与 #d1d5dc 精确等价） */
 	empty: {
-		fill: 'oklch(87.2% 0.01 258.338)'
+		fill: colors.line
 	}
 })
 

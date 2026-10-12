@@ -16,6 +16,7 @@ export const music = {
 	previous: 'Previous track',
 	next: 'Next track',
 	volume: 'Volume',
+	progress: 'Playback progress',
 	modeListLoop: 'List loop',
 	modeOneLoop: 'Single track loop',
 	modeRandom: 'Random playback',

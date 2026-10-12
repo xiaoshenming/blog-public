@@ -10,7 +10,8 @@ import { toolbox } from './toolbox'
 import { bloggers } from './bloggers'
 import { write } from './write'
 import { config } from './config'
+import { skins } from './skins'
 import { admin } from './admin'
 import { dialogs } from './dialogs'
 
-export const ja = { collections, common, nav, home, blog, about, music, toolbox, bloggers, write, config, admin, dialogs }
+export const ja = { collections, common, nav, home, blog, about, music, toolbox, bloggers, write, config, skins, admin, dialogs }

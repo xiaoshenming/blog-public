@@ -1,0 +1,36 @@
+<svg width="64" height="160" viewBox="0 0 64 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- 落款墨痕：本项目自绘（替代原先来自 shuimo-blog 的同名素材，该仓库无 LICENSE 文件）。
+       用 feTurbulence + feDisplacementMap 把规整的贝塞尔轮廓揉出墨渗纸的毛边。
+       作为 mask 使用，只取 alpha，实际颜色由 CSS 的 backgroundColor 决定。 -->
+  <defs>
+    <filter id="ink-bleed" x="-25%" y="-15%" width="150%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.05" numOctaves="4" seed="11" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G" />
+      <feGaussianBlur stdDeviation="0.6" />
+    </filter>
+  </defs>
+
+  <!-- 外圈墨晕：淡、大、边缘更散 -->
+  <path
+    d="M32 4 C 44 9, 51 26, 49 49 C 48 68, 51 87, 50 107 C 49 130, 42 150, 31 158 C 19 151, 13 129, 14 106 C 15 84, 12 65, 15 45 C 18 25, 22 8, 32 4 Z"
+    fill="#000"
+    opacity="0.34"
+    filter="url(#ink-bleed)" />
+
+  <!-- 主体笔迹：饱和、略窄 -->
+  <path
+    d="M32 12 C 41 17, 46 31, 45 50 C 44 68, 47 86, 46 105 C 45 125, 40 142, 31 149 C 22 143, 17 125, 18 105 C 19 86, 16 68, 17 50 C 18 31, 23 17, 32 12 Z"
+    fill="#000"
+    opacity="0.95"
+    filter="url(#ink-bleed)" />
+
+  <!-- 飞白：主体内的一道浅缺口，模拟行笔速度 -->
+  <path
+    d="M27 34 C 30 56, 29 84, 27 108 C 26 122, 27 134, 29 142"
+    stroke="#000"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    fill="none"
+    opacity="0.22"
+    filter="url(#ink-bleed)" />
+</svg>

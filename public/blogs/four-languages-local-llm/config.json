@@ -4,5 +4,6 @@
 	"date": "2026-09-29",
 	"summary": "只有中文的博客总差点意思。这次一口气上了英日韩三语：464 条 UI 文案、39 篇文章译文，全部出自本地一个 1.8B 的翻译小模型。聊聊架构取舍、翻译管线的搭法，和几个只有上线才会踩到的坑。",
 	"hidden": false,
-	"category": "代码实现"
+	"category": "代码实现",
+	"cover": "/images/pictures/33437e1c4229c5ec2e73fd04b298b8757103cda277bac16c1dded617f3636b95.webp"
 }

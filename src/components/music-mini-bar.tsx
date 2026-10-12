@@ -36,7 +36,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 80%)',
+		backgroundColor: colors.surfaceStrong,
 		paddingInline: 16,
 		paddingBlock: 10,
 		boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%)',

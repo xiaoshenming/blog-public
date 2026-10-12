@@ -66,9 +66,9 @@ const styles = stylex.create({
 	badgeLiked: {
 		backgroundColor: '#ff667f'
 	},
-	/** bg-gray-300（色板固化：--color-gray-300 = #d1d5dc） */
+	/** bg-gray-300 → 中性线色令牌（未点赞态徽章底） */
 	badgeIdle: {
-		backgroundColor: '#d1d5dc'
+		backgroundColor: colors.line
 	}
 })
 

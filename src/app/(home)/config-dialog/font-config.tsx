@@ -132,10 +132,10 @@ export function FontConfig({ formData, setFormData }: FontConfigProps) {
 							<button key={font.id} type='button' onClick={() => handleSelect(font.id)} {...stylex.props(styles.fontCard, active && styles.fontCardActive)}>
 								<div {...stylex.props(styles.cardBody)}>
 									<div {...stylex.props(styles.nameRow)}>
-										<span {...stylex.props(styles.fontName)}>{font.name}</span>
+										<span {...stylex.props(styles.fontName)}>{t(font.nameKey)}</span>
 										{active && <CheckIcon {...stylex.props(styles.checkIcon)} />}
 									</div>
-									<p {...stylex.props(styles.fontDesc)}>{font.description}</p>
+									<p {...stylex.props(styles.fontDesc)}>{t(font.descriptionKey)}</p>
 									<p {...stylex.props(styles.sample)} style={{ fontFamily: font.family }}>
 										{SAMPLE_TEXT}
 									</p>

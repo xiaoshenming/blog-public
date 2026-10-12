@@ -13,6 +13,7 @@ import type { Line, Theme, VisualizerMode } from '../visualizer/types'
 import { buildVisualizerTheme } from './visualizer-theme'
 import VisualizerChrome, { stepVisualizerMode } from './visualizer-chrome'
 import { colors } from '@/styles/tokens.stylex'
+import { useI18n } from '@/i18n/context'
 
 const MODE_STORAGE_KEY = 'music-visualizer-mode'
 const CHROME_IDLE_MS = 2600
@@ -67,6 +68,7 @@ function findLineIndex(lines: Line[], time: number) {
  * 时间源是 rAF 驱动的 playbackTime，本组件只维护「当前行」「模式」「操作层可见」这些离散状态。
  */
 export default function LyricVisualizer() {
+	const { t } = useI18n()
 	const { open, track, lyricLines, isPlaying, setVisualizerOpen, seekToTime } = useMusicStore(
 		useShallow(s => ({
 			open: s.visualizerOpen,
@@ -196,7 +198,7 @@ export default function LyricVisualizer() {
 					ref={dialogRef}
 					role='dialog'
 					aria-modal='true'
-					aria-label='沉浸歌词'
+					aria-label={t('music.immersiveLyrics')}
 					tabIndex={-1}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}

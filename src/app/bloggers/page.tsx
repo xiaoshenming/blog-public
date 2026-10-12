@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import * as stylex from '@stylexjs/stylex'
@@ -18,6 +18,10 @@ import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { useI18n } from '@/i18n/context'
+import { localizedContent } from '@/i18n/content'
+
+/** 各语言的内容变体表；新增语言时在此补一项（缺项/空文件由 localizedContent 回落中文） */
+const LOCALIZED_BLOGGERS = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Blogger[]>>
 
 /** 原 Tailwind → StyleX 对照（数值取自 Tailwind v4 编译产物） */
 const styles = stylex.create({
@@ -42,7 +46,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -70,7 +74,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	}
@@ -91,12 +95,7 @@ export default function Page() {
 	const { t, locale } = useI18n()
 
 	// 浏览态按当前语言展示（语言版缺失回落中文）；编辑态固定中文源，保存不会波及语言版数据
-	const displayBloggers = useMemo(() => {
-		if (isEditMode) return bloggers
-		const byLocale = { en: initialListEn, ja: initialListJa, ko: initialListKo } as Partial<Record<string, Blogger[]>>
-		const localized = byLocale[locale]
-		return localized && localized.length > 0 ? (localized as Blogger[]) : bloggers
-	}, [bloggers, locale, isEditMode])
+	const displayBloggers = localizedContent(bloggers, LOCALIZED_BLOGGERS, locale, isEditMode)
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	const handleUpdate = (updatedBlogger: Blogger, oldBlogger: Blogger, avatarItem?: AvatarItem) => {

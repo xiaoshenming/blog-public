@@ -11,12 +11,17 @@ import LikeButton from '@/components/like-button'
 import GithubSVG from '@/svgs/github.svg'
 import initialDataZh from './list.json'
 import initialDataEn from './list.en.json'
+import initialDataJa from './list.ja.json'
+import initialDataKo from './list.ko.json'
 import * as stylex from '@stylexjs/stylex'
 import { card } from '@/styles/shared/card.stylex'
 import { brandBtn } from '@/styles/shared/button.stylex'
 import { colors } from '@/styles/tokens.stylex'
 import { useI18n } from '@/i18n/context'
-import { DEFAULT_LOCALE } from '@/i18n/config'
+import { mergeLocalizedContent } from '@/i18n/content'
+
+/** 各语言的关于页变体（Partial，逐字段覆盖中文源）；新增语言时在此补一项 */
+const LOCALIZED_ABOUT = { en: initialDataEn, ja: initialDataJa, ko: initialDataKo } as Partial<Record<string, Partial<AboutData>>>
 
 /** 本页样式（数值取自 Tailwind v4 编译产物；卡片系复用共享定义） */
 const styles = stylex.create({
@@ -151,7 +156,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 24,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -166,7 +171,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	},
@@ -190,8 +195,7 @@ export default function Page() {
 	const hideEditButton = siteContent.hideEditButton ?? false
 
 	// 浏览态按当前语言展示（英文缺失字段回落中文）；编辑态始终编辑中文源文件，保存不会波及英文版
-	const enData = initialDataEn as Partial<AboutData> | undefined
-	const displayData: AboutData = !isEditMode && locale !== DEFAULT_LOCALE && enData ? { ...data, ...enData } : data
+	const displayData: AboutData = mergeLocalizedContent(data, LOCALIZED_ABOUT, locale, isEditMode)
 	const { content, loading } = useMarkdownRender(displayData.content)
 
 	const handleChoosePrivateKey = async (file: File) => {

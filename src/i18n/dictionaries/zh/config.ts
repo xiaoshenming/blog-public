@@ -3,6 +3,7 @@ export const config = {
 	tabSiteSettings: '网站设置',
 	tabColorConfig: '色彩配置',
 	tabFont: '字体',
+	tabSkin: '风格皮肤',
 	tabHomeLayout: '首页布局',
 	preview: '预览',
 	cancel: '取消',
@@ -53,6 +54,18 @@ export const config = {
 	colorBorder: '边框色',
 	colorCard: '卡片色',
 	colorArticle: '文章背景',
+	colorInk: '正文墨色',
+	colorInkHint: '文章正文与标题的主文字色',
+	colorMuted: '次要文字',
+	colorMutedHint: '说明文字、占位符与禁用态的文字色',
+	colorLine: '边框与分隔线',
+	colorLineHint: '卡片描边与表格线的颜色',
+	colorSurface: '输入框底色',
+	colorSurfaceHint: '输入框与按钮的半透明底色',
+	colorSurfaceStrong: '较实底色',
+	colorSurfaceStrongHint: '悬停底色，以及需要压住背景的条状控件（如迷你播放条）',
+	colorSubtle: '浅色底',
+	colorSubtleHint: '表头、代码块与悬停时的浅色底',
 	backgroundColors: '背景颜色',
 	randomColors: '随机配色',
 	addColor: '+ 添加颜色',
@@ -64,6 +77,13 @@ export const config = {
 	// 字体
 	siteFont: '全站字体',
 	fontHint: '点选后整站立即预览；「保存」提交后对所有访客生效，「取消」则还原为原来的字体。',
+	fontSystem: '系统默认',
+	fontSystemDesc: '跟随访客设备自带的无衬线字体，不产生任何额外下载',
+	fontHuiwenmincho: '汇文明朝体',
+	fontHuiwenminchoDesc: '宋体（明朝体）风格，bosswnx 修正版，CC0 协议。已按 unicode-range 切块自托管，页面只下载用到的字',
+
+	// 风格皮肤
+	skinHint: '选一套外观预设，会同时套用配色与推荐字体；之后仍可在「色彩配置」「字体」里单独微调',
 
 	// 图片与文件操作通用
 	selectImageFile: '请选择图片文件',

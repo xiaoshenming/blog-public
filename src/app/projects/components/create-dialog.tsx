@@ -77,12 +77,12 @@ const styles = stylex.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		borderRadius: 12,
-		backgroundColor: '#e5e7eb'
+		backgroundColor: colors.line
 	},
 	plusIcon: {
 		width: 24,
 		height: 24,
-		color: '#6a7282'
+		color: colors.muted
 	},
 	info: {
 		flex: '1'
@@ -109,7 +109,7 @@ const styles = stylex.create({
 		borderRadius: 4,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		paddingInline: 8,
 		paddingBlock: 4,
 		fontSize: 12,
@@ -140,8 +140,8 @@ const styles = stylex.create({
 		borderRadius: 6,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
-		backgroundColor: '#f9fafb',
+		borderColor: colors.line,
+		backgroundColor: colors.subtle,
 		paddingInline: 12,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -163,7 +163,7 @@ const styles = stylex.create({
 		paddingBlock: 2,
 		fontSize: 12,
 		lineHeight: '16px',
-		color: '#4a5565'
+		color: colors.ink
 	},
 	/** 项目介绍 */
 	descriptionInput: {
@@ -194,7 +194,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 16,
 		paddingBlock: 8,
@@ -206,7 +206,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	},

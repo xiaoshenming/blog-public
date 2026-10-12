@@ -58,8 +58,8 @@ const styles = stylex.create({
 		borderRadius: 12,
 		borderWidth: 1,
 		borderStyle: 'dashed',
-		borderColor: '#d1d5dc',
-		backgroundColor: '#f9fafb',
+		borderColor: colors.line,
+		backgroundColor: colors.subtle,
 		transitionProperty:
 			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
@@ -79,7 +79,7 @@ const styles = stylex.create({
 		marginBottom: 4,
 		width: 32,
 		height: 32,
-		color: '#6a7282'
+		color: colors.muted
 	},
 	hintText: {
 		fontSize: 12,
@@ -161,20 +161,20 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 12,
 		paddingBlock: 6,
 		fontSize: 12,
 		lineHeight: '16px',
-		color: '#364153',
+		color: colors.ink,
 		transitionProperty:
 			'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
 		transitionDuration: '150ms',
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	},
@@ -188,8 +188,8 @@ const styles = stylex.create({
 		borderRadius: 6,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
-		backgroundColor: '#f9fafb',
+		borderColor: colors.line,
+		backgroundColor: colors.subtle,
 		paddingInline: 12,
 		paddingBlock: 8,
 		fontSize: 14,
@@ -210,7 +210,7 @@ const styles = stylex.create({
 		borderRadius: 8,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#d1d5dc',
+		borderColor: colors.line,
 		backgroundColor: colors.white,
 		paddingInline: 16,
 		paddingBlock: 8,
@@ -222,7 +222,7 @@ const styles = stylex.create({
 		transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 		'@media (hover: hover)': {
 			':hover': {
-				backgroundColor: '#f9fafb'
+				backgroundColor: colors.subtle
 			}
 		}
 	},

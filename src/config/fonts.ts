@@ -1,7 +1,10 @@
+import type { TranslationKey } from '@/i18n/translate'
+
 export type FontOption = {
 	id: string
-	name: string
-	description: string
+	/** 字体名与描述的字典 key（四语齐备；访客切换菜单与站长配置面板共用） */
+	nameKey: TranslationKey
+	descriptionKey: TranslationKey
 	/** 写入 `--font-sans` 的完整 font-family 栈，SSR 与客户端切换都用它 */
 	family: string
 	/** 自托管 webfont 的样式表地址，没有则表示仅依赖访客本机字体 */
@@ -17,14 +20,14 @@ const SYSTEM_FONT_STACK =
 export const FONT_OPTIONS: FontOption[] = [
 	{
 		id: DEFAULT_FONT_ID,
-		name: '系统默认',
-		description: '跟随访客设备自带的无衬线字体，不产生任何额外下载',
+		nameKey: 'config.fontSystem',
+		descriptionKey: 'config.fontSystemDesc',
 		family: SYSTEM_FONT_STACK
 	},
 	{
 		id: 'huiwenmincho',
-		name: '汇文明朝体',
-		description: '宋体（明朝体）风格，bosswnx 修正版，CC0 协议。已按 unicode-range 切块自托管，页面只下载用到的字',
+		nameKey: 'config.fontHuiwenmincho',
+		descriptionKey: 'config.fontHuiwenminchoDesc',
 		family: "'Huiwenmincho Improved', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'SimSun', serif",
 		cssHref: '/fonts/huiwenmincho/result.css'
 	}

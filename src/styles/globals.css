@@ -3,6 +3,13 @@
 @import 'katex/dist/katex.min.css';
 @import './theme.css';
 @import './article.css';
+/* 皮肤专属样式（普通 CSS + [data-skin] 属性选择器，StyleX 表达不了）。
+   置于 article.css 之后：同为无层样式，靠引入顺序 + 属性选择器权重覆盖 .prose。
+   每个皮肤两个文件：shuimo.css = 皮肤基调（页面纸纹、正文墨韵、光标）；
+   ui.css = 控件质感（表单/按钮/浮层/滚动条）与 CSS 层动效。
+   新增皮肤时在此按目录显式加行，保持层叠顺序可见。 */
+@import '../skins/shuimo/shuimo.css';
+@import '../skins/shuimo/ui.css';
 
 /* StyleX 原子 CSS 不在本文件注入 —— 见 src/styles/stylex-atoms.css（由根布局导入）。
    Tailwind 已于 Phase 4 拆除；该独立入口保留，防止未来引入含 @import 的
@@ -23,6 +30,8 @@
 		height: 100%;
 		line-height: 1.25;
 		scroll-behavior: smooth;
+		/* 光标随皮肤切换，默认值见 theme.css 的 --skin-cursor */
+		cursor: var(--skin-cursor);
 	}
 
 	body {

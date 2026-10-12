@@ -102,7 +102,7 @@ const styles = stylex.create({
 		flexWrap: 'wrap',
 		gap: 8,
 		borderRadius: 8,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		padding: 12,
 		fontSize: 14,
 		lineHeight: '20px'
@@ -158,7 +158,7 @@ const styles = stylex.create({
 		maxHeight: 360,
 		overflowY: 'auto',
 		borderRadius: 12,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		padding: 12
 	},
 	/** 文章行 */
@@ -170,7 +170,7 @@ const styles = stylex.create({
 		borderWidth: 1,
 		borderStyle: 'solid',
 		borderColor: colors.border,
-		backgroundColor: 'rgb(255 255 255 / 80%)',
+		backgroundColor: colors.surfaceStrong,
 		paddingInline: 12,
 		paddingBlock: 8,
 		'@media (width >= 40rem)': {

@@ -66,7 +66,7 @@ const sx = stylex.create({
 		marginTop: 4,
 		height: 8,
 		borderRadius: 9999,
-		backgroundColor: 'rgb(255 255 255 / 60%)'
+		backgroundColor: colors.surface
 	},
 	fill: {
 		height: '100%',

@@ -183,7 +183,7 @@ const styles = stylex.create({
 		alignItems: 'center',
 		gap: 6,
 		borderRadius: 9999,
-		backgroundColor: 'rgb(255 255 255 / 60%)',
+		backgroundColor: colors.surface,
 		paddingInline: 12,
 		paddingBlock: 6,
 		fontSize: 12,

@@ -141,7 +141,7 @@ const styles = stylex.create({
 		'@media (hover: hover)': {
 			':hover': {
 				borderColor: 'color-mix(in oklab, var(--color-brand) 20%, transparent)',
-				backgroundColor: 'rgb(255 255 255 / 80%)'
+				backgroundColor: colors.surfaceStrong
 			}
 		}
 	},
@@ -190,7 +190,7 @@ const styles = stylex.create({
 		justifyContent: 'space-between',
 		borderBottomWidth: 1,
 		borderBottomStyle: 'solid',
-		borderBottomColor: '#e2e8f0',
+		borderBottomColor: colors.line,
 		paddingBottom: 12,
 		color: colors.secondary,
 		fontSize: 12,
@@ -209,7 +209,7 @@ const styles = stylex.create({
 	listItemDivided: {
 		borderBottomWidth: 1,
 		borderBottomStyle: 'solid',
-		borderBottomColor: '#e2e8f0'
+		borderBottomColor: colors.line
 	},
 	/** 缩略图外框 */
 	thumb: {
@@ -219,8 +219,8 @@ const styles = stylex.create({
 		borderRadius: 12,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#e2e8f0',
-		backgroundColor: '#f8fafc'
+		borderColor: colors.line,
+		backgroundColor: colors.subtle
 	},
 	/** 缩略图铺满 */
 	thumbImage: {
@@ -261,7 +261,7 @@ const styles = stylex.create({
 		fontWeight: 500,
 		':disabled': {
 			cursor: 'not-allowed',
-			color: '#cad5e2'
+			color: colors.line
 		}
 	},
 	/** 品牌描边按钮（对比 / 下载） */
@@ -327,7 +327,7 @@ const styles = stylex.create({
 	},
 	/** 灰色说明文字 */
 	mutedText: {
-		color: '#62748e',
+		color: colors.muted,
 		fontSize: 12,
 		lineHeight: '16px'
 	},
@@ -348,7 +348,7 @@ const styles = stylex.create({
 		width: 16,
 		height: 16,
 		borderRadius: 4,
-		borderColor: '#cad5e2'
+		borderColor: colors.line
 	},
 	/** 复选标签：可点击 */
 	checkLabel: {
@@ -360,7 +360,7 @@ const styles = stylex.create({
 		borderRadius: 4,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#e2e8f0',
+		borderColor: colors.line,
 		paddingInline: 8,
 		paddingBlock: 4,
 		fontSize: 14,
@@ -379,14 +379,14 @@ const styles = stylex.create({
 		borderRadius: 9999,
 		borderWidth: 1,
 		borderStyle: 'solid',
-		borderColor: '#e2e8f0',
+		borderColor: colors.line,
 		paddingInline: 16,
 		paddingBlock: 8,
 		fontWeight: 500,
 		':disabled': {
 			cursor: 'not-allowed',
-			borderColor: '#e2e8f0',
-			color: '#cad5e2'
+			borderColor: colors.line,
+			color: colors.line
 		}
 	},
 	/** 品牌描边按钮（大号） */
@@ -401,8 +401,8 @@ const styles = stylex.create({
 		fontWeight: 600,
 		':disabled': {
 			cursor: 'not-allowed',
-			borderColor: '#e2e8f0',
-			color: '#cad5e2'
+			borderColor: colors.line,
+			color: colors.line
 		}
 	},
 	/** 对比弹窗：双列网格 */
@@ -439,7 +439,7 @@ const styles = stylex.create({
 		marginTop: 12,
 		maxHeight: '90vh',
 		borderRadius: 12,
-		backgroundColor: '#f1f5f9'
+		backgroundColor: colors.subtle
 	},
 	/** 颜色过渡（transition-colors） */
 	transitionColors: {
