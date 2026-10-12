@@ -1,5 +1,31 @@
 [
 	{
+		"slug": "shuimo-skin-replica",
+		"title": "Building an Ink-Wash Skin: A Pluggable Theme System and Four Replication Decisions",
+		"summary": "A theme system for the blog: site-wide defaults, visitor overrides, no flash on first paint. Plus an ink-wash skin replicated from shuimo-design. All 26 skin tokens go through CSS custom properties, and assets went from 250 KB to 61 KB. Includes four replication decisions and four pitfalls where the CSS was written but never took effect.",
+		"tags": [
+			"Theme system",
+			"CSS",
+			"Ink wash",
+			"Design tokens",
+			"Replication"
+		],
+		"category": "Code implementation"
+	},
+	{
+		"slug": "the-fire-i-brought",
+		"title": "First-time experience at work: an empty Mac and a knot of frustration",
+		"summary": "One month after leaving, one empty Mac, four AI shifts, four parallel fronts. And the most important discovery: leaving a company, there really is no rain outside.",
+		"tags": [
+			"Hiring",
+			"AI",
+			"Multi-agent",
+			"Work",
+			"Summary"
+		],
+		"category": "Summary"
+	},
+	{
 		"slug": "four-languages-local-llm",
 		"title": "Shipping a Four-Language Blog with a Local 1.8B Translation Model",
 		"summary": "A Chinese-only blog felt limiting, so I added English, Japanese and Korean in one go: 464 UI strings and 39 article translations, all produced by a local 1.8B translation model. Notes on architecture trade-offs, building the pipeline, and bugs you only hit after going live.",

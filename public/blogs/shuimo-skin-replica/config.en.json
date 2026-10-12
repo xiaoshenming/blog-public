@@ -1,0 +1,15 @@
+{
+	"title": "Building an Ink-Wash Skin: A Pluggable Theme System and Four Replication Decisions",
+	"tags": [
+		"Theme system",
+		"CSS",
+		"Ink wash",
+		"Design tokens",
+		"Replication"
+	],
+	"date": "2026-10-12",
+	"summary": "A theme system for the blog: site-wide defaults, visitor overrides, no flash on first paint. Plus an ink-wash skin replicated from shuimo-design. All 26 skin tokens go through CSS custom properties, and assets went from 250 KB to 61 KB. Includes four replication decisions and four pitfalls where the CSS was written but never took effect.",
+	"hidden": false,
+	"category": "Code implementation",
+	"cover": "/images/pictures/shuimo-skin-replica.webp"
+}
