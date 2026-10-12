@@ -1,5 +1,5 @@
 {
-	"title": "AI writing de-duplication guide: The journey from 66.6% to 8.5%",
+	"title": "AI writing plagiarism reduction guide: The journey from 66.6% to 8.5%",
 	"tags": [
 		"AI paraphrasing",
 		"Academic writing",
@@ -7,7 +7,7 @@
 		"Claude"
 	],
 	"date": "2026-03-16T22:00",
-	"summary": "From 66.6% AI rate to 8.5%, how I used the Claude Opus model with carefully designed prompts to achieve this breakthrough",
+	"summary": "From 66.6% AI rate to 8.5%, how I achieved this breakthrough using the Claude Opus model paired with carefully designed prompts",
 	"cover": "/blogs/aigc-rewrite-experience/a8f680e856071235.png",
 	"hidden": false,
 	"category": "Summary"

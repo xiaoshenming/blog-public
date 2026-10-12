@@ -2,7 +2,7 @@
 
 ## Preface
 
-As a developer (in the奇妙 network environment), you are familiar with `pip install`, `docker pull`, `conda install`, `nvm install`, and `npm/pnpm/yarn/cnpm install`, right? These often cause unexpected freezes—most of these issues are due to the current network being blocked by an image source!
+As a developer in the (fascinating network environment), you are familiar with `pip install`, `docker pull`, `conda install`, `nvm install`, and `npm/pnpm/yarn/cnpm install`, right? These often cause unexplained freezes, and these issues are largely due to the current network being blocked by an image source!
 
 ## What is an image source?
 
@@ -16,12 +16,12 @@ Common Mirror Sources include:
 
 ## Conda Mirror Source Configuration
 
-### Official Download Addresses (recommended! at least the latest!)
+### Official Source Download Links (highly recommended! at least the latest!)
 
-Anaconda official repository address: `https://repo.anaconda.com/archive/`  
-Avoid using ancient versions from some domestic university mirror sources (it's just a hassle)  
-nvm domestic official repository address: `https://nvm.uihtm.com/doc/download-nvm.html`  
-### Configuration steps
+Anaconda官方源地址：`https://repo.anaconda.com/archive/`
+Avoids the ancient versions still served by some domestic university mirrors (ask me how I know).
+Official nvm mirror for mainland China: `https://nvm.uihtm.com/doc/download-nvm.html`
+### 配置步骤
 
 #### 1. Initialize Conda
 
@@ -36,14 +36,14 @@ conda init
 Taking Tsinghua University mirror source as an example:
 
 ```bash
-# Add the main mirror sources
+# Add the main mirror source
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/pro
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
 
-# Set strict priority for search using mirror sources
+# Set the mirror source as the priority for search queries
 conda config --set channel_priority strict
 ```
 
@@ -55,32 +55,34 @@ View the currently configured image source:
 conda config --show channels
 ```
 
-#### 4. Clean up configuration (to reset if needed)
+#### 4. Clean up the configuration (if needed to reset)
 
 If you need to revert to the default configuration:
 
+```bash
+conda config --remove-key channels
+```
 
+### Common Conda Mirror Sources
 
-### Common Conda Image Sources
-
-| Image Source | URL | Features |
-|--------------|------|----------|
+| Mirror Source | URL | Features |
+|---------------|------|----------|
 | Tsinghua University | https://mirrors.tuna.tsinghua.edu.cn/anaconda/ | Fast, timely updates |
 | USTC | https://mirrors.ustc.edu.cn/anaconda/ | Stable and reliable |
 | Alibaba Cloud | https://mirrors.aliyun.com/anaconda/ | Enterprise-level services |
-| Huawei Cloud | https://mirrors.huaweicloud.com/anaconda/ | Emerging image source |
+| Huawei Cloud | https://mirrors.huaweicloud.com/anaconda/ | Emerging mirror source |
 
-## Configuration of Linux System Image Sources
+## Linux System Mirror Source Configuration
 
-### One-Click Source Switch Script
+### Script for one-click source switching
 
-For Linux systems, we can use a one-Click Source Switch script to configure it quickly:
+For Linux systems, we can use the one-click source switching script to configure quickly:
 
 ```bash
 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
 ```
 
-## Docker Image Source Configuration
+## Docker image source configuration
 
 ### One-click configuration script
 
@@ -91,18 +93,19 @@ bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
 ### pip image source
 
 ```bash
-# Temporary use
+# 临时使用
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple package_name
 
-# Permanent configuration
+# 永久配置
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-# Using proxy
+# 代理使用
 pip install --proxy=http://127.0.0.1:7897 -r requirements.txt
-This is the recommended method; system proxy or TUN mode may have issues, but this method is definitely stable.
+最推荐的用法，系统代理跟TUN模式有时候可能都有问题，但是标准用法绝对稳定。
 ```
+---
 
-## 1. Configuration of npm Mirror Sources
+## I. Configuration of npm mirror sources
 
 ### 1. Set up Taobao mirror (permanent effect)
 
@@ -123,11 +126,7 @@ npm config get registry
 npm install --registry https://registry.npmmirror.com
 ```
 
-### 4. Restore the official source (if needed)
-
-```bash
-npm config set registry registry.npmmirror.com
-```
+### 4. Translate to English (output translation only):
 
 ```bash
 npm config delete registry
@@ -139,11 +138,11 @@ npm config set registry https://registry.npm.org
 
 ## II. NVM Image Configuration (Accelerating Node.js Download)
 
-By default, NVM downloads Node.js from `https://nodejs.org/dist`, which has slow access in China. You can configure an image for faster download.
+By default, NVM downloads Node.js from `https://nodejs.org/dist`, which is slow to access in China. The image can be configured for faster downloads.
 
 ---
 
-### 🖥️ Windows (using [nvm-windows](https://github.com/coreybutler/nvm-windows))
+### 🖥️ Windows (using [nvm-windows](https://github.com/coreybutler/nvm-windows)))
 
 1. Open **PowerShell or CMD**
 2. Set environment variables (permanent):
@@ -156,19 +155,19 @@ By default, NVM downloads Node.js from `https://nodejs.org/dist`, which has slow
 [Environment]::SetEnvironmentVariable("NVM_NPM_MIRROR", "https://npmmirror.com/mirrors/npm", "User")
 ```
 
-3. **Restart the terminal**, then test:
+3. Restart the terminal, then test:
 
 ```bash
 nvm install latest
 ```
 
-> Image address description:
+> Image address instructions:
 > - Node.js image: `https://npmmirror.com/mirrors/node`
 > - npm image: `https://npmmirror.com/mirrors/npm`
 
 ---
 
-### 🐧 Linux / 🍏 macOS (using [nvm-sh/nvm](https://github.com/nvm-sh/nvm))
+### 🐧 Linux / 🍏 macOS (using [nvm-sh/nvm](https://github.com/nvm-sh/nvm)])
 
 1. Edit your shell configuration file (such as `~/.bashrc`, `~/.zshrc`, etc.):
 
@@ -197,7 +196,7 @@ nvm install --lts
 
 ---
 
-### Maven Mirror Sources
+### Maven image repository
 
 Add to `~/.m2/settings.xml`:
 
@@ -214,7 +213,7 @@ Add to `~/.m2/settings.xml`:
 
 ## GPU driver-related commands
 
-When configuring the development environment, checking the GPU driver is also important:
+When configuring the development environment, checking GPU drivers is also important:
 
 ```bash
 # Check GPU hardware information
@@ -227,25 +226,25 @@ nvidia-smi
 nvidia-smi --query-gpu=driver_version --format=csv
 ```
 
-
+---
 
 ## 🐉 ArchLinux Proxy Configuration (Latest Solution 2026)
 
-> I think this is a super useful solution! Especially when used with Clash Verge, enabling LAN mode directly allows all local applications to use the proxy automatically, even eliminating the need for configuration.
+> This is a solution I find extremely useful! Especially when used with Clash Verge, enabling LAN mode directly allows all local applications to use the proxy automatically, eliminating the need for configuration.
 
-### Core Concept
+### The core idea is...
 
-Instead of configuring proxies one by one, it’s better to use a unified proxy on a system level. My proposal is:
+Instead of configuring proxies one by one, it’s better to use a unified proxy at the system level. My proposal is:
 
 - **Proxy client**: Clash Verge (open source, free, with a beautiful interface)
 - **Proxy mode**: Only enable “Allow LAN connections”, do not use TUN mode
 - **Proxy address**: `http://127.0.0.1:7897`
 - **Global proxy**: Use `alias` alias + command prefix to make any command use the proxy with one click
 
-### Step 1: Install Clash Verge
+### Step one: Install Clash Verge
 
 ```bash
-# For Arch users, you can use yay or pacman directly
+# Arch users can directly use yay or pacman
 yay -S clash-verge
 
 # Or download the AppImage
@@ -258,11 +257,11 @@ tar -xzf Clash-Verge-linux-x64.tar.gz
 
 1. Open Clash Verge
 2. Import your airport subscription link
-3. **Key setting**: In "Settings" → "Network", check "Allow local network connections"
-4. No need to enable TUN mode; the standard HTTP proxy mode is sufficient
-5. Note down the proxy address: `http://127.0.0.1:7897`
+3. **Key setting**: In "Settings" → "Network", check "Allow local network connection"
+4. There is no need to enable TUN mode; the standard HTTP proxy mode is sufficient
+5. Note the proxy address: `http://127.0.0.1:7897`
 
-### Step 3: Configure Terminal Proxy Alias (Recommended!)
+### Step 3: Configure terminal proxy alias (recommended!)
 
 Edit `~/.zshrc` or `~/.bashrc` to add a very useful alias:
 
@@ -273,24 +272,24 @@ alias px='http_proxy=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 http
 
 Save the file and run `source ~/.zshrc` to apply the changes.
 
-### Step four: Use happily
+### Step four: Use with pleasure
 
 Now, simply add the `px ` prefix before any command, and this command will automatically use the proxy:
 
 ```bash
-# Install an npm package
+# Installing npm package
 px npm install express
 
-# Clone a GitHub repository
+# Cloning a GitHub repository
 px git clone https://github.com/some/repo.git
 
-# Install with pip
+# Installing with pip
 px pip install torch
 
-# Pull a container image
+# Pulling with docker
 px docker pull nginx:latest
 
-# Test with curl
+# Testing with curl
 px curl https://google.com
 
 # It can even be used to run scripts with network requests
@@ -299,11 +298,11 @@ px python my_script.py
 
 ### Why this method is recommended?
 
-1. **Simple and straightforward**: No need to configure separately for each application; one alias covers everything
-2. **High control**: Only commands you want to use proxy will be executed, without affecting other operations
-3. **Good compatibility**: TUN mode sometimes causes issues, but this alias method has almost none
+1. **Simple and effective**: No need to configure separately for each application; one alias covers everything
+2. **Strong control**: Only commands you want to use proxies will be executed, without affecting other operations
+3. **Good compatibility**: TUN mode sometimes causes issues, but this alias method rarely does
 4. **Easy to disable**: Just remove the `px` prefix, and you can use it as you like
-5. **One-time setup, lifetime benefit**: Configure once, and enjoy every day
+5. **One-time setup, lifetime benefit**: Configure once, enjoy every day
 
 ### Advanced usage
 
@@ -329,32 +328,32 @@ pip config set global.proxy http://127.0.0.1:7897
 ### Common Questions
 
 **Q: No response from the proxy?**
-A: Check if Clash Verge is enabled, if the "Allow local network connection" option is selected, and whether the port is 7897
+A: Check if Clash Verge is enabled, if the "Allow local network connection" option is selected, and if the port is 7897
 
 **Q: Are some commands still time-out?**  
-**A: Some airports have limitations on concurrency. Try reducing concurrency or switching to a different node.**
+A: Some airports have limitations on concurrency. Try reducing concurrency or switching to a different node.
 
 **Q: What is the difference between TUN mode and this alias method?**  
-**A: TUN is a global proxy, where all traffic passes through the proxy. The alias method is more flexible—you can use it when you want or not when you don’t. I prefer the alias method as it makes troubleshooting easier.**
+A: TUN is a global proxy, where all traffic passes through the proxy. The alias method is more flexible; you can use it when you want or not when you don’t. I prefer the alias method as it makes troubleshooting easier.
 
 ---
 
 # List of recommended mirror sites
 
-## 🏢 Corporate Sites
+## 🏢 Corporate Site
 | Name | Address |
 |------|------|
 | NetEase | https://mirrors.163.com |
 | Sohu | http://mirrors.sohu.com |
 | Alibaba Cloud | https://mirrors.aliyun.com |
-| Capital City Online Technology Co., Ltd. | http://mirrors.yun-idc.com |
+| Beijing Yun IDC Technology Co., Ltd. | http://mirrors.yun-idc.com |
 | Huawei Cloud | https://mirrors.huaweicloud.com |
 | Tencent Cloud | https://mirrors.cloud.tencent.com |
 | PingAn Cloud | https://mirrors.pinganyun.com |
-| Open Source Society/Azure China | http://mirror.azure.cn |
+| OpenSource Society/Azure China | http://mirror.azure.cn |
 | OpenTuna/AWS China | https://opentuna.cn |
 
-## 🎓 Education Sites
+## 🎓 Education Site
 | Name | Address |
 |------|------|
 | University of Science and Technology of China | https://mirrors.ustc.edu.cn |
@@ -364,7 +363,7 @@ A: Check if Clash Verge is enabled, if the "Allow local network connection" opti
 | Beijing Institute of Technology | http://mirror.bit.edu.cn/web |
 | Lanzhou University | http://mirror.lzu.edu.cn |
 | Shanghai Jiao Tong University | http://ftp.sjtu.edu.cn |
-| Dalian Neusoft Institute of Information Technology | http://mirrors.neusoft.edu.cn |
+| Dalian Neusoft College | http://mirrors.neusoft.edu.cn |
 | Zhejiang University | http://mirrors.zju.edu.cn |
 | Chongqing University | http://mirrors.cqu.edu.cn |
 | Nanyang Institute of Technology | http://mirror.nyist.edu.cn |
@@ -385,34 +384,34 @@ A: Check if Clash Verge is enabled, if the "Allow local network connection" opti
 | Harbin Institute of Technology | https://mirrors.hit.edu.cn |
 | Southern University of Science and Technology | https://mirrors.sustech.edu.cn |
 
-## 📦 Other Specialized Mirrors
+## 📦 Other specialized mirrors  
 | Type | Name | Address |
 |------|------|------|
-| General | Changzhou Bitcomm Software Technology Co., Ltd (Public Yun) | http://centos.bitcomm.cn |
+| General | Changzhou Bitcomm Software Technology Co., Ltd (PubYun) | http://centos.bitcomm.cn |
 | Python | Douban pypi | http://pypi.doubanio.com |
 | Python | v2ex pypi | http://pypi.v2ex.com |
 | NPM | Taobao NPM | https://npm.taobao.org |
-| Ruby | Ruby China's RubyGems | https://gems.ruby-china.com |
-| Maven | Taobao TAEMaven Repository Mirror | http://mvnrepo.tae.taobao.com/content/groups/public |
-| Maven | Alibaba Cloud Maven Repository Mirror | http://maven.aliyun.com/nexus/content/groups/public |
-| Maven | Alibaba Cloud Jcenter Repository Mirror | http://maven.aliyun.com/nexus/content/repositories/jcenter |
+| Ruby | RubyGems Ruby China | https://gems.ruby-china.com |
+| Maven | Taobao TAEMaven repository mirror | http://mvnrepo.tae.taobao.com/content/groups/public |
+| Maven | Aliyun Maven repository mirror | http://maven.aliyun.com/nexus/content/groups/public |
+| Maven | Aliyun Jcenter repository mirror | http://maven.aliyun.com/nexus/content/repositories/jcenter |
 | General | LinuxEye | http://mirrors.linuxeye.com |
-| General | Mobile Cloud Mirror Site | http://mirrors.bclinux.org |
-| General | Cloud-Stack Mirror Site | http://mirrors.cloudstack-china.com |
+| General | Mobile Cloud mirror site | http://mirrors.bclinux.org |
+| General | Cloud-Stack mirror site | http://mirrors.cloudstack-china.com |
 | General | cn99 (under Changzhou Bitcomm) | http://mirrors.cn99.com |
-| Loongix | Loongix Open Source Community | http://mirrors.loongnix.org |
-| Education | E-ducation.cn | https://mirrors.e-ducation.cn |
-| JDK | Various versions of JDK mirrors on injdk.cn | https://www.injdk.cn |
-| Go | Baidu Go Module Repository Proxy | http://goproxy.baidu.com |
+| Loongix | Loongix open source community | http://mirrors.loongnix.org |
+| Education | E-ducation | https://mirrors.e-ducation.cn |
+| JDK | Versions of JDK mirrors on injdk.cn | https://www.injdk.cn |
+| Go | Baidu Go Module repository proxy | http://goproxy.baidu.com |
 
-## 🏆 Recommended for Use (Better Overall Performance)
-1. **Tsinghua University Mirror Site** - https://mirrors.tuna.tsinghua.edu.cn
-2. **USTC Mirror Site** - https://mirrors.ustc.edu.cn
-3. **Alibaba Cloud Mirror Site** - https://mirrors.aliyun.com
-4. **Tencent Cloud Mirror Site** - https://mirrors.cloud.tencent.com
+## 🏆 Recommended (better overall performance)  
+1. **Tsinghua University mirror site** - https://mirrors.tuna.tsinghua.edu.cn  
+2. **USTC mirror site** - https://mirrors.ustc.edu.cn  
+3. **Aliyun mirror site** - https://mirrors.aliyun.com  
+4. **Tencent Cloud mirror site** - https://mirrors.cloud.tencent.com
 
-## 💡 Usage Recommendations
-- **Development Environment**: It is recommended to use Tsinghua or USTC mirrors as they update frequently and cover a wide range of resources
-- **Production Environment**: It is recommended to use enterprise-level mirrors such as Alibaba Cloud or Tencent Cloud as they offer higher stability
-- **Specific Languages**: Choose specialized mirrors according to the development language (e.g., NPM uses Taobao, Ruby uses Ruby China)
-- **Geographical Location**: Select a mirror site closer to your geographical location for faster speeds
+## 💡 Usage suggestions  
+- **Development environment**: It is recommended to use Tsinghua or USTC mirrors as they update frequently and cover a wide range of resources  
+- **Production environment**: It is recommended to use enterprise-level mirrors like Aliyun or Tencent Cloud as they offer higher stability  
+- **Specific languages**: Choose specialized mirrors based on the development language (e.g., NPM uses Taobao, Ruby uses Ruby China)  
+- **Geographic location**: Select a mirror site closer to your location for faster speeds

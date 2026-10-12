@@ -1,19 +1,19 @@
-# 🎯 Design Pattern Practical Guide: Say goodbye to spaghetti code, write elegant architectures
+# 🎯 Design Pattern Practical Guide: Say goodbye to messy code, write elegant architectures
 
-> A real design pattern guide for programmers, no fluff, only practical advice.
+> A real design pattern guide for programmers, no fluff, just practical advice.
 
 Hello everyone, I am programmer Xiao Ming.
 
-## 🤔 Why do we need design patterns?
+## 🤔 Why are design patterns needed?
 
-Are you also facing such challenges:
+Are you also facing such troubles:
 
-- Adding a new feature, but still can't run after modifying many files
+- Adding a new feature, but still can't run after modifying several files
 - The code is full of if-else statements, and with a new colleague joining, no one dares to touch it
-- Looking at a senior's source code feels like reading a sacred text
-- AI-written code uses design patterns, but you can't understand them
+- Looking at the source code of a expert feels like reading a sacred text
+- AI wrote the code using design patterns, but you can't understand them
 
-**Design patterns are exactly for solving these problems!**
+**Design patterns are precisely for solving these problems!**
 
 You can think of design patterns as **game guides**—when facing the same type of Boss, you know how to position yourself and use skills. They are **universal solutions** derived from the experiences of predecessors, which can help you:
 
@@ -26,7 +26,7 @@ Even in the AI era, the value of design patterns remains extremely high. If you 
 
 ---
 
-## 📚 Basic knowledge: The "prerequisite skills" of design patterns
+## 📚 Basic knowledge: The "prerequisite skills" for design patterns
 
 Before formally studying design patterns, we need to clarify several core object-oriented concepts first. These are not rigid knowledge from textbooks, but rather the foundation for understanding design patterns.
 
@@ -35,7 +35,7 @@ Before formally studying design patterns, we need to clarify several core object
 **An interface is like a "contract" or "specification" that defines what needs to be done, but not how it is done.**
 
 ```java
-// Define a standard: All payment methods must implement this interface
+// Define the specification: All payment methods must implement this interface
 interface Payment {
     boolean pay(double amount);  // Only defines methods, no implementation
 }
@@ -50,12 +50,12 @@ class WechatPay implements Payment {
 ```
 
 **Two main functions:**  
-- **Unified standards**: All implementation classes follow the same set of rules  
-- **Decoupled design**: Programs rely on interfaces rather than specific implementations
+- **Unified standard**: All implementation classes follow the same set of rules  
+- **Decoupled design**: The program relies on interfaces rather than specific implementations
 
-### 🏗️ Abstract Class
+### 🏗️ Abstract class (Abstract Class)
 
-**An abstract class is a "semi-finished product"**—it has already completed some work, but certain aspects are left for subclasses to complete.
+**An abstract class is a "semi-finished product"**—it has already done some work, but some aspects are left for subclasses to complete.
 
 ```java
 // Semi-finished product: Defines the basic process of payment, but specific payment methods are left to subclasses
@@ -81,12 +81,12 @@ abstract class AbstractPayment {
 
 **Differences from interfaces:**  
 - Can have instance variables and regular methods  
-- Can have constructors  
+- Can have constructor methods  
 - Can provide some default implementations
 
-### 🔄 Inheritance
+### 🔄 Inheritance (Inheritance)
 
-**Inheritance is essentially "copying homework"**, where the subclass directly inherits all attributes and methods from the superclass.
+**Inheritance is like "copying homework"**—the subclass directly gets all the attributes and methods of the superclass.
 
 ```java
 class BaseUser {
@@ -99,7 +99,7 @@ class BaseUser {
 }
 
 class VipUser extends BaseUser {
-    // Automatically inherited name, email, and login method
+    // Automatically gets name, email, and login method
     void getVipBenefits() {
         System.out.println("Enjoying VIP benefits");
     }
@@ -113,7 +113,7 @@ Remember: Java does not support multiple inheritance (just one parent is enough)
 **Polymorphism is the core essence of object-oriented programming**—the same operation yields different behaviors for different objects.
 
 ```java
-// Multiple payment methods, calling the same method, showing different results
+// Multiple payment methods, calling the same method, with different outcomes
 Payment wechat = new WechatPay();
 Payment alipay = new AlipayPay();
 
@@ -122,13 +122,13 @@ wechat.pay(100);  // Executes WeChat payment
 alipay.pay(100);  // Executes Alipay payment
 ```
 
-The core value of polymorphism: programming against a parent class, with specific behaviors determined at runtime. This is the foundation for design patterns to achieve "extensibility".
+The core value of polymorphism: programming against the parent class, with specific behaviors determined at runtime. This is the foundation for design patterns to achieve "extensibility".
 
 ---
 
-## 🎯 Core idea of design patterns: Why this design?
+## 🎯 Core idea of design patterns: Why is this designed this way?
 
-Learning design patterns should not be rote memorization; we need to understand the underlying design principles. These principles are the experiences compiled by countless developers after making mistakes.
+Learning design patterns cannot be memorized by rote; one must understand the underlying design principles. These principles are the result of countless developers' experiences avoiding common mistakes.
 
 ### 🎪 Single Responsibility Principle (SRP)
 
@@ -151,7 +151,7 @@ class LogService { void writeLog() { /* ... */ } }
 
 ### 🚪 Open-Closed Principle (OCP)
 
-Open for extension, closed for modification.
+Open for expansion, close for modification.
 
 Add a new feature? **Write new code**, don’t touch the old code!
 
@@ -171,12 +171,12 @@ class WechatPay implements Payment { public void pay() { /* ... */ } }
 class BankPay implements Payment { public void pay() { /* ... */ } }  // New addition
 ```
 
-### 👪 Lee’s Replacement Principle (LSP)
+### 👪 Liskov Substitution Principle (LSP)
 
-The subclass must be able to replace the parent class, and the program behavior remains unchanged.
+Subclasses must be able to replace the parent class without changing program behavior.
 
 ```java
-// ❌ The subclass breaks the conventions of the parent class
+// ❌ The subclass breaks the parent class's conventions
 class Bird {
     void fly() { /* Flies */ }
 }
@@ -191,13 +191,13 @@ class Penguin extends Bird {
 class Bird { void makeSound() { /* Crows */ } }
 class Penguin extends Bird {
     @Override
-    void makeSound() { /* The sound of a penguin */ }  // Perfect replacement
+    void makeSound() { /* Penguin's call */ }  // Perfect replacement
 }
 ```
 
 ### 🔄 Dependency Inversion Principle (DIP)
 
-**High-level modules do not depend on low-level modules; they all depend on abstractions.**
+The higher-level module does not depend on the lower-level module; both depend on the abstraction.
 
 ```java
 // ❌ Direct dependency on implementation
@@ -229,13 +229,13 @@ interface SuperUserService {
     void backupData();    // Backup data
 }
 
-// ✅ Small, focused interfaces
+// ✅ Small, clear interfaces with clear responsibilities
 interface AuthService { void register(); void login(); }
 interface ReportService { void exportReport(); }
 interface DataService { void backupData(); }
 ```
 
-### 🤫 The Neighbor Rule (The Law of Least Knowledge)
+### 🤫 The Little Brother Rule (Principle of Least Knowledge)
 
 **Don’t pry into others’ privacy; only talk with good friends.**
 
@@ -251,7 +251,7 @@ class Client {
     }
 }
 
-// ✅ Only interacting with the facade
+// ✅ Only dealing with the facade
 class Client {
     void doSomething() {
         ComputerFacade computer = new ComputerFacade();
@@ -267,83 +267,83 @@ class Client {
 23 design patterns are divided into three major categories based on their purpose:
 
 | Type | Focus | Representative Patterns |
-|------|------|--------------------------|
+|------|------|-----------------------|
 | **Creational** | How to create objects | Singleton, Factory, Builder |
 | **Structural** | How to combine classes and objects | Adapter, Decorator, Proxy |
 | **Behavioral** | How objects interact | Observer, Strategy, Template Method |
 
-## 🎯 Learning Tips: Avoid detours
+## 🎯 Learning tips: Avoid taking unnecessary detours
 
 ### ✅ How to do it
 
-1. **Understand first, then implement**: Knowing why you do it is more important than memorizing how to do it
-2. **Write more code**: Implement each pattern manually, don’t just read
-3. **Combine with source code**: See how Spring and MyBatis use them
-4. **Study independently**: Each pattern is independent, you can focus on key points first
+1. **Understand first, then implement**: Knowing why you do it is more important than remembering how to do it  
+2. **Write more code**: Implement each pattern manually, don’t just read  
+3. **Combine with source code**: See how Spring and MyBatis use them  
+4. **Study independently**: Each pattern is independent, focus on the key points first
 
 ### ❌ Don’t learn this way
 
-1. **Memorize rigidly**: This doesn’t work! Interviewers will expose your lack of knowledge when asked about details
-2. **Overuse**: Not all places require design patterns, don’t use them just for the sake of using them
-3. **Hurry up**: Design patterns require understanding and practice; you can’t achieve everything in one go
+1. **Memorize rigidly**: Not useful! Interviewers will expose your weakness when asked about details  
+2. **Overuse**: Not all places require design patterns, don’t use them just for the sake of using them  
+3. **Hurry to achieve results**: Design patterns require understanding and practice; you can’t get rich in one go
 
-### 📈 Recommended Learning Order
+### 📈 Recommended learning order
 
-Arranged by practical frequency and interview importance:
+Ordered by practical frequency and interview importance:
 
-#### 🔥 Must-learn (Prioritize Mastery)
+#### 🔥 Must-learn (prioritize mastering)
 
 1. **Singleton Pattern** - Essential for interviews and commonly used in projects
 2. **Factory Method** - Core of Spring IOC
 3. **Strategy Pattern** - A powerful tool for algorithm switching
-4. **Template Method** - A great method for code reuse
+4. **Template Method** - A great way for code reuse
 5. **Proxy Pattern** - Foundation of AOP
 6. **Observer Pattern** - Essential for event listening
 
 #### ⚡ Important (to be mastered later)
 
-7. Abstract Factory Pattern
-8. Adapter Pattern
-9. Decorator Pattern
-10. Chain of Responsibility Pattern
-11. Builder Pattern
-12. Facade Pattern
+7. Abstraction Factory Pattern  
+8. Adapter Pattern  
+9. Decorator Pattern  
+10. Chain of Responsibility Pattern  
+11. Builder Pattern  
+12. Facet Pattern
 
-#### 📚 Understanding (can be studied later)
+#### 📚 Understanding (can be studied later if time permits)
 
-You can learn the remaining patterns as needed, without needing to master all at once.
+The remaining patterns can be studied as needed; there’s no need to master all at once.
 
 ---
 
-## 🚀 Learning Path: Four Steps
+## 🚀 Learning path: 4 steps
 
-### Step 1: Theoretical Introduction (1-2 weeks)
+### Step 1: Theoretical introduction (1-2 weeks)
 - Understand the **application scenarios** of each pattern
 - Comprehend **UML class diagrams** and the relationships between classes
-- Be aware of **strengths and weaknesses**, and when it should not be used
+- Know the **strengths and weaknesses** and when it should not be used
 
-### Step 2: Hands-on Practice (2-3 weeks)
-- Write the code for each pattern independently
-- Try implementing them in different languages
-- Compare the differences between various implementations
+### Step 2: Hands-on practice (2-3 weeks)  
+- **Write the code for each pattern independently**  
+- Try implementing it in different languages  
+- **Compare the differences** between various implementation methods
 
-### Step 3: Project Application (Continuous)
-- **Consciously use** it in real projects
-- **Refactor old code** and apply design patterns
+### Step 3: Project Application (ongoing)  
+- **Consciously use**  
+- **Refactor old code** and apply design patterns  
 - **Write test cases** to verify the correctness of the patterns
 
-### Step 4: In-depth Understanding (Long-term)
-- **Read the source code of the framework** to see how masters use it
-- **Summarize your own experiences** to form design concepts
+### Step 4: In-depth Understanding (long-term)  
+- **Read the source code of the framework** to see how masters use it  
+- **Summarize your own experiences** to form design concepts  
 - **Share with others** for mutual learning
 
 ---
 
-## 🎯 Recommended Learning Resources
+## 🎯 Recommended learning resources
 
-- **Book**: "Design Patterns: Elements of Reusable Object-Oriented Software"
-- **Online resources**: [Refactoring.Guru](https://refactoring.guru/)
-- **Source code learning**: Spring Framework, MyBatis, JDK source code
+- **Book**: "Design Patterns: Elements of Reusable Object-Oriented Software"  
+- **Online Resources**: [Refactoring.Guru](https://refactoring.guru/)]  
+- **Source Code Study**: Spring Framework, MyBatis, JDK source code
 
 ---
 
@@ -353,12 +353,12 @@ You can learn the remaining patterns as needed, without needing to master all at
 
 Just like a craftsman’s hammer or screwdriver, knowing when to use which tool is more important than having a large collection of tools.
 
-Remember: **Code is written for people to read, and to enable machines to execute it.** Good design makes code easier to read, maintain, and extend.
+Remember: **Code is written for humans to read, and to make machines execute it. A good design makes code easier to read, maintain, and expand.**
 
 ---
 
 *🎯 Start your design pattern journey! Begin with the Singleton pattern and gradually become an architect.*
 
+---
 
-
-> If this tutorial is helpful to you, feel free to give ⭐ support! Your encouragement is the motivation for me to continue creating.
+> If this tutorial is helpful to you, feel free to give it ⭐ support! Your encouragement is the motivation for my continuous creation.

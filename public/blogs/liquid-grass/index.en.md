@@ -1,10 +1,10 @@
-In the morning, I saw an article: [“Liquid Glass in Browser”](https://kube.io/blog/liquid-glass-css-svg/). I can only understand the glass refractive index and replacement, but the rest is beyond my understanding.
+In the morning, I saw an article: [“Liquid Glass in Browser”](https://kube.io/blog/liquid-glass-css-svg/). I can only understand the refractive index of glass in the article, but other aspects are unclear.
 
-However, I find that following its guidance, it's easy to implement, and I find it very fun. I allow me to use this component on the blog for a while.
+] However, I find that with its guidance, it's easy to implement, and I find it very fun. I allow me to use this component on the blog for a while.
 
-The code is **very simple**, located in the `components/liquid-grass` directory within the blog repository folder.
+] The code is **very simple** and is located in the `components/liquid-grass` directory within the blog repository folder.
 
-## Implementation
+## ] It works.
 
 Logically, two **permutations** combine to create an edge effect. If too cumbersome, you can skip the edge effect.
 
@@ -52,6 +52,6 @@ const height = 150
 
 ## Principle
 
-Initially thought it could only be implemented in SVG, meaning the URL content would need to be embedded in SVG, but in reality it doesn’t require that. Instead, it can be used directly in the document flow, which is very **convenient**.
+At first, I thought it could only be implemented in SVG, which means the URL content needs to be embedded in SVG, but in reality, it doesn’t require that. Instead, it can be used directly in the document flow, which is very **convenient**.
 
 Just need to write down the SVG content, and just reference **backdropFilter** is sufficient. Although it is restricted for use in **chrome**, just playing with it alone is enough.

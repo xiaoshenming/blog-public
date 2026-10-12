@@ -1,12 +1,12 @@
-# 私がイメージソースについて語らなければならないこと
+# Liuxiandongについて言わざるを得ないこと
 
-## 前置き
+## 前書き
 
-（奇妙なネットワーク環境下の）開発者として、pip install、docker pull、conda install、nvm install、npm/pnpm/yarn/cnpm installといったコマンドがよく見覚えがあるだろう。なぜかとても頻繁に停止する問題があり、これらは主に現在のネットワークが何らかのイメージソースによって遮断されているためだ！
+（奇妙なネットワーク環境下の）開発者として、`pip install`、`docker pull`、`conda install`、`nvm install`、`npm/pnpm/yarn/cnpm install`は見覚えがあるでしょう。いつも不思議な理由で停止してしまうのは、これらの問題が主に現在のネットワークが何らかのイメージソースによって阻害されているからです！
 
 ## イメージソースとは何か？
 
-镜像源（Mirror Source）とは、原始ソフトウェア倉庫の内容を国内サーバーに完全にコピーした「イメージ」のことです。私たちがこの镜像源にアクセスすると、実際には国内のサーバーにアクセスしていることになり、ダウンロード速度と安定性が大幅に向上します。
+镜像源（Mirror Source）とは、原始ソフトウェア倉庫の内容を国内サーバーに完全にコピーしたものであり、この「镜像」を形成するものです。私たちがこの镜像源にアクセスする際、実際には国内のサーバーにアクセスしていることになり、ダウンロード速度と安定性が大幅に向上します。
 
 一般的な镜像源には以下が含まれます：
 - **パッケージ管理器の镜像源**：pip、conda、npm、yumなど
@@ -14,12 +14,12 @@
 - **コンテナの镜像源**：Docker Hub、GitHub Container Registryなど
 - **開発ツールの镜像源**：Maven、Gradleなど
 
-## Conda 镜像源の設定
+## Condaの镜像源設定
 
-### 公式ソースのダウンロードリンク（推奨！最新のものです）
+### 公式ソースのダウンロードリンク（推奨！少なくとも最新！）
 
 Anaconda公式リポジトリアドレス：`https://repo.anaconda.com/archive/`
-国内の一部大学のイメージリポジトリが古いバージョンであることに注意（つまり問題がある）
+国内の一部大学のイメージリポジトリが古いバージョンであることがないように注意（つまり問題を招く）
 nvm国内公式リポジトリアドレス：`https://nvm.uihtm.com/doc/download-nvm.html`
 ### 設定手順
 
@@ -43,21 +43,21 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/pro
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
 
-# 検索時にイメージソースを優先的に使用するように設定する
+# 検索時にイメージソースを優先的に使用する設定をする
 conda config --set channel_priority strict
 ```
 
 #### 3. 設定を確認する
 
-現在の設定されているイメージソースを確認する：
+現在の設定されたイメージソースを確認する：
 
 ```bash
 conda config --show channels
 ```
 
-#### 4. 設定の削除（リセットが必要な場合）
+#### 4. 設定を削除（リセットが必要な場合）
 
-デフォルトの設定に戻す必要がある場合：
+デフォルト設定に戻す必要がある場合：
 
 ```bash
 conda config --remove-key channels
@@ -67,24 +67,24 @@ conda config --remove-key channels
 
 | イメージソース | アドレス | 特徴 |
 |--------|------|------|
-| 清華大学 | https://mirrors.tuna.tsinghua.edu.cn/anaconda/ | 動作が速く、更新が迅速 |
+| 清華大学 | https://mirrors.tuna.tsinghua.edu.cn/anaconda/ | 処理速度が速く、更新が迅速 |
 | 中国科学技術大学 | https://mirrors.ustc.edu.cn/anaconda/ | 安定かつ信頼性が高い |
 | アリバイトクラウド | https://mirrors.aliyun.com/anaconda/ | 企業レベルのサービス |
 | 華為クラウド | https://mirrors.huaweicloud.com/anaconda/ | 新興のイメージソース |
 
 ## Linux システムのイメージソース設定
 
-### 一键换源スクリプト
+### 一键換ソーススクリプト
 
-Linuxシステムでは、一鍵換源スクリプトを使用して迅速に設定できます：
+Linuxシステムでは、一键換ソーススクリプトを使用して迅速に設定できます：
 
 ```bash
 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
 ```
 
-## Dockerイメージのソース設定
+## Dockerイメージソースの設定
 
-### 一鍵設定スクリプト
+### 一键配置スクリプト
 
 ```bash
 bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
@@ -93,26 +93,27 @@ bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
 ### pip イメージソース
 
 ```bash
-# 一時的な使用
+# 临时使用
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple package_name
 
-# 永続的な設定
+# 永久配置
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-# プロキシの使用
+# 代理使用
 pip install --proxy=http://127.0.0.1:7897 -r requirements.txt
-最も推奨される方法で、システムのプロキシやTUNモードで問題が発生することがありますが、標準的な方法は非常に安定です。
+最推荐的用法，系统代理跟TUN模式有时候可能都有问题，但是标准用法绝对稳定。
 ```
+---
 
-## 一、npm 镜像源配置
+## 一、npm イメージソースの設定
 
-### 1. 设置淘宝镜像（永久生效）
+### 1. 設定淘宝镜像（永久生效）
 
 ```bash
 npm config set registry https://registry.npmmirror.com
 ```
 
-### 2. 验证配置是否生效
+### 2. 設定が有効かどうかを確認する
 
 ```bash
 npm config get registry
@@ -125,15 +126,11 @@ npm config get registry
 npm install --registry https://registry.npmmirror.com
 ```
 
-### 4. 公式ソースに戻す（必要な場合）
-
-```bash
-npm config set registry https://registry.npmmirror.com
-```
+### 4. 正式な出典を復元（必要な場合）
 
 ```bash
 npm config delete registry
-# または正式に公式リポジトリを設定
+# または正式に公式ソースを復元
 npm config set registry https://registry.npm.org
 ```
 
@@ -141,24 +138,24 @@ npm config set registry https://registry.npm.org
 
 ## 二、NVM イメージ設定（Node.js ダウンロードの高速化）
 
-NVMはデフォルトで `https://nodejs.org/dist` から Node.js をダウンロードしますが、国内でのアクセスが遅いです。イメージを設定してダウンロードを高速化できます。
+NVM はデフォルトで `https://nodejs.org/dist` から Node.js をダウンロードしますが、国内でのアクセスが遅いです。イメージを設定してダウンロードを高速化できます。
 
 ---
 
-### 🖥️ Windows（[nvm-windows](https://github.com/coreybutler/nvm-windows)を使用）
+### 🖥️ Windows（[nvm-windows](https://github.com/coreybutler/nvm-windows)]を使用）
 
 1. **PowerShell または CMD** を開く
-2. 環境変数を設定（永続的に）：
+2. 環境変数を設定（永続的）：
 
 ```powershell
 # Node.js のミラーを設定
 [Environment]::SetEnvironmentVariable("NVM_NODEJS_ORG_MIRROR", "https://npmmirror.com/mirrors/node", "User")
 
-# オプション：npm のミラーを設定（nvm install 後に自動的に設定される）
+# オプション：npm のミラーを設定（nvm install 後に自動的に構成される）
 [Environment]::SetEnvironmentVariable("NVM_NPM_MIRROR", "https://npmmirror.com/mirrors/npm", "User")
 ```
 
-3. **终端を再起動し**、次にテストを実施：
+3. 终端を再起動し、テストを実施してください：
 
 ```bash
 nvm install latest
@@ -170,31 +167,28 @@ nvm install latest
 
 ---
 
-### 🐧 Linux / 🍏 macOS（使用 [nvm-sh/nvm](https://github.com/nvm-sh/nvm））
+### 🐧 Linux / 🍏 macOS（使用 [nvm-sh/nvm](https://github.com/nvm-sh/nvm)）
 
-1. 编辑你的 shell 配置文件（如 `~/.bashrc`、`~/.zshrc` 等）：
+1. 編集您的 shell 設定ファイル（例：~/.bashrc、~/.zshrc など）：
 
 ```bash
 nano ~/.zshrc   # 或 ~/.bashrc
 ```
 
-2. 在文件末尾添加以下环境变量：
+2. ファイルの末尾に以下の環境変数を追加してください：
 
 ```bash
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
 export NVM_NPM_MIRROR=https://npmmirror.com/mirrors/npm
 ```
 
-3. 保存并生效配置：
+3. 設定を保存して有効化する：
 
 ```bash
 source ~/.zshrc   # 或 source ~/.bashrc
 ```
 
-4. 测试安装：
-```bash
-npm install
-```
+4. テストインストール：
 
 ```bash
 nvm install --lts
@@ -202,9 +196,9 @@ nvm install --lts
 
 ---
 
-### Maven 镜像源
+### Mavenイメージソース
 
-`~/.m2/settings.xml` に以下を追加してください：
+~/.m2/settings.xml に次の内容を追加してください：
 
 ```xml
 <mirrors>
@@ -217,70 +211,70 @@ nvm install --lts
 </mirrors>
 ```
 
-## グラフィカルカードドライバ関連のコマンド
+## グラフィカルカードドライバー関連のコマンド
 
-開発環境を設定する際、グラフィカルカードドライバのチェックも重要です：
+開発環境を設定する際、グラフィカルカードドライバーのチェックも重要です：
 
 ```bash
-# グラフィカルカードのハードウェア情報を確認
+# グラフィカルカードのハードウェア情報を確認する
 lspci | grep -i nvidia
 
-# NVIDIAドライバの状態を確認
+# NVIDIAドライバーの状態を確認する
 nvidia-smi
 
-# ドライバのバージョンを表示
+# ドライバーのバージョンを表示する
 nvidia-smi --query-gpu=driver_version --format=csv
 ```
 
+---
 
+## 🐉 ArchLinux 代理設定（2026年最新方案）
 
-## 🐉 ArchLinux 代理配置（2026年最新方案）
-
-> これは私がとても便利だと思う方法です！特に Clash Verge と組み合わせると、ローゼルネットワークモードを直接有効にすることで、本機のすべてのアプリが自動的に代理を利用するようになり、設定も不要になります。
+> これは私がとても便利だと思う方案です！特に Clash Verge と連携して、ローカルネットモードを直接有効にすることで、本機のすべてのアプリが自動的に代理を利用するようになり、設定も不要になります。
 
 ### 核心的な考え方
 
-代理を個別にアプリで設定するよりも、システムレベルで統一して代理を実施する方が良い。私の案は以下の通りです：
+代理を個別に設定するより、システムレベルで統一して利用する方が良い。私の提案は以下の通り：
 
 - **代理クライアント**：Clash Verge（オープンソースで無料、インターフェースが美しい）
-- **代理モード**：「ローカルネットワーク接続を許可する」のみを有効にし、TUNモードは有効にしない
+- **代理モード**：「ローカルネットワーク接続を許可」のみを有効にし、TUNモードは有効にしない
 - **代理アドレス**：`http://127.0.0.1:7897`
-- **グローバル代理**：`alias` の別名とコマンドのプレフィックスを使用し、任意のコマンドを一括で代理に切り替えることができる
+- **グローバル代理**：`alias` の別名とコマンドのプレフィックスを使用し、任意のコマンドを一括で代理に切り替える
 
 ### ステップ1：Clash Vergeのインストール
 
 ```bash
-# Archユーザーは直接 yay または pacmanを使用できる
+# Archユーザーは直接 yay または pacmanを使用できます
 yay -S clash-verge
 
-# または AppImageをダウンロード
+# または AppImageをダウンロードすることもできます
 wget https://github.com/zzzgydi/clash-verge/releases/latest/download/Clash-Verge-linux-x64.tar.gz
 tar -xzf Clash-Verge-linux-x64.tar.gz
 ./Clash-Verge-linux-x64/clash-verge
 ```
 
-### ステップ2：Clash Vergeの設定
+### ステップ2：Clash Vergeの設定を行う
 
 1. Clash Vergeを開く
-2. 自分の空港サブスクリプションリンクをインポートする
-3. **重要設定**：「設定」→「ネットワーク」で「ローカルエリア接続を許可」をチェックする
-4. TUNモードは不要、通常のHTTPプロキシモードで十分である
+2. 空港のサブスクリプションリンクを追加する
+3. **重要設定**：「設定」→「ネットワーク」で「ローカルエリア接続を許可」を選択
+4. TUNモードは必要ない、通常のHTTPプロキシモードで十分だ
 5. プロキシアドレスを記録：`http://127.0.0.1:7897`
 
-### ステップ3：終端器プロキシの別名設定（おすすめ！）
+### ステップ3：ターミングプロキシの別名を設定する（おすすめ！）
 
-`~/.zshrc` または `~/.bashrc` を編集し、非常に便利な別名を追加する：
+`~/.zshrc` または `~/.bashrc` を編集し、便利な別名を追加する：
 
 ```bash
-# 代理ア바イラル：px = proxy
+# 代理アライバル：px = proxy
 alias px='http_proxy=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 HTTPS_PROXY=http://127.0.0.1:7897'
 ```
 
 保存後、`source ~/.zshrc`を実行すると有効になります。
 
-### ステップ4：楽しく利用する
+### ステップ4：楽しみながら使用する
 
-現在は、任意のコマンドの前に `px ` のプレフィックスを付けるだけで、このコマンドは自動的にエージェントを使用します。
+現在は、任意のコマンドの前に `px ` のプレフィックスを付けるだけで、そのコマンドは自動的にエージェントを使用するようになります。
 
 ```bash
 # npmパッケージのインストール
@@ -289,36 +283,36 @@ px npm install express
 # GitHubリポジトリのクローン
 px git clone https://github.com/some/repo.git
 
-# pipのインストール
+# pipによるインストール
 px pip install torch
 
-# dockerのダウル
+# dockerのコンテナ引き落とし
 px docker pull nginx:latest
 
 # curlによるテスト
 px curl https://google.com
 
-# ネットワークリクエスト付きのスクリプト実行にも利用可能
+# さらに、ネットワークリクエスト付きのスクリプトを実行することも可能
 px python my_script.py
 ```
 
 ### なぜこの方法が推奨されるのか？
 
-1. **シンプルで手間がかからない**：各アプリを個別に設定する必要がなく、一つのアライバルで全てが対応
-2. **制御が可能**：プロキシを使用したい命令のみが実行され、他の操作には影響しない
+1. **シンプルで手軽**：各アプリに個別の設定をする必要がなく、一つのアライバルで全てを処理可能
+2. **制御性が高い**：プロキースを使う命令のみが実行され、他の操作には影響を与えない
 3. **互換性が良い**：TUNモードでは時々問題が発生するが、このアライバル方式ではほとんど問題ない
-4. **いつでも終了可能**：`px`の前置文字を入れない限り、自由に操作可能
-5. **一度設定で永遠に便利**：一度設定すれば、今後も快適に利用可能
+4. **いつでも終了可能**：`px` のプレフィックスを付けない限り、自由に操作可能
+5. **一度設定で永遠に便利**：一度設定すれば、今後も快適に使用可能
 
 ### 高度な使い方
 
-`px` を毎回入力するのが面倒だと感じる場合は、さらに設定を変更できます：
+`px` を毎回書くのが面倒だと感じる場合は、さらに詳細な設定が可能です：
 
 ```bash
-# 方法1：より短い別名
+# 方法1：より短いアライラー名
 alias p='px'
 
-# 方法2：特定ツール用の永続プロキシの設定（選択可能）
+# 方法2：特定のツール用の永続的なプロキシ設定（選択可能）
 # npm
 npm config set proxy http://127.0.0.1:7897
 npm config set https-proxy http://127.0.0.1:7897
@@ -334,17 +328,17 @@ pip config set global.proxy http://127.0.0.1:7897
 ### よくある質問
 
 **Q：プロキシが機能しない？**
-A：Clash Verge が有効になっているか、 「LAN接続を許可」のチェックが有効になっているか、ポートが 7897 かどうかを確認してください
+A：Clash Verge が有効になっているか、『ローカルネットワーク接続を許可』のチェックが入っているか、ポートが 7897 であるかを確認してください
 
-**Q：一部のコマンドはまだタイムアウトになっていますか？**
+**Q：一部のコマンドはまだタイムアウトになっている？**
 A：一部の空港ではコンマンチに制限がありますので、コンマンチを減らすか別のノードを使用してみてください
 
 **Q：TUNモードとこの別名法の違いは何ですか？**
-A：TUNはグローバルエージェントであり、すべてのトラフィックがエージェントを通過します。別名法はより柔軟で、必要なら使うことができ、必要でなければ使わないことができます。個人的には別名法の方が好きです。問題が発生した場合、対処が容易です
+A：TUNはグローバルエージェントであり、すべてのトラフィックがエージェントを通過します。別名法はより柔軟で、利用したいときは利用し、利用したくないときは利用しないことができます。個人的には別名法の方が好きです。問題が発生した場合、対処が容易です。
 
 ---
 
-# ミラーリングサイトの推奨リスト
+# イメージサイト推奨リスト
 
 ## 🏢 企業サイト
 | 名称 | 住所 |
@@ -403,21 +397,21 @@ A：TUNはグローバルエージェントであり、すべてのトラフィ�
 | Maven | 阿里云Jcenterリポジトリミラーサイト | http://maven.aliyun.com/nexus/content/repositories/jcenter |
 | 総合 | LinuxEye | http://mirrors.linuxeye.com |
 | 総合 | モバイルクラウドミラーサイト | http://mirrors.bclinux.org |
-| 総合 | Cloud-Stackミラーサイト | http://mirrors.cloudstack-china.com |
+| 総合 | Cloud-Stackリポジトリサイト | http://mirrors.cloudstack-china.com |
 | 総合 | cn99(常州贝特康姆傘下) | http://mirrors.cn99.com |
 | 龍芯 | 龍芯オープンソースコミュニティ | http://mirrors.loongnix.org |
 | 教育 | 英荔教育 | https://mirrors.e-ducation.cn |
-| JDK | injdk.cnの各バージョンJDKミラーサイト | https://www.injdk.cn |
-| Go | 百度Go Moduleリポジトリ代理 | http://goproxy.baidu.com |
+| JDK | injdk.cnの各バージョンのJDKミラーサイト | https://www.injdk.cn |
+| Go | 百度Go Moduleリポジトリエージェント | http://goproxy.baidu.com |
 
-## 🏆 推奨使用（総合的な性能が良い）
+## 🏆 推奨使用（総合性能が良い）
 1. **清華大学ミラーサイト** - https://mirrors.tuna.tsinghua.edu.cn
 2. **中国科学技術大学ミラーサイト** - https://mirrors.ustc.edu.cn
 3. **阿里云ミラーサイト** - https://mirrors.aliyun.com
 4. **テンセントクラウドミラーサイト** - https://mirrors.cloud.tencent.com
 
-## 💡 使用提案
+## 💡 使用推奨事項
 - **開発環境**：清華大学または中国科学技術大学のミラーサイトを推奨します。更新が迅速で対応範囲が広い
 - **生産環境**：阿里云、テンセントクラウドなどの企業レベルのミラーサイトを使用することを推奨します。安定性が高い
-- **特定言語**：開発言語に応じて専用ミラーサイトを選択します（例：NPMは淘宝、RubyはRuby China）
-- **地理的場所**：自分の地理的場所に近いミラーサイトを選択すると速度が速い
+- **特定言語**：開発言語に応じて専用ミラーサイトを選択します（例：NPMには淘宝、RubyにはRuby Chinaを使用）
+- **地理位置**：自分の地理位置に近いミラーサイトを選択すると速度が速い

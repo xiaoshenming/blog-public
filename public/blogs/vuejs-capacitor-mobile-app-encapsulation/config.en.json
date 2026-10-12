@@ -1,5 +1,5 @@
 {
-	"title": "There are only 6 steps to encapsulate Vue.js for mobile: packaging → configuration → compilation → initialization → add platform → synchronization",
+	"title": "There are only 6 steps to encapsulate Vue.js for mobile: packaging → configuration → compilation → initialization → add platforms → sync",
 	"tags": [
 		"Front-end development",
 		"Vue"
