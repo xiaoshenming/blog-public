@@ -6,6 +6,8 @@ import NavCard from '@/components/nav-card'
 import { Toaster } from 'sonner'
 import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon } from 'lucide-react'
 import { useSize, useSizeInit } from '@/hooks/use-size'
+import { useParallax } from '@/hooks/use-parallax'
+import { useSkin } from '@/skin/context'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { useShallow } from 'zustand/react/shallow'
 import { ScrollTopButton } from '@/components/scroll-top-button'
@@ -18,9 +20,18 @@ import * as stylex from '@stylexjs/stylex'
 import { util } from '@/styles/shared/util.stylex'
 
 const styles = stylex.create({
+	/**
+	 * 背景层：比视口四周各大 12px。
+	 * 多出来的余量是给皮肤视差用的（位移 ±8px）：静止时四边各余 12px，
+	 * 位移到极限时迎风侧仍余 4px（12 − 8），任何视口下都不会露出缝隙。
+	 * 用固定像素而非 scale：scale 的余量按视口尺寸等比给出，越矮的视口留得越少 ——
+	 * 1.02 在 768 高的视口下每边只有约 7.7px，小于 8px 的位移上限，
+	 * 指针到边角时对边会露出约 0.3px 缝隙（实测值）。
+	 * 无背景图时这 12px 无任何影响。
+	 */
 	background: {
 		position: 'fixed',
-		inset: 0,
+		inset: -12,
 		zIndex: 0,
 		overflow: 'hidden'
 	},
@@ -78,6 +89,8 @@ export default function Layout({ children }: PropsWithChildren) {
 		}))
 	)
 	const { maxSM, init } = useSize()
+	const { skin } = useSkin()
+	const backgroundRef = useParallax<HTMLDivElement>(Boolean(skin.backgroundParallax))
 
 	return (
 		<>
@@ -100,8 +113,10 @@ export default function Layout({ children }: PropsWithChildren) {
 			{/*
 			 * 背景图由 --skin-bg-image 驱动（SSR 注入站长设置，引导脚本在首次绘制前覆盖为访客偏好），
 			 * 无图时变量为 none。始终渲染这一层，避免条件渲染带来的挂载时序差异。
+			 * 视差由皮肤声明（preset.backgroundParallax）：默认皮肤不挂监听，纯装饰不该付 rAF 循环。
 			 */}
 			<div
+				ref={backgroundRef}
 				{...stylex.props(styles.background)}
 				style={{
 					backgroundImage: 'var(--skin-bg-image, none)',

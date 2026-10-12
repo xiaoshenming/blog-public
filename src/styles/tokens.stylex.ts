@@ -44,5 +44,18 @@ export const cardTokens = stylex.defineConsts({
 	radiusLg: 'var(--skin-card-radius-lg)',
 	blur: 'var(--skin-card-blur)',
 	shadow: 'var(--skin-card-shadow)',
-	borderWidth: 'var(--skin-card-border-width)'
+	borderWidth: 'var(--skin-card-border-width)',
+	/** 四边描边贴图（四层 background-image）；默认 none，水墨皮肤下为墨笔触线 */
+	edge: 'var(--skin-card-edge)'
+})
+
+/** 按钮质感令牌：随皮肤切换，见 src/skins/ 与 src/lib/skin.ts 的 applySkin */
+export const buttonTokens = stylex.defineConsts({
+	radius: 'var(--skin-btn-radius)',
+	radiusLg: 'var(--skin-btn-radius-lg)',
+	borderWidth: 'var(--skin-btn-border-width)',
+	/** border-image 取值（笔触方框）；默认 none，水墨皮肤下为墨笔触 */
+	frame: 'var(--skin-btn-frame)',
+	/** 按钮底纹 background-image；默认 none，水墨皮肤下为青海波纹 */
+	texture: 'var(--skin-btn-texture)'
 })

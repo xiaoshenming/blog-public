@@ -1,5 +1,15 @@
-import { DEFAULT_SKIN_ID, SKIN_PRESETS, getSkinPreset, isSkinId, type SkinId, type SkinTheme } from '@/skins'
+import {
+	DEFAULT_SKIN_ID,
+	SKIN_PRESETS,
+	getSkinPreset,
+	isSkinId,
+	type SkinButtonStyle,
+	type SkinCardStyle,
+	type SkinId,
+	type SkinTheme
+} from '@/skins'
 import { FONT_OPTIONS } from '@/config/fonts'
+import { applyFont } from '@/lib/font'
 
 export const SKIN_STORAGE_KEY = 'blog-skin'
 export const FONT_STORAGE_KEY = 'blog-font'
@@ -22,8 +32,64 @@ const THEME_VARS: Record<keyof SkinTheme, string> = {
 	colorSubtle: '--color-subtle'
 }
 
-/** 卡片质感变量名，由 card.stylex.ts 消费 */
-const CARD_VARS = ['--skin-card-radius', '--skin-card-radius-lg', '--skin-card-blur', '--skin-card-shadow', '--skin-card-border-width'] as const
+/**
+ * 质感令牌表：皮肤预设里的一个字段 → 一个 CSS 自定义属性 + 取值函数。
+ * 单一映射表同时供运行时（applySkin）、引导脚本序列化（buildPreferenceBootstrap）
+ * 与 SSR 内联样式（themeVars / styleVars）使用，四处共用一份，避免各写一遍而漂移。
+ */
+type TokenSpec<T> = Record<keyof T, { cssVar: string; toValue: (style: T) => string }>
+
+/** 卡片质感，由 card.stylex.ts 消费 */
+const CARD_TOKENS: TokenSpec<SkinCardStyle> = {
+	radius: { cssVar: '--skin-card-radius', toValue: c => `${c.radius}px` },
+	radiusLg: { cssVar: '--skin-card-radius-lg', toValue: c => `${c.radiusLg}px` },
+	blur: { cssVar: '--skin-card-blur', toValue: c => c.blur },
+	shadow: { cssVar: '--skin-card-shadow', toValue: c => c.shadow },
+	borderWidth: { cssVar: '--skin-card-border-width', toValue: c => `${c.borderWidth}px` },
+	edge: { cssVar: '--skin-card-edge', toValue: c => c.edge ?? 'none' }
+}
+
+/** 按钮质感，由 button.stylex.ts 消费 */
+const BUTTON_TOKENS: TokenSpec<SkinButtonStyle> = {
+	radius: { cssVar: '--skin-btn-radius', toValue: b => `${b.radius}px` },
+	radiusLg: { cssVar: '--skin-btn-radius-lg', toValue: b => `${b.radiusLg}px` },
+	borderWidth: { cssVar: '--skin-btn-border-width', toValue: b => `${b.borderWidth}px` },
+	frame: { cssVar: '--skin-btn-frame', toValue: b => b.frame ?? 'none' },
+	texture: { cssVar: '--skin-btn-texture', toValue: b => b.texture ?? 'none' }
+}
+
+/** 全部质感令牌表，按预设里的分组组织 */
+const STYLE_TOKENS = { card: CARD_TOKENS, button: BUTTON_TOKENS } as const
+
+/** 把一组质感令牌序列化成 { cssVar: value }，供内联注入与引导脚本共用 */
+function serializeTokens<T extends object>(style: T, spec: TokenSpec<T>): Record<string, string> {
+	const out: Record<string, string> = {}
+	for (const key of Object.keys(spec) as (keyof T)[]) {
+		const { cssVar, toValue } = spec[key]
+		out[cssVar] = toValue(style)
+	}
+	return out
+}
+
+/**
+ * 配色字段 → CSS 变量值的平表。
+ * 导出给根布局生成 SSR 内联样式用 —— 那边曾手抄一份 14 个变量的清单，漏掉了
+ * --color-surface-strong，且 `as React.CSSProperties` 把漏项藏到了运行时。
+ * 由本函数统一生成后，THEME_VARS 是唯一的令牌清单来源。
+ */
+export function themeVars(theme: SkinTheme): Record<string, string> {
+	const out: Record<string, string> = {}
+	for (const [key, cssVar] of Object.entries(THEME_VARS)) {
+		const value = theme[key as keyof SkinTheme]
+		if (value) out[cssVar] = value
+	}
+	return out
+}
+
+/** 卡片 + 按钮质感 → CSS 变量值的平表（同样导出给根布局） */
+export function styleVars(card: SkinCardStyle, button: SkinButtonStyle): Record<string, string> {
+	return { ...serializeTokens(card, CARD_TOKENS), ...serializeTokens(button, BUTTON_TOKENS) }
+}
 
 /** 背景图变量名，由 layout 的背景层消费 */
 export const BACKGROUND_VAR = '--skin-bg-image'
@@ -37,28 +103,16 @@ export function applyTheme(theme?: Partial<SkinTheme> | null) {
 	}
 }
 
-/** 应用皮肤：切换 data-skin（皮肤专属 CSS 与装饰层的开关）并写入卡片质感变量 */
+/** 应用皮肤：切换 data-skin（皮肤专属 CSS 与装饰层的开关）并写入卡片/按钮质感变量 */
 export function applySkin(skinId?: string | null) {
 	if (typeof document === 'undefined') return
 	const skin = getSkinPreset(skinId)
 	const root = document.documentElement
 	root.setAttribute('data-skin', skin.id)
-	root.style.setProperty(CARD_VARS[0], `${skin.card.radius}px`)
-	root.style.setProperty(CARD_VARS[1], `${skin.card.radiusLg}px`)
-	root.style.setProperty(CARD_VARS[2], skin.card.blur)
-	root.style.setProperty(CARD_VARS[3], skin.card.shadow)
-	root.style.setProperty(CARD_VARS[4], `${skin.card.borderWidth}px`)
-}
-
-/**
- * 移除所有内联的皮肤变量，回到 theme.css 的兜底值。
- * 配置弹窗的「取消」用它还原预览期间改动的样式。
- */
-export function resetSkinVars() {
-	if (typeof document === 'undefined') return
-	const root = document.documentElement
-	for (const cssVar of Object.values(THEME_VARS)) root.style.removeProperty(cssVar)
-	for (const cssVar of CARD_VARS) root.style.removeProperty(cssVar)
+	for (const [group, spec] of Object.entries(STYLE_TOKENS)) {
+		const vars = serializeTokens(skin[group as keyof typeof STYLE_TOKENS], spec as TokenSpec<object>)
+		for (const [cssVar, value] of Object.entries(vars)) root.style.setProperty(cssVar, value)
+	}
 }
 
 function readStorage(key: string): string | null {
@@ -86,18 +140,19 @@ export function persistSkin(skinId: SkinId | null) {
 	writeStorage(SKIN_STORAGE_KEY, skinId)
 }
 
-/** 访客选择的字体；返回 null 表示未覆盖 */
+/**
+ * 访客选择的字体；返回 null 表示未覆盖。
+ * 与 readStoredSkin 一样要校验有效性：脏值（字体被删、手改 localStorage、跨版本残留）
+ * 会让 resolveFont 返回一个不存在的 id —— 视觉上静默回落 system 看不出问题，
+ * 但字体菜单里没有任何一项处于选中态，且「皮肤推荐字体」这条优先级被无效值短路。
+ */
 export function readStoredFont(): string | null {
-	return readStorage(FONT_STORAGE_KEY)
+	const stored = readStorage(FONT_STORAGE_KEY)
+	return stored && FONT_OPTIONS.some(font => font.id === stored) ? stored : null
 }
 
 export function persistFont(fontId: string | null) {
 	writeStorage(FONT_STORAGE_KEY, fontId)
-}
-
-export function clearStoredPreferences() {
-	persistSkin(null)
-	persistFont(null)
 }
 
 /**
@@ -123,6 +178,39 @@ export function applyBackgroundImage(url?: string | null) {
 	document.documentElement.style.setProperty(BACKGROUND_VAR, url ? `url("${url}")` : 'none')
 }
 
+type AppearanceSource = {
+	/** 访客在 localStorage 里的覆盖；null 表示未覆盖 */
+	visitorSkin: SkinId | null
+	visitorFont: string | null
+	/** 站长设置 */
+	siteSkin?: string | null
+	siteFont?: string | null
+	siteTheme: SkinTheme
+	siteBackgroundImageId?: string | null
+	backgroundImages: ReadonlyArray<{ id: string; url: string }>
+}
+
+/**
+ * 按「访客覆盖 > 站长设置 > 代码兜底」解析出最终外观，并一次性落地到 DOM。
+ *
+ * 这是「按访客视角落地外观」的统一入口，SkinProvider 与配置面板共用。
+ * （applyTheme / applySkin / applyFont / applyBackgroundImage 这些原语仍是公开的，
+ *  皮肤配置面板在「选皮肤即预览」时会直接调它们写 DOM；那是预览路径，关窗时会
+ *  由本函数覆盖回访客视角。这里说的是「解析 + 落地」这件事只有一套实现。）
+ * 之前两处各有一套：SkinProvider 走下面的解析函数，配置面板则直接写站长值 ——
+ * 于是配置面板「取消」后 DOM 停在站长值，而 localStorage 里的访客覆盖还在，
+ * 且 SkinProvider 的依赖没变不会重跑，页面与 localStorage 就此不一致，直到下次刷新。
+ */
+export function applyResolvedAppearance(source: AppearanceSource) {
+	const skinId = resolveSkin(source.visitorSkin, source.siteSkin)
+	const preset = getSkinPreset(skinId)
+	// 访客一旦自己选了皮肤，就该看到该皮肤的完整配色，而不是站长微调过的版本
+	applyTheme(source.visitorSkin ? preset.theme : source.siteTheme)
+	applySkin(skinId)
+	applyFont(resolveFont(source.visitorFont, source.visitorSkin ? null : source.siteFont, skinId))
+	applyBackgroundImage(resolveBackgroundUrl(source.visitorSkin, skinId, source.siteBackgroundImageId, source.backgroundImages))
+}
+
 /**
  * 解析最终生效的背景图 url。
  * 访客选的皮肤若自带关联背景就用它，否则回落站长的背景设置 ——
@@ -138,73 +226,4 @@ export function resolveBackgroundUrl(
 	const id = (visitorSkin && getSkinPreset(skinId).backgroundImageId) || siteBackgroundImageId
 	if (!id) return null
 	return images.find(item => item.id === id)?.url ?? null
-}
-
-/**
- * 生成注入 <head> 的阻塞式引导脚本：在首次绘制前就落地访客偏好，
- * 否则选了水墨的访客会先看到一帧站长默认皮肤再跳变。
- *
- * 脚本必须自包含（此时还没有 React 与模块加载），所以把皮肤/字体预设与站长的背景图清单序列化进去。
- * 键名刻意压缩：这段 JSON 会出现在每一份 HTML 里。
- *   t = theme 的 CSS 变量表, c = 卡片质感变量, df = 皮肤推荐字体, b = 皮肤关联背景图 id
- *   f = font-family, h = 字体样式表, im = 背景图 id→url, sb = 站长当前背景图 id
- */
-export function buildPreferenceBootstrap(
-	siteSkinId: string,
-	siteFontId: string,
-	siteBackgroundImageId: string | null | undefined,
-	backgroundImages: ReadonlyArray<{ id: string; url: string }>
-): string {
-	const skins: Record<string, { t: Record<string, string>; c: Record<string, string>; df: string; b?: string }> = {}
-	for (const skin of SKIN_PRESETS) {
-		const theme: Record<string, string> = {}
-		for (const [key, cssVar] of Object.entries(THEME_VARS)) {
-			const value = skin.theme[key as keyof SkinTheme]
-			if (value) theme[cssVar] = value
-		}
-		skins[skin.id] = {
-			t: theme,
-			c: {
-				'--skin-card-radius': `${skin.card.radius}px`,
-				'--skin-card-radius-lg': `${skin.card.radiusLg}px`,
-				'--skin-card-blur': skin.card.blur,
-				'--skin-card-shadow': skin.card.shadow,
-				'--skin-card-border-width': `${skin.card.borderWidth}px`
-			},
-			df: skin.defaultFont,
-			...(skin.backgroundImageId ? { b: skin.backgroundImageId } : {})
-		}
-	}
-
-	const fonts: Record<string, { f: string; h?: string }> = {}
-	for (const font of FONT_OPTIONS) {
-		fonts[font.id] = font.cssHref ? { f: font.family, h: font.cssHref } : { f: font.family }
-	}
-
-	const images: Record<string, string> = {}
-	for (const image of backgroundImages) {
-		if (image.id && image.url) images[image.id] = image.url
-	}
-
-	const data = JSON.stringify({ skins, fonts, images, siteSkinId, siteFontId, siteBgId: siteBackgroundImageId || '' })
-
-	return `(function(){try{
-var d=${data},r=document.documentElement;
-var vs=localStorage.getItem(${JSON.stringify(SKIN_STORAGE_KEY)});
-var vf=localStorage.getItem(${JSON.stringify(FONT_STORAGE_KEY)});
-var sid=(vs&&d.skins[vs])?vs:d.siteSkinId;
-var s=d.skins[sid]||d.skins[d.siteSkinId];
-if(s){r.setAttribute('data-skin',sid);
-for(var k in s.t)r.style.setProperty(k,s.t[k]);
-for(var c in s.c)r.style.setProperty(c,s.c[c]);}
-var bid=(vs&&s&&s.b)?s.b:d.siteBgId;
-var burl=bid?d.images[bid]:null;
-r.style.setProperty(${JSON.stringify(BACKGROUND_VAR)},burl?'url("'+burl+'")':'none');
-var fid=vf||(vs&&s?s.df:null)||d.siteFontId;
-var fo=d.fonts[fid]||d.fonts[d.siteFontId];
-if(fo){if(fo.h&&!document.querySelector('link[data-font-css][href="'+fo.h+'"]')){
-var l=document.createElement('link');l.rel='stylesheet';l.href=fo.h;l.setAttribute('data-font-css','');
-document.head.appendChild(l);}
-r.style.setProperty('--font-sans',fo.f);}
-}catch(e){}})();`
 }

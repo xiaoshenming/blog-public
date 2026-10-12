@@ -7,7 +7,8 @@ import Head from '@/layout/head'
 import siteContent from '@/config/site-content.json'
 import { getFontOption } from '@/config/fonts'
 import { getSkinPreset } from '@/skins'
-import { buildPreferenceBootstrap, resolveBackgroundUrl } from '@/lib/skin'
+import { resolveBackgroundUrl, styleVars, themeVars } from '@/lib/skin'
+import { buildPreferenceBootstrap } from '@/lib/skin-bootstrap'
 import { Averia_Gruesa_Libre } from 'next/font/google'
 import { I18nProvider } from '@/i18n/context'
 import { SkinProvider } from '@/skin/context'
@@ -45,34 +46,25 @@ export const metadata: Metadata = {
 /**
  * SSR 只按站长默认值渲染；访客覆盖由 Head 里的阻塞脚本在首次绘制前落地，
  * 随后由 SkinProvider 接管响应式更新（见 src/skin/context.tsx）。
+ *
+ * 变量表由 lib/skin 的 THEME_VARS / 质感令牌表统一生成，不在此手抄清单 ——
+ * 手抄时漏掉一个令牌（曾漏 --color-surface-strong）只会静默回落 theme.css 的兜底值，
+ * 因为 `as React.CSSProperties` 让 TS 查不出缺项。
  */
 const htmlStyle = {
-	'--color-brand': theme.colorBrand,
-	'--color-primary': theme.colorPrimary,
-	'--color-secondary': theme.colorSecondary,
-	'--color-brand-secondary': theme.colorBrandSecondary,
-	'--color-bg': theme.colorBg,
-	'--color-border': theme.colorBorder,
-	'--color-card': theme.colorCard,
-	'--color-article': theme.colorArticle,
-	'--color-ink': theme.colorInk,
-	'--color-muted': theme.colorMuted,
-	'--color-line': theme.colorLine,
-	'--color-surface': theme.colorSurface,
-	'--color-subtle': theme.colorSubtle,
-	'--skin-card-radius': `${skin.card.radius}px`,
-	'--skin-card-radius-lg': `${skin.card.radiusLg}px`,
-	'--skin-card-blur': skin.card.blur,
-	'--skin-card-shadow': skin.card.shadow,
-	'--skin-card-border-width': `${skin.card.borderWidth}px`,
+	...themeVars(theme),
+	...styleVars(skin.card, skin.button),
 	'--skin-bg-image': backgroundUrl ? `url("${backgroundUrl}")` : 'none',
 	'--font-sans': font.family
 } as React.CSSProperties
 
+/** 参数全是模块常量，构建期算一次即可，不必每个 SSR 请求重算 */
+const preferenceBootstrap = buildPreferenceBootstrap(skin.id, font.id, currentBackgroundImageId, backgroundImages ?? [])
+
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='zh-CN' data-skin={skin.id} suppressHydrationWarning style={htmlStyle} className={averiaFont.variable}>
-			<Head fontCssHref={font.cssHref} preferenceBootstrap={buildPreferenceBootstrap(skin.id, font.id, currentBackgroundImageId, backgroundImages ?? [])} />
+			<Head fontCssHref={font.cssHref} preferenceBootstrap={preferenceBootstrap} />
 
 			<body>
 				<script

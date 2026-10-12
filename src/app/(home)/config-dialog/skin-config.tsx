@@ -164,8 +164,7 @@ export function SkinConfig({ formData, setFormData }: SkinConfigProps) {
 
 	const backgroundUrlFor = (id?: string) => {
 		if (!id) return null
-		const images = (formData as { backgroundImages?: Array<{ id: string; url: string }> }).backgroundImages ?? []
-		return images.find(item => item.id === id)?.url ?? null
+		return formData.backgroundImages?.find(item => item.id === id)?.url ?? null
 	}
 
 	return (

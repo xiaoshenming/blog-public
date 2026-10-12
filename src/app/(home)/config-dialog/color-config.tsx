@@ -359,7 +359,8 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 						<ColorPicker value={theme.colorArticle ?? DEFAULT_THEME_COLORS.colorArticle} onChange={value => handleThemeColorChange('colorArticle', value)} />
 						<span {...stylex.props(styles.hint)}>{t('config.colorArticle')}</span>
 					</div>
-					{/* 皮肤令牌：13 个 theme 字段中的后 5 个，与 skins.ts 的 SkinTheme 同构；说明见 title 悬停 */}
+					{/* 中性色一组（正文/次要文字/线/表单底等），与 skins.ts 的 SkinTheme 同构；说明见 title 悬停。
+					    刻意不写「N 个中的第几个」这类计数 —— 字段增减时它必然过期，且没有任何检查会提醒。 */}
 					<div {...stylex.props(styles.colorRow)}>
 						<ColorPicker value={theme.colorInk ?? DEFAULT_THEME_COLORS.colorInk} onChange={value => handleThemeColorChange('colorInk', value)} />
 						<span {...stylex.props(styles.hint)} title={t('config.colorInkHint')}>

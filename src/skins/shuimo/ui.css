@@ -2,7 +2,7 @@
  * 皮肤专属样式 · 控件质感与动效（水墨）
  *
  * 与 shuimo.css 的分工：那边是皮肤基调（页面纸纹、正文墨韵、毛笔光标）；
- * 这边是控件的水墨化——表单、按钮、浮层、滚动条，以及 CSS 层动效。
+ * 这边是控件的水墨化——表单、勾选框、滑块、浮层、滚动条，以及 CSS 层动效。
  *
  * 为什么是普通 CSS：同 shuimo.css —— StyleX 表达不了 [data-skin='shuimo']
  * 这类属性选择器。覆盖能力（已核对）：
@@ -15,117 +15,104 @@
  *   见下文「浮层」一节。
  * - 颜色一律走 --color-* 令牌，站长在配置面板微调后本文件样式仍跟随。
  *
- * 挂点策略：组件样式多为 StyleX 哈希类，没有稳定类名。本文件只挂「稳定
- * 挂点」——语义标签 + 属性选择器（input[type] / button[type='submit']）、
- * 数据属性（[data-sonner-toast] / [data-color-picker-panel]）、项目既有
- * 普通类（.prose .code-block-copy-btn / .range-track）与角色属性
- * （[role='menu']）。宁可少覆盖，不可误伤图标按钮、菜单项、圆形按钮。
+ * 挂点策略：组件样式多为 StyleX 哈希类，没有稳定类名。本文件只挂「稳定挂点」——
+ * 语义标签 + 属性选择器（input[type]）、数据属性（[data-sonner-toast] /
+ * [data-color-picker-panel]）、项目既有普通类（.prose .code-block-copy-btn /
+ * .range-track）与角色属性（[role='menu']）。宁可少覆盖，不可误伤图标按钮与菜单项。
  *
- * 分节：一 表单控件 / 二 按钮 / 三 浮层 / 四 滚动条 / 五 滑块手柄 / 六 动效
+ * 按钮不在这里：主按钮（brandBtn）的墨笔触边框与青海波底纹走 --skin-btn-* 令牌，
+ * 见 src/styles/shared/button.stylex.ts。早先用 button[type='submit'] / ul > button
+ * 这类裸选择器去挂，命中面靠「当前只有一处这样写」来保证，任何新增结构都会被静默墨化。
+ *
+ * 分节：一 表单控件 / 二 勾选框 / 三 代码块复制按钮 / 四 浮层 / 五 滚动条 / 六 滑块 / 七 动效
  */
 
 /* ── 一、表单控件：纸色底 + 淡墨描边 ───────────────────────────
    用「类型排除法」命中文本类输入（text/url/number/search/password…）：
-   checkbox/radio 走原生语义（另以 accent-color 墨化），range/file/color
-   与按钮类 input 各有自绘或特殊渲染，全部排除，避免误伤。
-   select 目前全站无原生使用（下拉是自绘组件），此处仅为兜底。
-   刻意不改 border-radius：各控件自有形状（方角/胶囊），只换色与描边，
-   不赌形状。 */
-[data-skin='shuimo'] :is(
+   checkbox 另见下节，range/file/color 与按钮类 input 各有自绘或特殊渲染，
+   全部排除，避免误伤。
+   刻意不改 border-radius：各控件自有形状，只换色与描边，不赌形状。 */
+[data-skin='shuimo']
+	:is(
 		input:not([type='checkbox'], [type='radio'], [type='range'], [type='file'], [type='color'], [type='submit'], [type='button'], [type='reset']),
-		textarea,
-		select
+		textarea
 	) {
 	background-color: color-mix(in srgb, var(--color-surface-strong) 82%, transparent);
 	border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
 	color: var(--color-ink);
 	caret-color: var(--color-brand);
+
+	/* focus：墨色描边加深 + 一圈极淡墨晕，取代浏览器默认焦点环
+	   （globals 已去 outline；此处补上随皮肤走的可见焦点指示，无障碍不受损） */
+	&:focus {
+		border-color: color-mix(in srgb, var(--color-ink) 42%, transparent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ink) 7%, transparent);
+		outline: none;
+	}
+
+	&::placeholder {
+		color: var(--color-muted);
+	}
+
+	/* 禁用态：文字退到次要墨色（各浏览器原生 disabled 渲染不一，统一之） */
+	&:disabled {
+		color: var(--color-muted);
+	}
 }
 
-/* focus：墨色描边加深 + 一圈极淡墨晕，取代浏览器默认焦点环
-   （globals 已去 outline；此处补上随皮肤走的可见焦点指示，无障碍不受损） */
-[data-skin='shuimo'] :is(
-		input:not([type='checkbox'], [type='radio'], [type='range'], [type='file'], [type='color'], [type='submit'], [type='button'], [type='reset']),
-		textarea,
-		select
-	):focus {
-	border-color: color-mix(in srgb, var(--color-ink) 42%, transparent);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ink) 7%, transparent);
-	outline: none;
-}
+/* ── 二、勾选框：手绘墨框 + 墨勾 ──────────────────────────────
+   素材来自 shuimo-ui（MIT）：border.webp 是 48×48 的手绘墨方框，
+   checkbox-checked.webp 是 28×20 的勾。参考实现里勾靠 margin 手工对位在
+   24×24 框内（12×10，居中），此处用 background-position: center 达到同样效果，
+   尺寸按 50% / 42% 等比给出，因此任意方框尺寸下勾都居中且比例不变。
 
-[data-skin='shuimo'] input::placeholder,
-[data-skin='shuimo'] textarea::placeholder {
-	color: var(--color-muted);
-}
+   appearance: none 会一并废掉 accent-color（它只作用于原生渲染），
+   所以原「勾选色跟随品牌色」的规则由本节的贴图取代。
 
-/* 禁用态：文字退到次要墨色（各浏览器原生 disabled 渲染不一，统一之） */
-[data-skin='shuimo'] input:disabled,
-[data-skin='shuimo'] textarea:disabled {
-	color: var(--color-muted);
-}
-
-/* 原生勾选框：勾选色跟随皮肤品牌色（水墨下为朱砂） */
+   flex-shrink: 0 是必需的：写作页的勾选框在 display:flex / flex-wrap:nowrap
+   的容器里，默认 flex-shrink: 1 会把它从 16px 压到 14.25px，墨框跟着被挤扁。
+   固定尺寸的控件不该参与收缩。 */
 [data-skin='shuimo'] input[type='checkbox'] {
-	accent-color: var(--color-brand);
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	flex-shrink: 0;
+	vertical-align: middle;
+	background: url('/skins/shuimo/control/checkbox-border.webp') no-repeat center / 100% 100%;
 }
 
-/* ── 二、按钮 ────────────────────────────────────────────────
-   提交按钮：墨笔触框。
-   挂点：button[type='submit']。全站仅 3 处（三个上传弹窗的确认键，
-   brandBtn + confirmButton），语义即「确认提交」，不会误伤图标按钮、
-   菜单项、圆形按钮（它们都不带 type='submit'）。
-   声明与 shuimo.css 的 .skin-decor-ink-btn 同源：brush-frame.webp 经
-   border-image 铺成墨笔触边框（必须方角、7px 边宽，内边距同步回收；
-   数值按本挂点按钮的 padding 24/10 微调，整体尺寸与原按钮基本一致）。
-   其余 brandBtn（保存/发布等约 20 处）是 StyleX 哈希类、无稳定挂点，
-   仍走 .skin-decor-ink-btn 显式挂点机制，见 shuimo.css 注释。 */
-[data-skin='shuimo'] button[type='submit'] {
-	border: 7px solid transparent;
-	border-image: url('/skins/shuimo/brush-frame.webp') 8 / 7px stretch;
-	border-radius: 0;
-	/* 底色收缩到边框内侧：笔触方框的透明缝隙露出页面底色，墨框才立得住
-	   （不收缩的话，brandBtn 的不透明底色会垫到笔触下方，把墨框「吃掉」） */
-	background-clip: padding-box;
-	padding-inline: 12px;
-	padding-block: 4px;
+[data-skin='shuimo'] input[type='checkbox']:checked {
+	background-image: url('/skins/shuimo/control/checkbox-border.webp'), url('/skins/shuimo/control/checkbox-checked.webp');
+	background-position: center, center;
+	background-repeat: no-repeat, no-repeat;
+	background-size:
+		100% 100%,
+		50% 42%;
 }
 
-/* 写作页工具栏（取消/删除/导入 MD/预览/发布）——发布是站长高频动作。
-   挂点：ul > button。该结构全站仅此一处（已核对：其余 ul 均为 li 结构，
-   日历/工具箱/鸣潮页的列表都不是直接嵌 button），命中面精确；
-   若未来新增同类结构会被一并墨化，属预期行为。
-   参数同上（原按钮 padding 16/8 与 brandBtn 同尺寸，补偿后高度基本一致）。 */
-[data-skin='shuimo'] ul > button {
-	border: 7px solid transparent;
-	border-image: url('/skins/shuimo/brush-frame.webp') 8 / 7px stretch;
-	border-radius: 0;
-	background-clip: padding-box;
-	padding-inline: 12px;
-	padding-block: 4px;
-}
-
-/* 文章代码块的复制按钮（类名由 article.css 提供，稳定）：白底黑边改纸色墨边 */
+/* ── 三、文章代码块的复制按钮 ────────────────────────────────
+   类名由 article.css 提供（稳定挂点），那边是硬编码的白底黑边；
+   这里换成纸色底 + 淡墨边，并补上 hover / 按压反馈。
+   它不在 card.base 的覆盖范围内（article.css 里是普通类），必须单独写。 */
 [data-skin='shuimo'] .prose .code-block-copy-btn {
 	background: color-mix(in srgb, var(--color-surface-strong) 88%, transparent);
 	border-color: color-mix(in srgb, var(--color-ink) 15%, transparent);
 	color: var(--color-ink);
 }
+
 [data-skin='shuimo'] .prose .code-block-copy-btn:hover {
 	background: var(--color-surface-strong);
 	border-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
 }
 
-/* ── 三、浮层：边框墨韵 ──────────────────────────────────────
-   弹窗容器（DialogModal 等）是 StyleX 哈希类、无稳定挂点，其 card.base
-   的边框色与阴影已随 --color-border / --skin-card-shadow 令牌走，未再补。
-   这里只补能稳定命中的浮层。 */
-
-/* 头部三个下拉（语言/字体/皮肤切换）带 role='menu'（全站仅此 3 处），
-   容器已用 card.base；把边框色从通用 border 加深为淡墨 */
-[data-skin='shuimo'] [role='menu'] {
-	border-color: color-mix(in srgb, var(--color-ink) 20%, transparent);
-}
+/* ── 四、浮层：边框墨韵 ──────────────────────────────────────
+   弹窗容器（DialogModal 等）与左下角三个下拉（role='menu'）都是 StyleX 哈希类、
+   无稳定挂点，但它们用的都是 card.base —— 水墨下 card.base 的 borderWidth 是 0
+   （边框交给 --skin-card-edge 的四边墨线贴图），边框色、阴影也各自随
+   --color-border / --skin-card-shadow 令牌走。所以这两处无需再补：
+   曾经有一条给 [role='menu'] 加 border-color 的规则，在 borderWidth: 0 下是空操作，
+   已删除。这里只补真正没有挂点归属的浮层。 */
 
 /* 色板面板（站长调色高频控件，带 data-color-picker-panel 属性）：
    其底色是 tokens.stylex 的 colors.white（编译期常量 #fff，不随皮肤），
@@ -149,7 +136,7 @@
 	}
 }
 
-/* ── 四、滚动条：细墨条 + 纸色轨道 ───────────────────────────
+/* ── 五、滚动条：细墨条 + 纸色轨道 ───────────────────────────
    两套并存：标准属性（scrollbar-width / scrollbar-color，Firefox 与
    Chrome 121+；Chrome 下标准属性优先、自动忽略 webkit 伪元素）
    + webkit 伪元素（Safari / 旧 Chrome）。安全边界（已核对）：
@@ -193,40 +180,79 @@ html[data-skin='shuimo']:not(.windows) *:not(.scrollbar-none)::-webkit-scrollbar
 	background-color: transparent;
 }
 
-/* ── 五、滑块手柄：globals.css 的 2px 白边（写死）改为纸色 ─── */
-[data-skin='shuimo'] .range-track::-webkit-slider-thumb {
-	border-color: color-mix(in srgb, var(--color-surface-strong) 92%, transparent);
-}
-[data-skin='shuimo'] .range-track::-moz-range-thumb {
-	border-color: color-mix(in srgb, var(--color-surface-strong) 92%, transparent);
+/* ── 六、滑块：墨线轨道 + 毛笔手柄 ───────────────────────────
+   挂点是项目既有的 .range-track 类（全站仅图像工具箱的压缩质量条在用）。
+   手柄换成 shuimo-ui 的毛笔笔头（素材 64×64，按 20×20 显示，3 倍余量够视网膜屏）。
+
+   轨道必须同时覆盖**三层**：globals.css 给 .range-track 本身、以及
+   ::-webkit-slider-runnable-track / ::-moz-range-track 都铺了不透明的品牌色渐变
+   （在 @layer base 里）。只改 input 自身的 background 是没用的 ——
+   轨道伪元素画在 input 背景之上，会把它整个盖住。三层都要换成墨线。
+   两套伪元素都要写：Chrome/Safari 走 -webkit-，Firefox 走 -moz-。
+
+   音乐页的进度条**刻意不动**：它走的是原生渲染 + accent-color，自带
+   「已播放/未播放」的填充反馈，而填充是进度条的全部意义。改成自绘就得
+   自己算填充渐变，为观感牺牲功能不值当；它的 accent-color 取的是
+   colors.brand，已经随皮肤变成朱砂红，与整体是协调的。 */
+[data-skin='shuimo'] .range-track,
+[data-skin='shuimo'] .range-track::-webkit-slider-runnable-track,
+[data-skin='shuimo'] .range-track::-moz-range-track {
+	background: url('/skins/shuimo/line-h.webp') repeat-x center / auto 5px;
 }
 
-/* ── 六、动效：墨的晕开是慢的 ────────────────────────────────
-   只覆盖 transition 的时长与缓动，不动 transition-property——保留各组件
-   声明的过渡属性集合，仅把手感从「快而干脆」换成「慢而柔和」。
+[data-skin='shuimo'] .range-track::-webkit-slider-thumb {
+	appearance: none;
+	background: url('/skins/shuimo/control/slider-thumb.webp') no-repeat center / 100% 100%;
+	border: none;
+	box-shadow: none;
+	width: 20px;
+	height: 20px;
+	margin-top: -7px;
+}
+
+[data-skin='shuimo'] .range-track::-moz-range-thumb {
+	background: url('/skins/shuimo/control/slider-thumb.webp') no-repeat center / 100% 100%;
+	border: none;
+	box-shadow: none;
+	width: 20px;
+	height: 20px;
+}
+
+/* ── 七、动效：墨的晕开是慢的 ────────────────────────────────
+   显式列出过渡属性：只写 duration/timing 的话，transition-property 的初始值
+   是 all —— 对原本没有声明过渡的元素，等于凭空激活「全属性 320ms 过渡」，
+   颜色、背景、边框、阴影、transform 全被卷进来，范围不可控。
+   这里限定在真正需要过渡的几个属性上。
    easeOutCubic 前段快、尾段缓，贴近墨在纸上晕开的节奏。
-   限定在交互元素上；motion/react 的 JS 动画（弹窗开合等）不在此列。 */
+   限定在交互元素上；motion/react 的 JS 动画（弹窗开合等）不在此列。
+
+   已知代价（取舍，非疏漏）：这条规则无层、命中所有交互元素，会**顶掉组件
+   自己声明的 transition-property**。所以清单必须涵盖组件实际会过渡的属性 ——
+   除了 transform，还要带上独立的 `scale`（select / color-picker 的 :active
+   与 :hover 用的是它，只写 transform 盖不住，那些微交互会瞬间跳变）。
+   将来若有组件过渡清单外的属性，需同步加到这里。 */
 @media (prefers-reduced-motion: no-preference) {
-	[data-skin='shuimo'] :is(a, button, input, textarea, select, summary, [role='button'], [role='menuitem'], [role='menuitemradio']) {
+	[data-skin='shuimo'] :is(a, button, input, textarea, summary, [role='button'], [role='menuitem'], [role='menuitemradio']) {
+		transition-property: color, background-color, border-color, box-shadow, transform, scale, opacity;
 		transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 		transition-duration: 320ms;
 	}
 
-	/* 按压反馈：由「干脆缩放」改为含蓄下沉 */
-	[data-skin='shuimo'] button[type='submit']:active,
-	[data-skin='shuimo'] ul > button:active {
-		transform: scale(0.985);
-	}
-	/* article.css 的 scale(0.95) 改为更含蓄的幅度 */
-	[data-skin='shuimo'] .prose .code-block-copy-btn:active {
+	/* 按压反馈：由「干脆缩放」改为含蓄下沉。
+	   注意它对**带内联 transform 的按钮无效** —— motion/react 的入场动画会在
+	   元素上写 style="transform: ..."，内联样式优先级高于本规则，首页那些
+	   淡入的卡片按钮按下去不会缩放。这是 CSS 的固有边界，不是漏写；
+	   要覆盖得给那些按钮的 :active 也上内联样式，代价大于收益。 */
+	[data-skin='shuimo'] :is(button, [role='button']):active {
 		transform: scale(0.985);
 	}
 }
 
-/* 减弱动态偏好：收掉原组件自带的按压缩放（本文件新增的位移/缩放
-   已整体包在 no-preference 中，此处不生效，无需再写） */
+/* 减弱动态偏好：收掉按压缩放（本文件新增的位移/缩放已整体包在 no-preference 中，
+   这里补的是各组件自带的 :active 缩放 —— card.hover 的 scale(0.95) 与
+   article.css 的 scale(0.95)，选择器要盖得住它们） */
 @media (prefers-reduced-motion: reduce) {
-	[data-skin='shuimo'] .prose .code-block-copy-btn:active {
+	[data-skin='shuimo'] :is(a, button, [role='button']):active {
 		transform: none;
 	}
 }

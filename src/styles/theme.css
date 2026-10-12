@@ -23,9 +23,22 @@
 	--skin-card-blur: blur(4px);
 	--skin-card-shadow: 0 40px 50px -32px rgb(0 0 0 / 5%), inset 0 0 20px rgb(255 255 255 / 25%);
 	--skin-card-border-width: 1px;
+	/* 四边描边贴图：默认无（普通边框），皮肤可换成笔触线，见 src/skins/types.ts */
+	--skin-card-edge: none;
 
-	/* 光标：皮肤可整体替换（水墨为毛笔）。数值为热点偏移 */
-	--skin-cursor: url(/images/cursor.svg) 2 1, auto;
+	/* 按钮质感：兜底等同默认皮肤（圆角胶囊、实线边框、无贴图） */
+	--skin-btn-radius: 12px;
+	--skin-btn-radius-lg: 16px;
+	--skin-btn-border-width: 1.5px;
+	--skin-btn-frame: none;
+	--skin-btn-texture: none;
+
+	/* 光标三态：皮肤可整体替换（水墨为毛笔）。数值为热点偏移。
+	   分三态而非一个变量，是因为交互元素（按钮/链接）要换成「蘸朱砂的笔」，
+	   与静态区域的素笔区分开；只给一个变量的话按钮会被 globals 的 pointer 顶掉。 */
+	--skin-cursor-auto: url(/images/cursor.svg) 2 1, auto;
+	--skin-cursor-pointer: pointer;
+	--skin-cursor-disabled: not-allowed;
 
 	/* Averia 只有拉丁字形，中文回退到站点当前字体（--font-sans），这样切换字体时标题里的汉字也会跟着变 */
 	--font-averia: var(--font-averia-next, 'Averia Gruesa Libre'), var(--font-sans);

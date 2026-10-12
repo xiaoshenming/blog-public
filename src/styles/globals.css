@@ -30,8 +30,8 @@
 		height: 100%;
 		line-height: 1.25;
 		scroll-behavior: smooth;
-		/* 光标随皮肤切换，默认值见 theme.css 的 --skin-cursor */
-		cursor: var(--skin-cursor);
+		/* 光标三态随皮肤切换，默认值见 theme.css 的 --skin-cursor-* */
+		cursor: var(--skin-cursor-auto);
 	}
 
 	body {
@@ -50,8 +50,14 @@
 		text-overflow: ellipsis;
 	}
 
-	button {
-		cursor: pointer;
+	/* 交互元素用「pointer 态」光标（水墨下是蘸朱砂的笔）；禁用态同理走变量，
+	   让皮肤能一并替换，而不是各处硬编码 pointer / not-allowed。
+	   放在 base 层：皮肤的无层规则可覆盖，需要特殊光标的组件也能自行声明。 */
+	:is(button, a, summary, [role='button'], [role='menuitem'], [role='menuitemradio']) {
+		cursor: var(--skin-cursor-pointer);
+	}
+	:is(button, input, textarea, select):disabled {
+		cursor: var(--skin-cursor-disabled);
 	}
 
 	.range-track {

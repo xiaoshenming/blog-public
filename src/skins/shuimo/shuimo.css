@@ -13,29 +13,40 @@
  * 颜色一律走 --color-* 令牌，站长在配置里微调色值后皮肤样式仍跟随。
  */
 
-/* ── 页面底色：宣纸纹理 ─────────────────────────────────────────
-   铺在 <html>：根元素背景会传播到整个画布（含滚动溢出区），天然位于
+/* ── 页面底色：宣纸纹理 + 三态毛笔光标 ──────────────────────────
+   纸纹铺在 <html>：根元素背景会传播到整个画布（含滚动溢出区），天然位于
    BlurredBubbles（fixed z-0）与内容 main（z-10）之下，不会盖住任何东西。
 
    混合模式用 luminosity 而非 multiply（按 W3C 公式离线合成对比过）：
    paper.webp 是中性灰纸纹（亮度均值 230，底色 #e8e2d5 为 226）——
    - multiply 会把整页压暗到约 210 并洗掉暖调，等于回退 preset 特意提亮的宣纸调；
    - luminosity 取 --color-bg 的色相/饱和度 + 纸纹的明度纹理，
-     合成后亮度均值约 229、暖调与 preset 一致，纤维纹理清晰可见。 */
+     合成后亮度均值约 229、暖调与 preset 一致，纤维纹理清晰可见。
+
+   光标三态各一支笔（素材来自 shuimo-ui 的 public/cursor/，MIT，32×32）：
+   静态是素笔，可点处换成蘸了朱砂的笔，禁用态再换一支。
+   热点是各支笔笔锋尖端的位置，逐张按 alpha 通道实测：auto / pointer 是 (1,0)，
+   disabled 是 (0,0)（三张的笔锋位置并不完全一致，不能共用一组数值）。
+
+   为什么转成 PNG 而不是直接用原 webp：Safari 不支持 webp 光标，
+   Firefox 也是较新版本才支持；PNG 全平台通吃，32×32 下体积只差几百字节。
+   每条都带一个关键字兜底，图片未加载时退回系统光标而不是整个 cursor 声明失效。 */
 html[data-skin='shuimo'] {
 	background-image: url('/skins/shuimo/paper.webp');
 	background-repeat: repeat;
 	background-blend-mode: luminosity;
+
+	--skin-cursor-auto: url('/skins/shuimo/cursor/auto.png') 1 0, auto;
+	--skin-cursor-pointer: url('/skins/shuimo/cursor/pointer.png') 1 0, pointer;
+	--skin-cursor-disabled: url('/skins/shuimo/cursor/disabled.png') 0 0, not-allowed;
 }
 
-/* 卡片为何没铺纸纹：
-   card.base 的卡片是 StyleX 哈希类、没有稳定挂点；即便挂上 <article>
-   （全站唯一的博客正文卡片），paper.webp 的亮度（230）也远低于卡片底色
-   （#fdfbf6 ≈ 250）——任何混合模式都会把卡片压暗到约 235，与页面底色（229）
-   几乎贴平，preset 精心拉开的卡片/页面色阶就没了。
-   现有方案：卡片保持 preset 的半透明（#fbf7ee99 / #fdfbf6e6），
-   页面纸纹从卡片底下自然透出，是不破坏色阶的唯一纸感做法。
-   若将来一定要卡片自带纸纹，需要一张亮度接近卡片的纹理素材。 */
+/* 卡片本身不铺纸纹：card.base 是 StyleX 哈希类、没有稳定挂点；即便挂上
+   <article>（全站唯一的博客正文卡片），纸纹的亮度也低于卡片底色，
+   任何混合模式都会把卡片压暗到与页面底色几乎贴平，preset 特意拉开的
+   卡片/页面色阶就没了。现有方案是让卡片底色比页面更亮更实（见 preset 的
+   colorCard / colorArticle），页面纸纹从卡片底下自然透出，不破坏色阶。
+   背景画之上的那层纸感由装饰层负责，见 src/skins/shuimo/decor.tsx。 */
 
 /* ── 文章正文：墨色与墨韵（不改排版结构，只调可读性相关的字色/行距/线）── */
 [data-skin='shuimo'] .prose {
@@ -45,14 +56,27 @@ html[data-skin='shuimo'] {
 	letter-spacing: 0.04em;
 }
 
-/* 一二级标题下压一条向右渐隐的淡墨细线（云母色） */
+/* 一二级标题下压一条墨笔触横线（crossrange 548×5，与卡片描边同一素材）。
+   用 ::after 而非给标题本身铺背景：标题的 ::before 已被 article.css 占用（'# ' 标记），
+   且横线要向右渐隐 —— 渐隐靠 mask 实现，而 mask 会连带裁掉元素自身的内容文字。 */
+[data-skin='shuimo'] .prose h1::after,
+[data-skin='shuimo'] .prose h2::after {
+	content: '';
+	display: block;
+	height: 5px;
+	margin-top: 0.4em;
+	background-image: url('/skins/shuimo/line-h.webp');
+	background-repeat: repeat-x;
+	background-size: auto 5px;
+	mask-image: linear-gradient(90deg, #000 58%, transparent 94%);
+}
+
+/* 标题墨字带一点硬偏移的白影，像从纸上拓下来（参考实现 doc/assets/style/index.css
+   的 --text-shadow: 1px 2px 0 #ffffff）。不用模糊光晕 —— 实心偏移才是拓印的观感。 */
 [data-skin='shuimo'] .prose h1,
-[data-skin='shuimo'] .prose h2 {
-	padding-bottom: 0.35em;
-	background-image: linear-gradient(90deg, color-mix(in srgb, var(--color-line) 90%, transparent), transparent 78%);
-	background-repeat: no-repeat;
-	background-position: 0 100%;
-	background-size: 100% 1px;
+[data-skin='shuimo'] .prose h2,
+[data-skin='shuimo'] .prose h3 {
+	text-shadow: 1px 2px 0 color-mix(in srgb, var(--color-article) 92%, transparent);
 }
 
 /* 链接改用青雀头黛，去掉默认蓝在宣纸上的突兀感 */
@@ -78,30 +102,9 @@ html[data-skin='shuimo'] {
 	background: color-mix(in srgb, var(--color-subtle) 60%, transparent);
 }
 
-/* 选中文字以朱砂晕染 */
+/* 选中文字以朱砂晕染。两段选择器：带空格的只命中后代，
+   html 自身的选中态要单独写一条 */
+html[data-skin='shuimo']::selection,
 [data-skin='shuimo'] ::selection {
 	background-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
-}
-
-/* ── 墨框按钮（可选挂点，按需接线）─────────────────────────────
-   用法：给按钮加 className='skin-decor-ink-btn'。
-   把 brush-frame.webp（156×45 墨笔触方框）经 border-image 铺成按钮边框。
-   注意：
-   - border-image 不跟随 border-radius，必须方形（radius 归零），这也是它不适合卡片的原因；
-   - 边框从 1.5px 加宽到 7px，同步回调内边距，适配 brandBtn 尺寸的按钮整体不变形。
-   未默认挂在任何按钮上：全站主按钮（brandBtn）没有稳定的选择器挂点，
-   用一个宽泛的 button 选择器会误伤图标按钮，故留作显式挂点。 */
-[data-skin='shuimo'] .skin-decor-ink-btn {
-	border: 7px solid transparent;
-	border-image: url('/skins/shuimo/brush-frame.webp') 8 / 7px stretch;
-	border-radius: 0;
-	padding-inline: 10px;
-	padding-block: 3px;
-}
-
-/* ── 光标：毛笔 ────────────────────────────────────────────────
-   覆盖 theme.css 的 --skin-cursor。热点 (3 3) 对准笔锋尖端。
-   交互元素上的 pointer/text 等语义光标不受影响（它们各自声明 cursor）。 */
-html[data-skin='shuimo'] {
-	--skin-cursor: url('/skins/shuimo/cursor.svg') 3 3, auto;
 }

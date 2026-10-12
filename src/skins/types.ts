@@ -49,6 +49,16 @@ export type SkinCardStyle = {
 	shadow: string
 	/** 边框宽度，单位 px */
 	borderWidth: number
+	/**
+	 * 四边描边贴图，取值是一整条 background-image（最多四层：上/下/左/右），
+	 * 默认 'none' 即普通边框。
+	 *
+	 * 为什么不用 border-image：border-image 会把四角按 slice 缩放，卡片宽高比一变
+	 * 笔触就被拉变形（156×45 的墨框素材拉到 800×300 的卡片上尤其明显）；
+	 * 而「四条各自 repeat 的线」不随尺寸变形，这正是 shuimo-ui 的 .m-border 做法。
+	 * 四条线的定位/重复/尺寸是固定常量，写在 card.stylex.ts 里，此处只换图。
+	 */
+	edge?: string
 }
 
 export type SkinPreset = {
@@ -58,6 +68,7 @@ export type SkinPreset = {
 	descriptionKey: TranslationKey
 	theme: SkinTheme
 	card: SkinCardStyle
+	button: SkinButtonStyle
 	/** 选中该皮肤时填入 font 字段的推荐字体 id，站长可再改 */
 	defaultFont: string
 	/**
@@ -67,6 +78,12 @@ export type SkinPreset = {
 	 * 未设置、或该图已被站长删除时回落站长设置（layout 侧对找不到的 id 静默跳过）。
 	 */
 	backgroundImageId?: string
+	/**
+	 * 背景画是否跟随指针做极小幅位移（视差）。
+	 * 幅度固定为 ±8px、每帧收敛 8%（数值取自参考实现 shuimo-ui 的远山视差），
+	 * 只在皮肤显式开启时挂监听：默认皮肤下不该为纯装饰付一个 rAF 循环。
+	 */
+	backgroundParallax?: boolean
 	/** 配置面板与访客切换菜单里的色块预览 */
 	preview: {
 		bg: string
@@ -81,6 +98,30 @@ export type SkinModule = {
 	preset: SkinPreset
 	/** 皮肤专属装饰层；不提供则不渲染任何装饰 */
 	Decor?: ComponentType
+}
+
+/**
+ * 按钮质感：写入 --skin-btn-* 自定义属性，由 button.stylex.ts 消费。
+ *
+ * 与卡片分开成一组，是因为两者的贴图策略本就不同：
+ * 卡片宽高比变化极大（从方形头像卡到通栏卡片），只能用「四条各自 repeat 的线」；
+ * 按钮尺寸接近素材固有比例（156×45），可以直接用 border-image 拉伸四边 ——
+ * 这也正是参考实现 shuimo-ui 的做法（.m-button 用 border-image，容器用线）。
+ */
+export type SkinButtonStyle = {
+	/** 圆角，单位 px */
+	radius: number
+	/** squircle 升级后的圆角，单位 px */
+	radiusLg: number
+	/** 边框宽度，单位 px（border-image 的 slice 会被缩放到这个宽度） */
+	borderWidth: number
+	/**
+	 * border-image 取值（笔触方框），默认 'none' 即普通边框。
+	 * 只写 source 与 slice，宽度交给 borderWidth，repeat 走 CSS 初始值 stretch。
+	 */
+	frame?: string
+	/** 按钮底纹（background-image），默认 'none'；水墨下是青海波纹 */
+	texture?: string
 }
 
 export function isSkinId(value: unknown): value is SkinId {

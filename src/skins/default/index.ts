@@ -32,6 +32,11 @@ export const defaultSkin: SkinModule = {
 			shadow: '0 40px 50px -32px rgb(0 0 0 / 5%), inset 0 0 20px rgb(255 255 255 / 25%)',
 			borderWidth: 1
 		},
+		button: {
+			radius: 12,
+			radiusLg: 16,
+			borderWidth: 1.5
+		},
 		defaultFont: 'system',
 		preview: {
 			bg: '#eeeeee',

@@ -13,8 +13,7 @@ import { ColorConfig } from './color-config'
 import { FontConfig } from './font-config'
 import { SkinConfig } from './skin-config'
 import { HomeLayout } from './home-layout'
-import { applyFont } from '@/lib/font'
-import { applyBackgroundImage, applySkin, applyTheme } from '@/lib/skin'
+import { applyResolvedAppearance, readStoredFont, readStoredSkin } from '@/lib/skin'
 import { initiateGitHubOAuth2, clearOAuth2Token, hasOAuth2Auth } from '@/lib/oauth2-github'
 import { useI18n } from '@/i18n/context'
 import { card } from '@/styles/shared/card.stylex'
@@ -292,7 +291,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 			)
 			setSiteContent(formData)
 			setCardStyles(cardStylesData)
-			applyAppearance(formData)
+			applyVisitorView(formData)
 			setFaviconItem(null)
 			setAvatarItem(null)
 			setArtImageUploads({})
@@ -342,7 +341,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				metaDescription.setAttribute('content', originalData.meta.description)
 			}
 		}
-		applyAppearance(originalData)
+		applyVisitorView(originalData)
 		setFaviconItem(null)
 		setAvatarItem(null)
 		setArtImageUploads({})
@@ -351,13 +350,25 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 		onClose()
 	}
 
-	/** 预览与还原都走 lib/skin 的统一入口，避免这里漏掉新增的令牌 */
-	const applyAppearance = (content: SiteContent) => {
-		applyTheme(content.theme)
-		applySkin(content.skin)
-		applyFont(content.font)
-		const images = (content as { backgroundImages?: Array<{ id: string; url: string }> }).backgroundImages ?? []
-		applyBackgroundImage(images.find(item => item.id === content.currentBackgroundImageId)?.url ?? null)
+	/**
+	 * 弹窗关闭后一律落到「访客视角」，而不是站长值。
+	 *
+	 * 关窗的三条路径（取消 / 保存 / 预览）此前都直接写站长值，于是若访客
+	 * （可能就是站长自己在试皮肤）localStorage 里有覆盖，页面会停在站长值上，
+	 * 而 localStorage 仍说访客选了别的皮肤 —— 两者不一致，且 SkinProvider 的
+	 * 依赖没变、不会重跑纠正，直到下次刷新。
+	 * 走 lib/skin 的统一入口后，解析与落地只有一套实现，不会再各写一份。
+	 */
+	const applyVisitorView = (content: SiteContent) => {
+		applyResolvedAppearance({
+			visitorSkin: readStoredSkin(),
+			visitorFont: readStoredFont(),
+			siteSkin: content.skin,
+			siteFont: content.font,
+			siteTheme: content.theme,
+			siteBackgroundImageId: content.currentBackgroundImageId,
+			backgroundImages: content.backgroundImages ?? []
+		})
 	}
 
 	const handlePreview = () => {
@@ -374,7 +385,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 				metaDescription.setAttribute('content', formData.meta.description)
 			}
 		}
-		applyAppearance(formData)
+		applyVisitorView(formData)
 
 		onClose()
 	}

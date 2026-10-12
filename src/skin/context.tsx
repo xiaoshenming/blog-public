@@ -4,16 +4,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useShallow } from 'zustand/react/shallow'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import { getSkinPreset, type SkinId, type SkinPreset } from '@/skins'
-import { applyFont } from '@/lib/font'
 import {
-	applyBackgroundImage,
-	applySkin,
-	applyTheme,
+	applyResolvedAppearance,
 	persistFont,
 	persistSkin,
 	readStoredFont,
 	readStoredSkin,
-	resolveBackgroundUrl,
 	resolveFont,
 	resolveSkin
 } from '@/lib/skin'
@@ -43,11 +39,11 @@ const SkinContext = createContext<SkinValue | null>(null)
  * 在首次绘制前就写好 data-skin 与 CSS 变量，这里只负责后续的响应式更新。
  */
 export function SkinProvider({ children }: { children: ReactNode }) {
-	const siteSkin = useConfigStore(useShallow(s => (s.siteContent as { skin?: string }).skin))
-	const siteFont = useConfigStore(useShallow(s => (s.siteContent as { font?: string }).font))
+	const siteSkin = useConfigStore(useShallow(s => s.siteContent.skin))
+	const siteFont = useConfigStore(useShallow(s => s.siteContent.font))
 	const siteTheme = useConfigStore(useShallow(s => s.siteContent.theme))
 	const siteBackgroundImageId = useConfigStore(useShallow(s => s.siteContent.currentBackgroundImageId))
-	const backgroundImages = useConfigStore(useShallow(s => (s.siteContent as { backgroundImages?: Array<{ id: string; url: string }> }).backgroundImages ?? []))
+	const backgroundImages = useConfigStore(useShallow(s => s.siteContent.backgroundImages ?? []))
 
 	const [visitorSkin, setVisitorSkin] = useState<SkinId | null>(null)
 	const [visitorFont, setVisitorFont] = useState<string | null>(null)
@@ -66,23 +62,12 @@ export function SkinProvider({ children }: { children: ReactNode }) {
 
 	const skinId = resolveSkin(visitorSkin, siteSkin)
 	const skin = useMemo(() => getSkinPreset(skinId), [skinId])
-
-	// 访客一旦自己选了皮肤，就该看到该皮肤的完整配色（含字体与关联背景），而不是站长微调过的版本
-	const theme = visitorSkin ? skin.theme : siteTheme
 	const fontId = resolveFont(visitorFont, visitorSkin ? null : siteFont, skinId)
-	const backgroundUrl = resolveBackgroundUrl(visitorSkin, skinId, siteBackgroundImageId, backgroundImages)
 
 	useEffect(() => {
 		if (!preferencesLoaded) return
-		applyTheme(theme)
-		applySkin(skinId)
-		applyBackgroundImage(backgroundUrl)
-	}, [preferencesLoaded, theme, skinId, backgroundUrl])
-
-	useEffect(() => {
-		if (!preferencesLoaded) return
-		applyFont(fontId)
-	}, [preferencesLoaded, fontId])
+		applyResolvedAppearance({ visitorSkin, visitorFont, siteSkin, siteFont, siteTheme, siteBackgroundImageId, backgroundImages })
+	}, [preferencesLoaded, visitorSkin, visitorFont, siteSkin, siteFont, siteTheme, siteBackgroundImageId, backgroundImages])
 
 	const setSkin = useCallback((next: SkinId | null) => {
 		persistSkin(next)
